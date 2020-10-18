@@ -190,9 +190,11 @@ export default class BotCommands {
                 user = this.message.client.users.cache.find(user => user.username == "Meg");
                 color = "#800080";
                 break;
+            case "nineveh":
             case "nin":
                 user = this.message.client.users.cache.find(user => user.username == "wheelfor");
                 color = "#800080";
+                player = "nineveh";
                 break;
             case "rosa":
                 user = this.message.client.users.cache.find(user => user.username == "ROSA");
