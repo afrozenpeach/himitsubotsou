@@ -210,27 +210,7 @@ export default class BotCommands {
 
             //Find emojis for each character - emoji must be a custom emoji upload with the character's proper name
             characters.forEach(function(character) {
-                finalMessage += character[0];
-
-                if (character[1] || character[2]) {
-                    finalMessage += " (";
-                }
-
-                if (character[1]) {
-                    finalMessage += character[1]
-                }
-
-                if (character[1] && character[2]) {
-                    finalMessage += "/";
-                }
-
-                if (character[2]) {
-                    finalMessage += character[2];
-                }
-
-                if (character[1] || character[2]) {
-                    finalMessage += ")";
-                }
+                finalMessage += this.#getCharacterName(character);
     
                 var emoji = this.#getCharacterEmoji(character[0], character[1], character[2]);
     
@@ -308,27 +288,7 @@ export default class BotCommands {
                 nameLine += `${emoji} `;
             }
             
-            nameLine += character.name;
-
-            if (character.nickname1 || character.nickname2) {
-                nameLine += " (";
-            }
-
-            if (character.nickname1) {
-                nameLine += character.nickname1;
-            }
-
-            if (character.nickname1 && character.nickname2) {
-                nameLine += "/";
-            }
-
-            if (character.nickname2) {
-                nameLine += character.nickname2;
-            }
-
-            if (character.nickname1 || character.nickname2) {
-                nameLine += ")";
-            }
+            nameLine += this.#getCharacterName(character);
 
             embed.setTitle(nameLine);
 
@@ -456,30 +416,10 @@ export default class BotCommands {
             characters.forEach(character => {
                 finalMessage += character[3] + " " + character[4] + ", " + character[5] + " AR - ";
 
-                finalMessage += character[0];
-
-                if (character[1] || character[2]) {
-                    finalMessage += " (";
-                }
-
-                if (character[1]) {
-                    finalMessage += character[1]
-                }
-
-                if (character[1] && character[2]) {
-                    finalMessage += "/";
-                }
-
-                if (character[2]) {
-                    finalMessage += character[2];
-                }
-
-                if (character[1] || character[2]) {
-                    finalMessage += ")";
-                }
+                finalMessage += this.#getCharacterName(character);
 
                 finalMessage += "\n";
-            })
+            }, this)
 
             embed.setDescription(finalMessage.slice(0, -1));
 
@@ -572,5 +512,57 @@ export default class BotCommands {
         }
 
         return emoji;
+    }
+
+    #getCharacterName(character) {
+        var nameLine = "";
+
+        if (Array.isArray(character)) {  
+            nameLine += character[0];
+
+            if (character[1] || character[2]) {
+                nameLine += " (";
+            }
+
+            if (character[1]) {
+                nameLine += character[1]
+            }
+
+            if (character[1] && character[2]) {
+                nameLine += "/";
+            }
+
+            if (character[2]) {
+                nameLine += character[2];
+            }
+
+            if (character[1] || character[2]) {
+                nameLine += ")";
+            }
+        } else {          
+            nameLine += character.name;
+
+            if (character.nickname1 || character.nickname2) {
+                nameLine += " (";
+            }
+
+            if (character.nickname1) {
+                nameLine += character.nickname1;
+            }
+
+            if (character.nickname1 && character.nickname2) {
+                nameLine += "/";
+            }
+
+            if (character.nickname2) {
+                nameLine += character.nickname2;
+            }
+
+            if (character.nickname1 || character.nickname2) {
+                nameLine += ")";
+            }
+        }
+
+        return nameLine;
     }
 }
