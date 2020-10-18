@@ -199,7 +199,12 @@ export default class BotCommands {
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
         .then(s => { return s.getTable("Characters") })
-        .then(t => t.select("name", "nickname1", "nickname2").where("player like :player" + activeOnly).orderBy("name").bind("player", player).execute())
+        .then(t => 
+            t.select("name", "nickname1", "nickname2")
+            .where("player like :player" + activeOnly)
+            .orderBy("name")
+            .bind("player", player)
+            .execute())
         .then(r => {
             characters = r.fetchAll();
 
