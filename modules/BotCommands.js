@@ -306,7 +306,7 @@ export default class BotCommands {
             )
         )
         .then(() => {
-            var character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {})
+            var character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {})            
 
             var embed = new MessageEmbed()
                 .setURL("https://himitsu-sensou.dreamwidth.org/?poster=" + character.journal);
@@ -365,6 +365,12 @@ export default class BotCommands {
             if (character.identifiers) {                
                 embed.addFields(
                     { name: "Identifiers", value: character.identifiers }
+                )
+            }
+
+            if (character.noncombat) {                
+                embed.addFields(
+                    { name: "Noncombat", value: character.noncombat }
                 )
             }
 
