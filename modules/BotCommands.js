@@ -370,7 +370,7 @@ export default class BotCommands {
 
             if (character.noncombat) {                
                 embed.addFields(
-                    { name: "Noncombat", value: character.noncombat }
+                    { name: "Noncombat", value: character.noncombat.split('<br>').join('\n') }
                 )
             }
 
