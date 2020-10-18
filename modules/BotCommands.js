@@ -175,30 +175,26 @@ export default class BotCommands {
         //Player preferences - TO DO: Pull from database
         switch (player.toLocaleLowerCase()) {
             case "frozen":
-                characters = ["Anemone", "Calaith", "Gebann", "Inara", "Kimberly", "Lenore", "Lionel", "Loki", "Marigold", "Martha", "Rae"];
                 user = this.message.client.users.cache.find(user => user.username == "FrozenPeach");
                 color = "#32a8a4";
                 break;
             case "dots":
-                characters = ["Kail", "Faith", "Prudence", "Jonathan", "Ebony", "Eri", "Christopher", "Mark", "Irving", "Lysander", "Verity"];
                 user = this.message.client.users.cache.find(user => user.username == "stormbourne");
                 color = "#a70058";
                 break;
             case "elzie":
-                characters = [];
                 user = this.message.client.users.cache.find(user => user.username == "belix");
                 color = "#008000";
                 break;
             case "meg":
-                characters = [];
                 user = this.message.client.users.cache.find(user => user.username == "Meg");
+                color = "#800080";
                 break;
             case "nin":
-                characters = [];
                 user = this.message.client.users.cache.find(user => user.username == "wheelfor");
+                color = "#800080";
                 break;
             case "rosa":
-                characters = [];
                 user = this.message.client.users.cache.find(user => user.username == "ROSA");
                 color = "#800080";
                 break;
@@ -207,41 +203,80 @@ export default class BotCommands {
                 return;
         }
 
-        characters.sort();
+        var activeOnly = " && status = 'Normal'";
 
-        //Find emojis for each character - emoji must be a custom emoji upload with the character's proper name
-        characters.forEach(function(character) {
-            finalMessage += character;
+        if (args[1] === "all") {
+            activeOnly = "";
+        }
 
-            var emoji = this.#getCharacterEmoji(character);
+        var vm = this;
+        var session;
+        var result = [];
+        var characters = [];
+        var itemsProcessed = 0;
 
-            if (emoji != undefined) {
-                finalMessage += ` ${emoji}`;
+        this.sql.getSession()
+        .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
+        .then(s => { return s.getTable("Characters") })
+        .then(t => t.select("name", "nickname1", "nickname2").where("player like :player" + activeOnly).orderBy("name").bind("player", player).execute())
+        .then(r => {
+            characters = r.fetchAll();
+
+            //Find emojis for each character - emoji must be a custom emoji upload with the character's proper name
+            characters.forEach(function(character) {
+                finalMessage += character[0];
+
+                if (character[1] || character[2]) {
+                    finalMessage += " (";
+                }
+
+                if (character[1]) {
+                    finalMessage += character[1]
+                }
+
+                if (character[1] && character[2]) {
+                    finalMessage += "/";
+                }
+
+                if (character[2]) {
+                    finalMessage += character[2];
+                }
+
+                if (character[1] || character[2]) {
+                    finalMessage += ")";
+                }
+    
+                var emoji = this.#getCharacterEmoji(character[0], character[1], character[2]);
+    
+                if (emoji != undefined) {
+                    finalMessage += ` ${emoji}`;
+                }
+    
+                finalMessage += ", ";
+            }, this)
+    
+            var embed = new MessageEmbed()
+                .setTitle(player.slice(0, 1).toLocaleUpperCase() + player.slice(1).toLocaleLowerCase() + (player.slice(-1) == "s" ? "'" : "'s") + " characters")
+                .setDescription(finalMessage.slice(0, -2));
+    
+            if (color != "") {
+                embed.setColor(color);
             }
-
-            finalMessage += ", ";
-        }, this)
-
-        var embed = new MessageEmbed()
-            .setTitle(player.slice(0, 1).toLocaleUpperCase() + player.slice(1).toLocaleLowerCase() + (player.slice(-1) == "s" ? "'" : "'s") + " characters")
-            .setDescription(finalMessage.slice(0, -2));
-
-        if (color != "") {
-            embed.setColor(color);
-        }
-
-        if (user != undefined) {
-            embed.setThumbnail(user.displayAvatarURL("webp", true, "64"));
-        }
-
-        this.message.channel.send(embed);
+    
+            if (user != undefined) {
+                embed.setThumbnail(user.displayAvatarURL("webp", true, "64"));
+            }
+    
+            this.message.channel.send(embed);
+        })
+        .then(() => session.close())
     }
 
     charactersHelp() {
         var embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Help - Franelcrew")
-            .setDescription("Lists characters played by the current user.\n\nOptional Parameters: alternative player name to filter by");
+            .setDescription("Lists characters played by the current user.\n\nOptional Parameters:\n\n0: alternative player name to filter by\n\n1: all to include deceased characters");
 
         this.message.channel.send(embed);
     }
@@ -291,18 +326,18 @@ export default class BotCommands {
     }
 
     //Gets the emoji based on a character name
-    #getCharacterEmoji(character) {
+    #getCharacterEmoji(character, nickname1 = undefined, nickname2 = undefined) {
         //proper name
-        var emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase().split("/")[0].split(" ")[0]);
+        var emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase());
 
-        //secondary name
-        if (emoji == undefined && character.includes("/")) {
-            emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase().split("/\"")[1].slice(0, -1));
+        //nickname1
+        if (emoji == undefined && nickname1 != undefined) {
+            emoji = this.message.client.emojis.cache.find(emoji => emoji.name === nickname1.toLocaleLowerCase());
         }
 
-        //nickname
-        if (emoji == undefined && character.includes("(")) {
-            emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase().split("(")[1].slice(0, -1));
+        //nickname2
+        if (emoji == undefined && nickname2 != undefined) {
+            emoji = this.message.client.emojis.cache.find(emoji => emoji.name === nickname2.toLocaleLowerCase());
         }
 
         return emoji;
