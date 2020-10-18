@@ -213,9 +213,7 @@ export default class BotCommands {
 
         var vm = this;
         var session;
-        var result = [];
         var characters = [];
-        var itemsProcessed = 0;
 
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
