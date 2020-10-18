@@ -446,11 +446,67 @@ export default class BotCommands {
         this.message.channel.send(embed);
     }
 
-    searchHelp() {
+    birthmonth(args) {
+        var vm = this;
+        var session;
+
+        this.sql.getSession()
+        .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
+        .then(s => { return s.getTable("Characters") })
+        .then(t => 
+            t.select("name", "nickname1", "nickname2", "birthmonth", "birthdate", "year")
+            .where("birthmonth like :month")
+            .orderBy("birthdate")
+            .bind("month", args[0])
+            .execute()
+        )
+        .then(r => {
+            var characters = r.fetchAll();
+
+            var embed = new MessageEmbed().setTitle("Birthdays for " + characters[0][3]);
+
+            var finalMessage = "";
+
+            characters.forEach(character => {
+                finalMessage += character[3] + " " + character[4] + ", " + character[5] + " AR - ";
+
+                finalMessage += character[0];
+
+                if (character[1] || character[2]) {
+                    finalMessage += " (";
+                }
+
+                if (character[1]) {
+                    finalMessage += character[1]
+                }
+
+                if (character[1] && character[2]) {
+                    finalMessage += "/";
+                }
+
+                if (character[2]) {
+                    finalMessage += character[2];
+                }
+
+                if (character[1] || character[2]) {
+                    finalMessage += ")";
+                }
+
+                finalMessage += "\n";
+            })
+
+            embed.setDescription(finalMessage.slice(0, -1));
+
+            vm.message.channel.send(embed);
+        })
+        .then(() => session.close())
+    }
+
+    birthmonthHelp() {
         var embed = new MessageEmbed()
             .setColor("#ff0000")
-            .setTitle("Help - Search")
-            .setDescription("Lists characters that match the passed in where clause.");
+            .setTitle("Help - Birth Month")
+            .setDescription("Lists characters that have a birthday in the designated month.");
 
         this.message.channel.send(embed);
     }
