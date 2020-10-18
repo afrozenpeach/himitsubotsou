@@ -5,5 +5,6 @@ export const Config = {
     "MYSQL_HOST": "localhost",
     "MYSQL_USER": "username",
     "MYSQL_PASSWORD": "password",
-    "MYSQL_DATABASE": "database"
+    "MYSQL_CHARDB": "characters_database",
+    "MYSQL_FICDB": "fic_database"
 }
