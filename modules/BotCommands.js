@@ -309,7 +309,10 @@ export default class BotCommands {
             var character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {})            
 
             var embed = new MessageEmbed()
-                .setURL("https://himitsu-sensou.dreamwidth.org/?poster=" + character.journal);
+
+            if (character.journal) {
+                embed.setURL("https://himitsu-sensou.dreamwidth.org/?poster=" + character.journal);
+            }
     
             var nameLine = "";
 
@@ -439,6 +442,15 @@ export default class BotCommands {
             .setColor("#ff0000")
             .setTitle("Help - Profile")
             .setDescription("Displays a profile for the specified character.");
+
+        this.message.channel.send(embed);
+    }
+
+    searchHelp() {
+        var embed = new MessageEmbed()
+            .setColor("#ff0000")
+            .setTitle("Help - Search")
+            .setDescription("Lists characters that match the passed in where clause.");
 
         this.message.channel.send(embed);
     }
