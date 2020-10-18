@@ -12,25 +12,6 @@ export default class BotCommands {
         )
     }
 
-    test(args) {
-        var vm = this;
-        var session;
-
-        this.sql.getSession()
-        .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
-        .then(s => { return s.getTable("Characters") })
-        .then(t => t.select("name").orderBy("name").execute())
-        .then(r => {
-            var rows = r.fetchAll();
-
-            var characters = rows.join(', ');
-
-            this.message.channel.send(characters.substring(0,2000));
-            this.message.channel.send(characters.substring(2000, 3999));
-        })
-        .then(() => session.close())
-    }
-
     help(args) {
         if (args[0] !== undefined) {
             var argHelp = args[0] + "Help";
