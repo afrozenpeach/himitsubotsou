@@ -340,6 +340,21 @@ export default class BotCommands {
             emoji = this.message.client.emojis.cache.find(emoji => emoji.name === nickname2.toLocaleLowerCase());
         }
 
+        if (emoji == undefined) {
+            //proper name
+            emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase().split("/")[0].split(" ")[0]);
+            
+            //secondary name
+            if (emoji == undefined && character.includes("/")) {
+                emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase().split("/\"")[1].slice(0, -1));
+            }
+
+            //nickname
+            if (emoji == undefined && character.includes("(")) {
+                emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase().split("(")[1].slice(0, -1));
+            }
+        }
+
         return emoji;
     }
 }
