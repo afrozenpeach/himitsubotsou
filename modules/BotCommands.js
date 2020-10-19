@@ -521,7 +521,6 @@ export default class BotCommands {
             //For each character find a matching emoji if possible - must be the character's proper name
             pc.characters.forEach(function(character) {
                 var characterName = this.#getCharacterName(character);
-                var splitMe = false;
 
                 if (characterString.length + characterName.length > 1024) {                    
                     embed.addField(pc.player, characterString.slice(0, -2))
