@@ -236,6 +236,9 @@ export default class BotCommands {
             this.message.channel.send(embed);
         })
         .then(() => session.close())
+        .catch(function (err) {
+            vm.message.channel.send(err.message);
+        })
     }
 
     charactersHelp() {
@@ -381,6 +384,9 @@ export default class BotCommands {
             vm.message.channel.send(embed);
         })
         .then(() => session.close())
+        .catch(function (err) {
+            vm.message.channel.send(err.message);
+        })
     }
 
     profileHelp() {
@@ -426,6 +432,9 @@ export default class BotCommands {
             vm.message.channel.send(embed);
         })
         .then(() => session.close())
+        .catch(function (err) {
+            vm.message.channel.send(err.message);
+        })
     }
 
     birthmonthHelp() {
@@ -468,6 +477,9 @@ export default class BotCommands {
             this.#sendCharacterEmbed(characters, "#ffffff", "Search where " + args.join(' '));
         })
         .then(() => session.close())
+        .catch(function (err) {
+            vm.message.channel.send(err.message);
+        })
     }
 
     searchHelp() {
