@@ -437,6 +437,48 @@ export default class BotCommands {
         this.message.channel.send(embed);
     }
 
+    search(args) {
+        var vm = this;
+        var session;
+
+        this.sql.getSession()
+        .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
+        .then(s => { return s.getTable("Characters") })
+        .then(t => 
+            t.select("name", "nickname1", "nickname2", "player")
+            .where(args.join(' '))
+            .orderBy("player", "name")
+            .execute()
+        )
+        .then(r => {
+            var results = r.fetchAll();
+            var characters = [];
+
+            results.forEach(result => {
+                var playerObj = characters.find(c => c.player === result[3])
+
+                if (playerObj === undefined) {
+                    characters.push({ player: result[3], characters: [] })
+                    playerObj = characters.find(c => c.player === result[3])
+                }
+
+                playerObj.characters.push({ name: result[0], nickname1: result[1], nickname2: result[2] })
+            });
+
+            this.#sendCharacterEmbed(characters, "#ffffff", "Search where " + args.join(' '));
+        })
+        .then(() => session.close())
+    }
+
+    searchHelp() {
+        var embed = new MessageEmbed()
+            .setColor("#ff0000")
+            .setTitle("Help - SQL Search")
+            .setDescription("Returns a list of characters and their players for a given where clause.");
+
+        this.message.channel.send(embed);
+    }
+
     //Takes a list of players/characters, a color, and a title, and creates a custom embed
     #sendCharacterEmbed(playerCharacters, color, title, filterPlayer = undefined) {
         if (filterPlayer !== undefined) {
@@ -460,11 +502,21 @@ export default class BotCommands {
         playerCharacters.forEach(function(pc) {
             var characterString = "";
 
-            pc.characters.sort();
+            if (Array.isArray(pc.characters[0])) {
+                pc.characters.sort();
+            }
 
             //For each character find a matching emoji if possible - must be the character's proper name
             pc.characters.forEach(function(character) {
-                characterString += character;
+                var characterName = this.#getCharacterName(character);
+                var splitMe = false;
+
+                if (characterString.length + characterName.length > 1024) {                    
+                    embed.addField(pc.player, characterString.slice(0, -2))
+                    characterString = "";
+                }
+
+                characterString += characterName;
 
                 var emoji = this.#getCharacterEmoji(character);
 
@@ -483,31 +535,48 @@ export default class BotCommands {
 
     //Gets the emoji based on a character name
     #getCharacterEmoji(character, nickname1 = undefined, nickname2 = undefined) {
-        //proper name
-        var emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase());
+        var emoji;
 
-        //nickname1
-        if (emoji == undefined && nickname1 != undefined) {
-            emoji = this.message.client.emojis.cache.find(emoji => emoji.name === nickname1.toLocaleLowerCase());
-        }
-
-        //nickname2
-        if (emoji == undefined && nickname2 != undefined) {
-            emoji = this.message.client.emojis.cache.find(emoji => emoji.name === nickname2.toLocaleLowerCase());
-        }
-
-        if (emoji == undefined) {
+        if (typeof character === 'object') {
             //proper name
-            emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase().split("/")[0].split(" ")[0]);
-            
-            //secondary name
-            if (emoji == undefined && character.includes("/")) {
-                emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase().split("/\"")[1].slice(0, -1));
+            emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.name.toLocaleLowerCase());
+    
+            //nickname1
+            if (emoji == undefined && nickname1 != undefined) {
+                emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.nickname1.toLocaleLowerCase());
             }
-
-            //nickname
-            if (emoji == undefined && character.includes("(")) {
-                emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase().split("(")[1].slice(0, -1));
+    
+            //nickname2
+            if (emoji == undefined && nickname2 != undefined) {
+                emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.nickname2.toLocaleLowerCase());
+            }
+        } else {
+            //proper name
+            emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase());
+    
+            //nickname1
+            if (emoji == undefined && nickname1 != undefined) {
+                emoji = this.message.client.emojis.cache.find(emoji => emoji.name === nickname1.toLocaleLowerCase());
+            }
+    
+            //nickname2
+            if (emoji == undefined && nickname2 != undefined) {
+                emoji = this.message.client.emojis.cache.find(emoji => emoji.name === nickname2.toLocaleLowerCase());
+            }
+    
+            if (emoji == undefined) {
+                //proper name
+                emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase().split("/")[0].split(" ")[0]);
+                
+                //secondary name
+                if (emoji == undefined && character.includes("/")) {
+                    emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase().split("/\"")[1].slice(0, -1));
+                }
+    
+                //nickname
+                if (emoji == undefined && character.includes("(")) {
+                    emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase().split("(")[1].slice(0, -1));
+                }
             }
         }
 
