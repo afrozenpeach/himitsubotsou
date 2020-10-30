@@ -386,9 +386,14 @@ export default class BotCommands {
                         
                         embed.addFields(
                             { name: "Dominant Hand", value: character.domhand, inline: true },
-                            { name: "Country", value: character.country, inline: true },
-                            { name: "Hometown", value: character.hometown, inline: true },
+                            { name: "Country", value: character.country, inline: true }
                         );
+
+                        if (character.hometown) {
+                            embed.addFields(
+                                { name: "Hometown", value: character.hometown, inline: true }
+                            );
+                        }
             
                         if (character.house) {
                             embed.addFields(
