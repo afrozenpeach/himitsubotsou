@@ -4,13 +4,13 @@ import BotCommands from "./modules/BotCommands.js";
 
 const client = new Client();
 
-client.on("ready", function() {
+client.on("ready", () => {
     if (Config.VERSION) {
         client.channels.cache.find(channel => channel.name === "botspam").send("Bot loaded. Version: " + Config.VERSION);
     }
 });
 
-client.on("message", function(message) {
+client.on("message", message => {
     try {
         //Ignore this and other bots' messages
         if (message.author.bot) return;

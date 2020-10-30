@@ -209,7 +209,7 @@ export default class BotCommands {
             characters = r.fetchAll();
 
             //Find emojis for each character - emoji must be a custom emoji upload with the character's proper name
-            characters.forEach(function(character) {
+            characters.forEach(character => {
                 finalMessage += this.#getCharacterName(character);
     
                 var emoji = this.#getCharacterEmoji(character[0], character[1], character[2]);
@@ -236,8 +236,8 @@ export default class BotCommands {
             this.message.channel.send(embed);
         })
         .then(() => session.close())
-        .catch(function (err) {
-            vm.message.channel.send(err.message);
+        .catch(e => {
+            vm.message.channel.send(e.message);
         })
     }
 
@@ -504,8 +504,8 @@ export default class BotCommands {
             vm.message.channel.send(embed);
         })
         .then(() => session.close())
-        .catch(function (err) {
-            vm.message.channel.send(err.message);
+        .catch(e => {
+            vm.message.channel.send(e.message);
         })
     }
 
