@@ -295,7 +295,7 @@ export default class BotCommands {
             )
             .then(() => {
                 this.sql.getSession()
-                .then(s => s.sql("select c2.name, r.reltype from characters.characters c1 join characters.relationships r on r.char1 = c1.id join characters.characters c2 on r.pcID = c2.id where c1.id = ?;")
+                .then(s => s.sql("select c.name, r.reltype from characters.relationships r join characters.characters c on r.pcID = c.id where r.char1 = ?;")
                             .bind([character.ID])
                             .execute(
                                 row => {
@@ -304,14 +304,14 @@ export default class BotCommands {
                             ))
                 .then(() => {
                     this.sql.getSession()
-                    .then(s => s.sql("select c2.name, r.reltype from characters.characters c1 join characters.relationships r on r.char1 = c1.id join characters.characters c2 on r.npcID = c2.id where c1.id = ?;")
+                    .then(s => s.sql("select c.name, r.reltype from characters.relationships r join characters.characters c on r.npcID = c.id where r.char1 = ?;")
                                 .bind([character.ID])
                                 .execute(
                                     row => {
                                         relationships.push(row)
                                     }
                                 ))
-                    .then(() => {                        
+                    .then(() => {                             
                         var embed = new MessageEmbed();
             
                         if (character.journal) {
