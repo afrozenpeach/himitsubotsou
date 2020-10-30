@@ -278,6 +278,7 @@ export default class BotCommands {
             var character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
             var mounts = [];
             var relationships = [];
+            var connections = [];
 
             this.sql.getSession()
             .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
@@ -304,158 +305,189 @@ export default class BotCommands {
                             ))
                 .then(() => {
                     this.sql.getSession()
-                    .then(s => s.sql("select c.name, r.reltype from characters.relationships r join characters.characters c on r.npcID = c.id where r.char1 = ?;")
+                    .then(s => s.sql("select c.npcname as name, r.reltype from characters.relationships r join characters.npcmaintable c on r.npcID = c.id where r.char1 = ?;")
                                 .bind([character.ID])
                                 .execute(
                                     row => {
                                         relationships.push(row)
                                     }
                                 ))
-                    .then(() => {                             
-                        var embed = new MessageEmbed();
-            
-                        if (character.journal) {
-                            embed.setURL("https://himitsu-sensou.dreamwidth.org/?poster=" + character.journal);
-                        }
-                
-                        var nameLine = "";
-            
-                        var emoji = this.#getCharacterEmoji(character.name, character.nickname1, character.nickname2);
-            
-                        if (emoji != undefined) {
-                            nameLine += `${emoji} `;
-                        }
+                    .then(() => {
+                        this.sql.getSession()
+                        .then(s => s.sql("select c.name, cn.connectionType from characters.pcconnections cn join characters.characters c on c.id = cn.familypcid where cn.basepcid = ?")
+                                    .bind([character.ID])
+                                    .execute(
+                                        row => {
+                                            connections.push(row);
+                                        }
+                                    ))
+                        .then(() => {
+                            this.sql.getSession()
+                            .then(s => s.sql("select c.npcname as name, cn.connectionType from characters.npcconnections cn join characters.npcmaintable c on c.id = cn.npcid where cn.pcid = ?")
+                                        .bind([character.ID])
+                                        .execute(
+                                            row => {
+                                                connections.push(row);
+                                            }
+                                        ))
+                            .then(() => {
+                                var embed = new MessageEmbed();
+                    
+                                if (character.journal) {
+                                    embed.setURL("https://himitsu-sensou.dreamwidth.org/?poster=" + character.journal);
+                                }
                         
-                        nameLine += this.#getCharacterName(character);
-            
-                        embed.setTitle(nameLine);
-            
-                        switch(character.sect.toLocaleLowerCase()) {
-                            case "pillar of light":
-                                embed.setColor("#fcba03");
-                                break;
-                            case "messenger of darkness":
-                                embed.setColor("#4a1a7d");
-                                break;
-                            case "neutral":
-                                embed.setColor("#343aeb");
-                                break;
-                            default:
-                                embed.setColor("#919191");
-                                break;
-                        }
-            
-                        if (character.picture) {
-                            embed.setThumbnail("https://host.lgbt/pics/" + character.picture);
-                        }
-            
-                        if (character.identifiers) {                
-                            embed.addFields(
-                                { name: "Identifiers", value: character.identifiers }
-                            )
-                        }
-            
-                        if (character.noncombat) {                
-                            embed.addFields(
-                                { name: "Noncombat", value: character.noncombat.split('<br>').join('\n') }
-                            )
-                        }
-            
-                        embed.addFields(
-                            { name: "Player", value: character.player , inline: true },
-                            { name: "Status", value: character.status, inline: true },
-                            { name: "Sect", value: character.sect, inline: true },
-                            { name: "Birthday", value: character.birthmonth + " " + character.birthdate + ", " + character.year + " AR", inline: true },
-                            { name: "Zodiac", value: character.zodiac, inline: true },
-                            { name: "Blood Type", value: character.bloodtype, inline: true },
-                            { name: "Gender", value: character.gender, inline: true },
-                            { name: "Orientation", value: character.orientation, inline: true },
-                            { name: "Hair Color", value: character.haircolor, inline: true },
-                            { name: "Eye Color", value: character.eyecolor, inline: true },
-                            { name: "Height", value: character.heightfeet + "'" + character.heightinches + '"' + "(" + character.heightcms + " cm)", inline: true },
-                            { name: "Build", value: character.build, inline: true },
-                            { name: "Skin Tone", value: character.skintone, inline: true }
-                        );
-                        
-                        
-                        if (character.cupsize) {
-                            embed.addFields(
-                                { name: "Cup Size", value: character.cupsize, inline: true }
-                            )
-                        }
-                        
-                        embed.addFields(
-                            { name: "Dominant Hand", value: character.domhand, inline: true },
-                            { name: "Country", value: character.country, inline: true }
-                        );
-
-                        if (character.hometown) {
-                            embed.addFields(
-                                { name: "Hometown", value: character.hometown, inline: true }
-                            );
-                        }
-            
-                        if (character.house) {
-                            embed.addFields(
-                                { name: "House", value: character.house, inline: true }
-                            )
-                        }
-                        
-                        embed.addFields(
-                            { name: "Social Class", value: character.socialclass, inline: true },
-                            { name: "Jobs", value: character.jobs, inline: true }
-                        )
-            
-                        if (character.subjobs) {
-                            embed.addFields(
-                                { name: "Sub Jobs", value: character.subjobs, inline: true }
-                            )
-                        }
-                         
-                        embed.addFields(
-                            { name: "Class", value: character.class, inline: true }
-                        );
-            
-                        if (character.pastclasses) {
-                            embed.addFields(
-                                { name: "Pass Classes", value: character.pastclasses ?? '', inline: true },
-                            );
-                        }
-        
-                        if (mounts.length > 0) {
-                            var mountLine = "";
-        
-                            mounts.forEach(m => {
-                                mountLine += m[1] + " - " + m[2] + " " + m[3] + " " + m[4] + " - " + m[6];
+                                var nameLine = "";
+                    
+                                var emoji = this.#getCharacterEmoji(character.name, character.nickname1, character.nickname2);
+                    
+                                if (emoji != undefined) {
+                                    nameLine += `${emoji} `;
+                                }
                                 
-                                if (m[7]) {
-                                    mountLine += " - " + m[7];
+                                nameLine += this.#getCharacterName(character);
+                    
+                                embed.setTitle(nameLine);
+                    
+                                switch(character.sect.toLocaleLowerCase()) {
+                                    case "pillar of light":
+                                        embed.setColor("#fcba03");
+                                        break;
+                                    case "messenger of darkness":
+                                        embed.setColor("#4a1a7d");
+                                        break;
+                                    case "neutral":
+                                        embed.setColor("#343aeb");
+                                        break;
+                                    default:
+                                        embed.setColor("#919191");
+                                        break;
+                                }
+                    
+                                if (character.picture) {
+                                    embed.setThumbnail("https://host.lgbt/pics/" + character.picture);
+                                }
+
+                                //There can only be 25 fields, so we're combining some things so everything fits
+                                var noncombatLine = "";
+
+                                if (character.identifiers) {
+                                    noncombatLine += character.identifiers + "\n";
+                                }
+                    
+                                if (character.noncombat) {
+                                    noncombatLine += character.noncombat.split('<br>').join('\n');
+                                }
+
+                                if (noncombatLine) {                                    
+                                    embed.addFields(
+                                        { name: "Noncombat", value: character.noncombat.split('<br>').join('\n') }
+                                    )
+                                }
+                    
+                                embed.addFields(
+                                    { name: "Player", value: character.player , inline: true },
+                                    { name: "Status", value: character.status, inline: true },
+                                    { name: "Sect", value: character.sect, inline: true },
+                                    { name: "Birthday", value: character.birthmonth + " " + character.birthdate + ", " + character.year + " AR", inline: true },
+                                    { name: "Zodiac", value: character.zodiac, inline: true },
+                                    { name: "Blood Type", value: character.bloodtype, inline: true },
+                                    { name: "Gender", value: character.gender, inline: true },
+                                    { name: "Orientation", value: character.orientation, inline: true },
+                                    { name: "Hair Color", value: character.haircolor, inline: true },
+                                    { name: "Eye Color", value: character.eyecolor, inline: true },
+                                    { name: "Height", value: character.heightfeet + "'" + character.heightinches + " (" + character.heightcms + " cm)", inline: true },
+                                    { name: "Build", value: character.build, inline: true },
+                                    { name: "Skin Tone", value: character.skintone, inline: true }
+                                );
+                                
+                                
+                                if (character.cupsize) {
+                                    embed.addFields(
+                                        { name: "Cup Size", value: character.cupsize, inline: true }
+                                    )
+                                }
+                            
+                                var hometownLine = "";
+
+                                if (character.hometown) {
+                                    hometownLine += character.hometown + ", ";
+                                }
+
+                                hometownLine += character.country;
+
+                                embed.addFields(
+                                    { name: "Dominant Hand", value: character.domhand, inline: true },
+                                    { name: "Hometown/Country", value: hometownLine, inline: true }
+                                );
+                    
+                                if (character.house) {
+                                    embed.addFields(
+                                        { name: "House", value: character.house, inline: true }
+                                    )
+                                }
+                                
+                                embed.addFields(
+                                    { name: "Social Class", value: character.socialclass, inline: true },
+                                    { name: "Jobs", value: character.jobs, inline: true }
+                                )
+                    
+                                if (character.subjobs) {
+                                    embed.addFields(
+                                        { name: "Sub Jobs", value: character.subjobs, inline: true }
+                                    )
+                                }
+                                 
+                                embed.addFields(
+                                    { name: "Class", value: character.class, inline: true }
+                                );
+                    
+                                if (character.pastclasses) {
+                                    embed.addFields(
+                                        { name: "Pass Classes", value: character.pastclasses ?? '', inline: true },
+                                    );
+                                }
+                
+                                if (mounts.length > 0) {
+                                    var mountLine = "";
+                
+                                    mounts.forEach(m => {
+                                        mountLine += m[1] + " - " + m[2] + " " + m[3] + " " + m[4] + " - " + m[6];
+                                        
+                                        if (m[7]) {
+                                            mountLine += " - " + m[7];
+                                        }
+                
+                                        mountLine += "\n";
+                                    });
+                
+                                    embed.addFields(
+                                        { name: "Mounts", value: mountLine }
+                                    );
                                 }
         
-                                mountLine += "\n";
-                            });
-        
-                            embed.addFields(
-                                { name: "Mounts", value: mountLine }
-                            );
-                        }
+                                var relationshipLine = "";
 
-                        if (relationships.length > 0) {
-                            var relationshipLine = "";
+                                relationships.forEach(r => {
+                                    relationshipLine += r[0] + " - " + r[1] + "\n";
+                                });
 
-                            relationships.forEach(r => {
-                                relationshipLine += r[0] + " - " + r[1] + "\n";
-                            });
+                                connections.forEach(c => {
+                                    relationshipLine += c[0] + " - " + c[1] + "\n";
+                                });
 
-                            embed.addFields(
-                                { name: "Relationships", value: relationshipLine }
-                            );
-                        }
-            
-                        vm.message.channel.send(embed);
-                    })
-                    .catch(e => {
-                        vm.message.channel.send(e.message);
+                                if (relationshipLine) {
+                                    embed.addFields(
+                                        { name: "Relationships", value: relationshipLine }
+                                    );
+                                }
+                    
+                                vm.message.channel.send(embed);
+                            })
+                            .catch(e => {
+                                vm.message.channel.send(e.message);
+                            })
+                        })
                     })
                 })
             })
