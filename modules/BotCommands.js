@@ -276,6 +276,12 @@ export default class BotCommands {
         )
         .then(() => {
             var character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
+
+            if (character.ID === undefined) {
+                vm.message.channel.send("Character profile not found.");
+                return;
+            }
+
             var mounts = [];
             var relationships = [];
             var connections = [];
@@ -401,7 +407,6 @@ export default class BotCommands {
                                     { name: "Skin Tone", value: character.skintone, inline: true }
                                 );
                                 
-                                
                                 if (character.cupsize) {
                                     embed.addFields(
                                         { name: "Cup Size", value: character.cupsize, inline: true }
@@ -503,6 +508,157 @@ export default class BotCommands {
             .setColor("#ff0000")
             .setTitle("Help - Profile")
             .setDescription("Displays a profile for the specified character.");
+
+        this.message.channel.send(embed);
+    }
+
+    npc(args) {
+        var vm = this;
+        var session;
+        var result = [];
+
+        this.sql.getSession()
+        .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
+        .then(s => { return s.getTable("npcMainTable") })
+        .then(t => 
+            t.select()
+            .where("npcName like :name")
+            .orderBy("npcName")
+            .bind("name", args[0])
+            .execute(
+                row => {
+                    row.forEach((value, i) => { result[i] = Object.assign({}, result[i], { value }) });
+                }, 
+                columns => {
+                    columns.forEach((key, i) => { result[i] = Object.assign({}, result[i], { key: key.getColumnName() }) });
+                }
+            )
+        )
+        .then(() => {
+            var npc = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
+
+            if (npc.ID === undefined) {
+                vm.message.channel.send("NPC profile not found.");
+                return;
+            }
+            
+            var embed = new MessageEmbed();
+
+            embed.setTitle(npc.npcName);
+
+            switch(npc.npcSect.toLocaleLowerCase()) {
+                case "pillar of light":
+                    embed.setColor("#fcba03");
+                    break;
+                case "messenger of darkness":
+                    embed.setColor("#4a1a7d");
+                    break;
+                case "neutral":
+                    embed.setColor("#343aeb");
+                    break;
+                default:
+                    embed.setColor("#919191");
+                    break;
+            }
+
+            if (npc.npcNotes) {
+                embed.addFields(
+                    { name: "Notes", value: npc.npcNotes.split('<br>').join('\n') }
+                );
+            }
+
+            embed.addFields(
+                { name: "Player", value: npc.Player, inline: true },
+                { name: "Status", value: npc.npcStatus, inline: true },
+                { name: "Sect", value: npc.npcSect, inline: true }
+            )
+
+            var birthdateLine = "";
+
+            if (npc.npcBirthMonth && npc.npcBirthMonth != 'Unspecified') {
+                birthdateLine += npc.npcBirthMonth;
+
+                if (npcBirthDate) {
+                    birthdateLine += " " + npc.npcBirthDate
+                }
+
+                birthdateLine += ", ";
+            }
+
+            if (npc.npcBirthYear) {
+                birthdateLine += npc.npcBirthYear;
+            }
+
+            if (birthdateLine) {
+                embed.addFields(
+                    { name: "Birthday", value: birthdateLine, inline: true }
+                );
+            }
+
+            embed.addFields(
+                { name: "Gender", value: npc.npcGender, inline: true },
+                { name: "Orientation", value: npc.npcOrientation, inline: true }
+            );
+
+            if (npc.npcHairColor) {
+                embed.addFields(
+                    { name: "Hair Color", value: npc.npcHairColor, inline: true }
+                );
+            }
+
+            if (npc.npcEyeColor) {
+                embed.addFields(
+                    { name: "Eye Color", value: npc.npcEyeColor, inline: true }
+                );
+            }
+
+            if (npc.npcHeightImperial || npc.npcHeightMetric) {
+                embed.addFields(
+                    { name: "Height", value: npc.npcHeightImperial + " (" + npc.npcHeightMetric + "cm)", inline: true }
+                );
+            }
+
+            if (npc.npcBuild) {
+                embed.addFields(
+                    { name: "Build", value: npc.npcBuild, inline: true }
+                );
+            }
+                            
+            var hometownLine = "";
+
+            if (npc.npcCity) {
+                hometownLine += npc.npcCity + ", ";
+            }
+
+            hometownLine += npc.npcCountry;
+
+            if (hometownLine) {
+                embed.addFields(
+                    { name: "Hometown/Country", value: hometownLine, inline: true }
+                )
+            }
+
+            if (npc.npcClass) {
+                embed.addFields(
+                    { name: "Class", value: npc.npcClass, inline: true }
+                );
+            }
+
+            if (npc.npcProfession) {
+                embed.addFields(
+                    { name: "Profession", value: npc.npcProfession, inline: true }
+                );
+            }
+
+            vm.message.channel.send(embed);
+        });
+    }
+
+    npcHelp() {
+        var embed = new MessageEmbed()
+            .setColor("#ff0000")
+            .setTitle("Help - NPC")
+            .setDescription("Displays a profile for the specified npc.");
 
         this.message.channel.send(embed);
     }
