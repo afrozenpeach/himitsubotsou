@@ -324,6 +324,9 @@ export default class BotCommands {
                     case "messenger of darkness":
                         embed.setColor("#4a1a7d");
                         break;
+                    case "silent one":
+                        embed.setColor("#ffffff");
+                        break;
                     case "neutral":
                         embed.setColor("#343aeb");
                         break;
@@ -510,6 +513,9 @@ export default class BotCommands {
                     break;
                 case "messenger of darkness":
                     embed.setColor("#4a1a7d");
+                    break;
+                case "silent one":
+                    embed.setColor("#ffffff");
                     break;
                 case "neutral":
                     embed.setColor("#343aeb");
