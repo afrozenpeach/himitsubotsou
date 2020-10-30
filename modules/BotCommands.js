@@ -439,7 +439,7 @@ export default class BotCommands {
                             var relationshipLine = "";
 
                             relationships.forEach(r => {
-                                r.relationshipLine += r[0] + " - " + r[1] + "\n";
+                                relationshipLine += r[0] + " - " + r[1] + "\n";
                             });
 
                             embed.addFields(
