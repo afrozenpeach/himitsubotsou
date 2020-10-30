@@ -199,7 +199,7 @@ export default class BotCommands {
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
         .then(s => { return s.getTable("Characters") })
-        .then(t => 
+        .then(t =>
             t.select("name", "nickname1", "nickname2")
             .where("player like :player" + activeOnly)
             .orderBy("name")
@@ -211,28 +211,28 @@ export default class BotCommands {
             //Find emojis for each character - emoji must be a custom emoji upload with the character's proper name
             characters.forEach(character => {
                 finalMessage += this.#getCharacterName(character);
-    
+
                 var emoji = this.#getCharacterEmoji(character[0], character[1], character[2]);
-    
+
                 if (emoji != undefined) {
                     finalMessage += ` ${emoji}`;
                 }
-    
+
                 finalMessage += ", ";
             }, this)
-    
+
             var embed = new MessageEmbed()
                 .setTitle(player.slice(0, 1).toLocaleUpperCase() + player.slice(1).toLocaleLowerCase() + (player.slice(-1) == "s" ? "'" : "'s") + " characters")
                 .setDescription(finalMessage.slice(0, -2));
-    
+
             if (color != "") {
                 embed.setColor(color);
             }
-    
+
             if (user != undefined) {
                 embed.setThumbnail(user.displayAvatarURL("webp", true, "64"));
             }
-    
+
             this.message.channel.send(embed);
         })
         .then(() => session.close())
@@ -258,7 +258,7 @@ export default class BotCommands {
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
         .then(s => { return s.getTable("Characters") })
-        .then(t => 
+        .then(t =>
             t.select()
             .where("name like :name OR nickname1 like :nickname1 OR nickname2 like :nickname2")
             .orderBy("name")
@@ -268,7 +268,7 @@ export default class BotCommands {
             .execute(
                 row => {
                     row.forEach((value, i) => { result[i] = Object.assign({}, result[i], { value }) });
-                }, 
+                },
                 columns => {
                     columns.forEach((key, i) => { result[i] = Object.assign({}, result[i], { key: key.getColumnName() }) });
                 }
@@ -289,7 +289,7 @@ export default class BotCommands {
             this.sql.getSession()
             .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
             .then(s => { return s.getTable("Mounts") })
-            .then(t => 
+            .then(t =>
                 t.select()
                 .where("CharID = :charid")
                 .orderBy("Current", "mountname")
@@ -302,7 +302,7 @@ export default class BotCommands {
             )
             .then(() => {
                 this.sql.getSession()
-                .then(s => s.sql("select c.name, r.reltype from characters.Relationships r join characters.Characters c on r.pcID = c.id where r.char1 = ?;")
+                .then(s => s.sql("select c.name, r.reltype from " + Config.MYSQL_CHARDB + ".Relationships r join " + Config.MYSQL_CHARDB + ".Characters c on r.pcID = c.id where r.char1 = ?;")
                             .bind([character.ID])
                             .execute(
                                 row => {
@@ -311,7 +311,7 @@ export default class BotCommands {
                             ))
                 .then(() => {
                     this.sql.getSession()
-                    .then(s => s.sql("select c.npcname as name, r.reltype from characters.Relationships r join characters.npcMainTable c on r.npcID = c.id where r.char1 = ?;")
+                    .then(s => s.sql("select c.npcname as name, r.reltype from " + Config.MYSQL_CHARDB + ".Relationships r join " + Config.MYSQL_CHARDB + ".npcMainTable c on r.npcID = c.id where r.char1 = ?;")
                                 .bind([character.ID])
                                 .execute(
                                     row => {
@@ -320,7 +320,7 @@ export default class BotCommands {
                                 ))
                     .then(() => {
                         this.sql.getSession()
-                        .then(s => s.sql("select c.name, cn.connectionType from characters.pcConnections cn join characters.Characters c on c.id = cn.familypcid where cn.basepcid = ?")
+                        .then(s => s.sql("select c.name, cn.connectionType from " + Config.MYSQL_CHARDB + ".pcConnections cn join " + Config.MYSQL_CHARDB + ".Characters c on c.id = cn.familypcid where cn.basepcid = ?")
                                     .bind([character.ID])
                                     .execute(
                                         row => {
@@ -329,7 +329,7 @@ export default class BotCommands {
                                     ))
                         .then(() => {
                             this.sql.getSession()
-                            .then(s => s.sql("select c.npcname as name, cn.connectionType from characters.npcConnections cn join characters.npcMainTable c on c.id = cn.npcid where cn.pcid = ?")
+                            .then(s => s.sql("select c.npcname as name, cn.connectionType from " + Config.MYSQL_CHARDB + ".npcConnections cn join " + Config.MYSQL_CHARDB + ".npcMainTable c on c.id = cn.npcid where cn.pcid = ?")
                                         .bind([character.ID])
                                         .execute(
                                             row => {
@@ -338,23 +338,23 @@ export default class BotCommands {
                                         ))
                             .then(() => {
                                 var embed = new MessageEmbed();
-                    
+
                                 if (character.journal) {
                                     embed.setURL("https://himitsu-sensou.dreamwidth.org/?poster=" + character.journal);
                                 }
-                        
+
                                 var nameLine = "";
-                    
+
                                 var emoji = this.#getCharacterEmoji(character.name, character.nickname1, character.nickname2);
-                    
+
                                 if (emoji != undefined) {
                                     nameLine += `${emoji} `;
                                 }
-                                
+
                                 nameLine += this.#getCharacterName(character);
-                    
+
                                 embed.setTitle(nameLine);
-                    
+
                                 switch(character.sect.toLocaleLowerCase()) {
                                     case "pillar of light":
                                         embed.setColor("#fcba03");
@@ -369,7 +369,7 @@ export default class BotCommands {
                                         embed.setColor("#919191");
                                         break;
                                 }
-                    
+
                                 if (character.picture) {
                                     embed.setThumbnail("https://host.lgbt/pics/" + character.picture);
                                 }
@@ -380,17 +380,17 @@ export default class BotCommands {
                                 if (character.identifiers) {
                                     noncombatLine += character.identifiers + "\n";
                                 }
-                    
+
                                 if (character.noncombat) {
                                     noncombatLine += character.noncombat.split('<br>').join('\n');
                                 }
 
-                                if (noncombatLine) {                                    
+                                if (noncombatLine) {
                                     embed.addFields(
                                         { name: "Noncombat", value: character.noncombat.split('<br>').join('\n') }
                                     )
                                 }
-                    
+
                                 embed.addFields(
                                     { name: "Player", value: character.player , inline: true },
                                     { name: "Status", value: character.status, inline: true },
@@ -406,13 +406,13 @@ export default class BotCommands {
                                     { name: "Build", value: character.build, inline: true },
                                     { name: "Skin Tone", value: character.skintone, inline: true }
                                 );
-                                
+
                                 if (character.cupsize) {
                                     embed.addFields(
                                         { name: "Cup Size", value: character.cupsize, inline: true }
                                     )
                                 }
-                            
+
                                 var hometownLine = "";
 
                                 if (character.hometown) {
@@ -425,52 +425,52 @@ export default class BotCommands {
                                     { name: "Dominant Hand", value: character.domhand, inline: true },
                                     { name: "Hometown/Country", value: hometownLine, inline: true }
                                 );
-                    
+
                                 if (character.house) {
                                     embed.addFields(
                                         { name: "House", value: character.house, inline: true }
                                     )
                                 }
-                                
+
                                 embed.addFields(
                                     { name: "Social Class", value: character.socialclass, inline: true },
                                     { name: "Jobs", value: character.jobs, inline: true }
                                 )
-                    
+
                                 if (character.subjobs) {
                                     embed.addFields(
                                         { name: "Sub Jobs", value: character.subjobs, inline: true }
                                     )
                                 }
-                                 
+
                                 embed.addFields(
                                     { name: "Class", value: character.class, inline: true }
                                 );
-                    
+
                                 if (character.pastclasses) {
                                     embed.addFields(
                                         { name: "Pass Classes", value: character.pastclasses ?? '', inline: true },
                                     );
                                 }
-                
+
                                 if (mounts.length > 0) {
                                     var mountLine = "";
-                
+
                                     mounts.forEach(m => {
                                         mountLine += m[1] + " - " + m[2] + " " + m[3] + " " + m[4] + " - " + m[6];
-                                        
+
                                         if (m[7]) {
                                             mountLine += " - " + m[7];
                                         }
-                
+
                                         mountLine += "\n";
                                     });
-                
+
                                     embed.addFields(
                                         { name: "Mounts", value: mountLine }
                                     );
                                 }
-        
+
                                 var relationshipLine = "";
 
                                 relationships.forEach(r => {
@@ -486,7 +486,7 @@ export default class BotCommands {
                                         { name: "Relationships", value: relationshipLine }
                                     );
                                 }
-                    
+
                                 vm.message.channel.send(embed);
                             })
                             .catch(e => {
@@ -520,7 +520,7 @@ export default class BotCommands {
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
         .then(s => { return s.getTable("npcMainTable") })
-        .then(t => 
+        .then(t =>
             t.select()
             .where("npcName like :name")
             .orderBy("npcName")
@@ -528,7 +528,7 @@ export default class BotCommands {
             .execute(
                 row => {
                     row.forEach((value, i) => { result[i] = Object.assign({}, result[i], { value }) });
-                }, 
+                },
                 columns => {
                     columns.forEach((key, i) => { result[i] = Object.assign({}, result[i], { key: key.getColumnName() }) });
                 }
@@ -541,7 +541,7 @@ export default class BotCommands {
                 vm.message.channel.send("NPC profile not found.");
                 return;
             }
-            
+
             var embed = new MessageEmbed();
 
             embed.setTitle(npc.npcName);
@@ -623,7 +623,7 @@ export default class BotCommands {
                     { name: "Build", value: npc.npcBuild, inline: true }
                 );
             }
-                            
+
             var hometownLine = "";
 
             if (npc.npcCity) {
@@ -670,7 +670,7 @@ export default class BotCommands {
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
         .then(s => { return s.getTable("Characters") })
-        .then(t => 
+        .then(t =>
             t.select("name", "nickname1", "nickname2", "birthmonth", "birthdate", "year")
             .where("birthmonth like :month")
             .orderBy("birthdate")
@@ -718,7 +718,7 @@ export default class BotCommands {
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
         .then(s => { return s.getTable("Characters") })
-        .then(t => 
+        .then(t =>
             t.select("name", "nickname1", "nickname2", "player")
             .where(args.join(' '))
             .orderBy("player", "name")
@@ -787,7 +787,7 @@ export default class BotCommands {
             pc.characters.forEach(function(character) {
                 var characterName = this.#getCharacterName(character);
 
-                if (characterString.length + characterName.length > 1024) {                    
+                if (characterString.length + characterName.length > 1024) {
                     embed.addField(pc.player, characterString.slice(0, -2))
                     characterString = "";
                 }
@@ -816,12 +816,12 @@ export default class BotCommands {
         if (typeof character === 'object') {
             //proper name
             emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.name.toLocaleLowerCase());
-    
+
             //nickname1
             if (emoji == undefined && nickname1 != undefined) {
                 emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.nickname1.toLocaleLowerCase());
             }
-    
+
             //nickname2
             if (emoji == undefined && nickname2 != undefined) {
                 emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.nickname2.toLocaleLowerCase());
@@ -829,26 +829,26 @@ export default class BotCommands {
         } else {
             //proper name
             emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase());
-    
+
             //nickname1
             if (emoji == undefined && nickname1 != undefined) {
                 emoji = this.message.client.emojis.cache.find(emoji => emoji.name === nickname1.toLocaleLowerCase());
             }
-    
+
             //nickname2
             if (emoji == undefined && nickname2 != undefined) {
                 emoji = this.message.client.emojis.cache.find(emoji => emoji.name === nickname2.toLocaleLowerCase());
             }
-    
+
             if (emoji == undefined) {
                 //proper name
                 emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase().split("/")[0].split(" ")[0]);
-                
+
                 //secondary name
                 if (emoji == undefined && character.includes("/")) {
                     emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase().split("/\"")[1].slice(0, -1));
                 }
-    
+
                 //nickname
                 if (emoji == undefined && character.includes("(")) {
                     emoji = this.message.client.emojis.cache.find(emoji => emoji.name === character.toLocaleLowerCase().split("(")[1].slice(0, -1));
@@ -862,7 +862,7 @@ export default class BotCommands {
     #getCharacterName(character) {
         var nameLine = "";
 
-        if (Array.isArray(character)) {  
+        if (Array.isArray(character)) {
             nameLine += character[0];
 
             if (character[1] || character[2]) {
@@ -884,7 +884,7 @@ export default class BotCommands {
             if (character[1] || character[2]) {
                 nameLine += ")";
             }
-        } else {          
+        } else {
             nameLine += character.name;
 
             if (character.nickname1 || character.nickname2) {
