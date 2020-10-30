@@ -245,7 +245,7 @@ export default class BotCommands {
         var embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Help - Franelcrew")
-            .setDescription("Lists characters played by the current user.\n\nOptional Parameters:\n\n0: alternative player name to filter by\n\n1: 'all' to include inactive characters");
+            .setDescription("Lists characters played by the current user.\n\nOptional Parameters:\n\n0: alternative player name to filter by\n\n1: 'all'0 to include inactive characters");
 
         this.message.channel.send(embed);
     }
@@ -302,7 +302,7 @@ export default class BotCommands {
             )
             .then(() => {
                 this.sql.getSession()
-                .then(s => s.sql("select c.name, r.reltype from characters.relationships r join characters.characters c on r.pcID = c.id where r.char1 = ?;")
+                .then(s => s.sql("select c.name, r.reltype from characters.Relationships r join characters.Characters c on r.pcID = c.id where r.char1 = ?;")
                             .bind([character.ID])
                             .execute(
                                 row => {
@@ -311,7 +311,7 @@ export default class BotCommands {
                             ))
                 .then(() => {
                     this.sql.getSession()
-                    .then(s => s.sql("select c.npcname as name, r.reltype from characters.relationships r join characters.npcmaintable c on r.npcID = c.id where r.char1 = ?;")
+                    .then(s => s.sql("select c.npcname as name, r.reltype from characters.Relationships r join characters.npcMainTable c on r.npcID = c.id where r.char1 = ?;")
                                 .bind([character.ID])
                                 .execute(
                                     row => {
@@ -320,7 +320,7 @@ export default class BotCommands {
                                 ))
                     .then(() => {
                         this.sql.getSession()
-                        .then(s => s.sql("select c.name, cn.connectionType from characters.pcconnections cn join characters.characters c on c.id = cn.familypcid where cn.basepcid = ?")
+                        .then(s => s.sql("select c.name, cn.connectionType from characters.pcConnections cn join characters.Characters c on c.id = cn.familypcid where cn.basepcid = ?")
                                     .bind([character.ID])
                                     .execute(
                                         row => {
@@ -329,7 +329,7 @@ export default class BotCommands {
                                     ))
                         .then(() => {
                             this.sql.getSession()
-                            .then(s => s.sql("select c.npcname as name, cn.connectionType from characters.npcconnections cn join characters.npcmaintable c on c.id = cn.npcid where cn.pcid = ?")
+                            .then(s => s.sql("select c.npcname as name, cn.connectionType from characters.npcConnections cn join characters.npcMainTable c on c.id = cn.npcid where cn.pcid = ?")
                                         .bind([character.ID])
                                         .execute(
                                             row => {
