@@ -522,7 +522,7 @@ export default class BotCommands {
         var embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Help - SQL Search")
-            .setDescription("Returns a list of characters and their players for a given where clause.");
+            .setDescription("Returns a list of characters and their players for a given where clause.\n\nAvailable Fields:\n`ID`, `picture`, `name`, `nickname1`, `nickname2`, `journal`, `jobs`, `subjobs`, `socialclass`, `country`, `hometown`, `house`, `birthmonth`, `birthdate`, `year`, `zodiac`, `bloodtype`, `sect`, `status`, `player`, `queued`, `adoptable`, `haircolor`, `eyecolor`, `heightfeet`, `heightinches`, `heightcms`, `build`, `skintone`, `cupsize`, `domhand`, `identifiers`, `class`, `pastclasses`, `mountcombat`, `orientation`, `noncombat`, `gender`, `Special`\n\nExamples:\nname = 'Fayre' -> Just 'Fayre'\nname like 'ra%' -> Starts with 'ra'\nyear < 600 -> Born before 600 AR");
 
         this.message.channel.send(embed);
     }
