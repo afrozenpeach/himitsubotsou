@@ -245,7 +245,7 @@ export default class BotCommands {
         var embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Help - Franelcrew")
-            .setDescription("Lists characters played by the current user.\n\nOptional Parameters:\n\n0: alternative player name to filter by\n\n1: all to include deceased characters");
+            .setDescription("Lists characters played by the current user.\n\nOptional Parameters:\n\n0: alternative player name to filter by\n\n1: 'all' to include inactive characters");
 
         this.message.channel.send(embed);
     }
