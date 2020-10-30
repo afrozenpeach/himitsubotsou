@@ -288,213 +288,171 @@ export default class BotCommands {
 
             this.sql.getSession()
             .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
-            .then(s => { return s.getTable("Mounts") })
-            .then(t =>
-                t.select()
-                .where("CharID = :charid")
-                .orderBy("Current", "mountname")
-                .bind("charid", character.ID)
-                .execute(
-                    row => {
-                        mounts.push(row);
-                    }
-                )
-            )
             .then(() => {
-                this.sql.getSession()
-                .then(s => s.sql("select c.name, r.reltype from " + Config.MYSQL_CHARDB + ".Relationships r join " + Config.MYSQL_CHARDB + ".Characters c on r.pcID = c.id where r.char1 = ?;")
-                            .bind([character.ID])
-                            .execute(
-                                row => {
-                                    relationships.push(row)
-                                }
-                            ))
-                .then(() => {
-                    this.sql.getSession()
-                    .then(s => s.sql("select c.npcname as name, r.reltype from " + Config.MYSQL_CHARDB + ".Relationships r join " + Config.MYSQL_CHARDB + ".npcMainTable c on r.npcID = c.id where r.char1 = ?;")
-                                .bind([character.ID])
-                                .execute(
-                                    row => {
-                                        relationships.push(row)
-                                    }
-                                ))
-                    .then(() => {
-                        this.sql.getSession()
-                        .then(s => s.sql("select c.name, cn.connectionType from " + Config.MYSQL_CHARDB + ".pcConnections cn join " + Config.MYSQL_CHARDB + ".Characters c on c.id = cn.familypcid where cn.basepcid = ?")
-                                    .bind([character.ID])
-                                    .execute(
-                                        row => {
-                                            connections.push(row);
-                                        }
-                                    ))
-                        .then(() => {
-                            this.sql.getSession()
-                            .then(s => s.sql("select c.npcname as name, cn.connectionType from " + Config.MYSQL_CHARDB + ".npcConnections cn join " + Config.MYSQL_CHARDB + ".npcMainTable c on c.id = cn.npcid where cn.pcid = ?")
-                                        .bind([character.ID])
-                                        .execute(
-                                            row => {
-                                                connections.push(row);
-                                            }
-                                        ))
-                            .then(() => {
-                                var embed = new MessageEmbed();
+                return Promise.all([
+                    session.sql("USE " + Config.MYSQL_CHARDB).execute(),
+                    session.sql("select * from Mounts where charid = ?;").bind([character.ID]).execute(row => { mounts.push(row) }),
+                    session.sql("select c.name, r.reltype from Relationships r join Characters c on r.pcID = c.id where r.char1 = ?;").bind([character.ID]).execute(row => { relationships.push(row) }),
+                    session.sql("select c.npcname as name, r.reltype from Relationships r join npcMainTable c on r.npcID = c.id where r.char1 = ?;").bind([character.ID]).execute(row => { relationships.push(row) }),
+                    session.sql("select c.name, cn.connectionType from pcConnections cn join Characters c on c.id = cn.familypcid where cn.basepcid = ?").bind([character.ID]).execute(row => { connections.push(row); }),
+                    session.sql("select c.npcname as name, cn.connectionType from npcConnections cn join npcMainTable c on c.id = cn.npcid where cn.pcid = ?").bind([character.ID]).execute(row => { connections.push(row); })
+                ]);
+            })
+            .then(() => {
+                var embed = new MessageEmbed();
 
-                                if (character.journal) {
-                                    embed.setURL("https://himitsu-sensou.dreamwidth.org/?poster=" + character.journal);
-                                }
+                if (character.journal) {
+                    embed.setURL("https://himitsu-sensou.dreamwidth.org/?poster=" + character.journal);
+                }
 
-                                var nameLine = "";
+                var nameLine = "";
 
-                                var emoji = this.#getCharacterEmoji(character.name, character.nickname1, character.nickname2);
+                var emoji = this.#getCharacterEmoji(character.name, character.nickname1, character.nickname2);
 
-                                if (emoji != undefined) {
-                                    nameLine += `${emoji} `;
-                                }
+                if (emoji != undefined) {
+                    nameLine += `${emoji} `;
+                }
 
-                                nameLine += this.#getCharacterName(character);
+                nameLine += this.#getCharacterName(character);
 
-                                embed.setTitle(nameLine);
+                embed.setTitle(nameLine);
 
-                                switch(character.sect.toLocaleLowerCase()) {
-                                    case "pillar of light":
-                                        embed.setColor("#fcba03");
-                                        break;
-                                    case "messenger of darkness":
-                                        embed.setColor("#4a1a7d");
-                                        break;
-                                    case "neutral":
-                                        embed.setColor("#343aeb");
-                                        break;
-                                    default:
-                                        embed.setColor("#919191");
-                                        break;
-                                }
+                switch(character.sect.toLocaleLowerCase()) {
+                    case "pillar of light":
+                        embed.setColor("#fcba03");
+                        break;
+                    case "messenger of darkness":
+                        embed.setColor("#4a1a7d");
+                        break;
+                    case "neutral":
+                        embed.setColor("#343aeb");
+                        break;
+                    default:
+                        embed.setColor("#919191");
+                        break;
+                }
 
-                                if (character.picture) {
-                                    embed.setThumbnail("https://host.lgbt/pics/" + character.picture);
-                                }
+                if (character.picture) {
+                    embed.setThumbnail("https://host.lgbt/pics/" + character.picture);
+                }
 
-                                //There can only be 25 fields, so we're combining some things so everything fits
-                                var noncombatLine = "";
+                //There can only be 25 fields, so we're combining some things so everything fits
+                var noncombatLine = "";
 
-                                if (character.identifiers) {
-                                    noncombatLine += character.identifiers + "\n";
-                                }
+                if (character.identifiers) {
+                    noncombatLine += character.identifiers + "\n";
+                }
 
-                                if (character.noncombat) {
-                                    noncombatLine += character.noncombat.split('<br>').join('\n');
-                                }
+                if (character.noncombat) {
+                    noncombatLine += character.noncombat.split('<br>').join('\n');
+                }
 
-                                if (noncombatLine) {
-                                    embed.addFields(
-                                        { name: "Noncombat", value: character.noncombat.split('<br>').join('\n') }
-                                    )
-                                }
+                if (noncombatLine) {
+                    embed.addFields(
+                        { name: "Noncombat", value: character.noncombat.split('<br>').join('\n') }
+                    )
+                }
 
-                                embed.addFields(
-                                    { name: "Player", value: character.player , inline: true },
-                                    { name: "Status", value: character.status, inline: true },
-                                    { name: "Sect", value: character.sect, inline: true },
-                                    { name: "Birthday", value: character.birthmonth + " " + character.birthdate + ", " + character.year + " AR", inline: true },
-                                    { name: "Zodiac", value: character.zodiac, inline: true },
-                                    { name: "Blood Type", value: character.bloodtype, inline: true },
-                                    { name: "Gender", value: character.gender, inline: true },
-                                    { name: "Orientation", value: character.orientation, inline: true },
-                                    { name: "Hair Color", value: character.haircolor, inline: true },
-                                    { name: "Eye Color", value: character.eyecolor, inline: true },
-                                    { name: "Height", value: character.heightfeet + "'" + character.heightinches + " (" + character.heightcms + " cm)", inline: true },
-                                    { name: "Build", value: character.build, inline: true },
-                                    { name: "Skin Tone", value: character.skintone, inline: true }
-                                );
+                embed.addFields(
+                    { name: "Player", value: character.player , inline: true },
+                    { name: "Status", value: character.status, inline: true },
+                    { name: "Sect", value: character.sect, inline: true },
+                    { name: "Birthday", value: character.birthmonth + " " + character.birthdate + ", " + character.year + " AR", inline: true },
+                    { name: "Zodiac", value: character.zodiac, inline: true },
+                    { name: "Blood Type", value: character.bloodtype, inline: true },
+                    { name: "Gender", value: character.gender, inline: true },
+                    { name: "Orientation", value: character.orientation, inline: true },
+                    { name: "Hair Color", value: character.haircolor, inline: true },
+                    { name: "Eye Color", value: character.eyecolor, inline: true },
+                    { name: "Height", value: character.heightfeet + "'" + character.heightinches + " (" + character.heightcms + " cm)", inline: true },
+                    { name: "Build", value: character.build, inline: true },
+                    { name: "Skin Tone", value: character.skintone, inline: true }
+                );
 
-                                if (character.cupsize) {
-                                    embed.addFields(
-                                        { name: "Cup Size", value: character.cupsize, inline: true }
-                                    )
-                                }
+                if (character.cupsize) {
+                    embed.addFields(
+                        { name: "Cup Size", value: character.cupsize, inline: true }
+                    )
+                }
 
-                                var hometownLine = "";
+                var hometownLine = "";
 
-                                if (character.hometown) {
-                                    hometownLine += character.hometown + ", ";
-                                }
+                if (character.hometown) {
+                    hometownLine += character.hometown + ", ";
+                }
 
-                                hometownLine += character.country;
+                hometownLine += character.country;
 
-                                embed.addFields(
-                                    { name: "Dominant Hand", value: character.domhand, inline: true },
-                                    { name: "Hometown/Country", value: hometownLine, inline: true }
-                                );
+                embed.addFields(
+                    { name: "Dominant Hand", value: character.domhand, inline: true },
+                    { name: "Hometown/Country", value: hometownLine, inline: true }
+                );
 
-                                if (character.house) {
-                                    embed.addFields(
-                                        { name: "House", value: character.house, inline: true }
-                                    )
-                                }
+                if (character.house) {
+                    embed.addFields(
+                        { name: "House", value: character.house, inline: true }
+                    )
+                }
 
-                                embed.addFields(
-                                    { name: "Social Class", value: character.socialclass, inline: true },
-                                    { name: "Jobs", value: character.jobs, inline: true }
-                                )
+                embed.addFields(
+                    { name: "Social Class", value: character.socialclass, inline: true },
+                    { name: "Jobs", value: character.jobs, inline: true }
+                )
 
-                                if (character.subjobs) {
-                                    embed.addFields(
-                                        { name: "Sub Jobs", value: character.subjobs, inline: true }
-                                    )
-                                }
+                if (character.subjobs) {
+                    embed.addFields(
+                        { name: "Sub Jobs", value: character.subjobs, inline: true }
+                    )
+                }
 
-                                embed.addFields(
-                                    { name: "Class", value: character.class, inline: true }
-                                );
+                embed.addFields(
+                    { name: "Class", value: character.class, inline: true }
+                );
 
-                                if (character.pastclasses) {
-                                    embed.addFields(
-                                        { name: "Pass Classes", value: character.pastclasses ?? '', inline: true },
-                                    );
-                                }
+                if (character.pastclasses) {
+                    embed.addFields(
+                        { name: "Pass Classes", value: character.pastclasses ?? '', inline: true },
+                    );
+                }
 
-                                if (mounts.length > 0) {
-                                    var mountLine = "";
+                if (mounts.length > 0) {
+                    var mountLine = "";
 
-                                    mounts.forEach(m => {
-                                        mountLine += m[1] + " - " + m[2] + " " + m[3] + " " + m[4] + " - " + m[6];
+                    mounts.forEach(m => {
+                        mountLine += m[1] + " - " + m[2] + " " + m[3] + " " + m[4] + " - " + m[6];
 
-                                        if (m[7]) {
-                                            mountLine += " - " + m[7];
-                                        }
+                        if (m[7]) {
+                            mountLine += " - " + m[7];
+                        }
 
-                                        mountLine += "\n";
-                                    });
+                        mountLine += "\n";
+                    });
 
-                                    embed.addFields(
-                                        { name: "Mounts", value: mountLine }
-                                    );
-                                }
+                    embed.addFields(
+                        { name: "Mounts", value: mountLine }
+                    );
+                }
 
-                                var relationshipLine = "";
+                var relationshipLine = "";
 
-                                relationships.forEach(r => {
-                                    relationshipLine += r[0] + " - " + r[1] + "\n";
-                                });
+                relationships.forEach(r => {
+                    relationshipLine += r[0] + " - " + r[1] + "\n";
+                });
 
-                                connections.forEach(c => {
-                                    relationshipLine += c[0] + " - " + c[1] + "\n";
-                                });
+                connections.forEach(c => {
+                    relationshipLine += c[0] + " - " + c[1] + "\n";
+                });
 
-                                if (relationshipLine) {
-                                    embed.addFields(
-                                        { name: "Relationships", value: relationshipLine }
-                                    );
-                                }
+                if (relationshipLine) {
+                    embed.addFields(
+                        { name: "Relationships", value: relationshipLine }
+                    );
+                }
 
-                                vm.message.channel.send(embed);
-                            })
-                            .catch(e => {
-                                vm.message.channel.send(e.message);
-                            })
-                        })
-                    })
-                })
+                vm.message.channel.send(embed);
+            })
+            .catch(e => {
+                vm.message.channel.send(e.message);
             })
         })
         .then(() => session.close())
