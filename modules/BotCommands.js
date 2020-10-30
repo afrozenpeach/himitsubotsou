@@ -325,7 +325,7 @@ export default class BotCommands {
                         embed.setColor("#4a1a7d");
                         break;
                     case "silent one":
-                        embed.setColor("#ffffff");
+                        embed.setColor("#f8f8ff");
                         break;
                     case "neutral":
                         embed.setColor("#343aeb");
@@ -515,7 +515,7 @@ export default class BotCommands {
                     embed.setColor("#4a1a7d");
                     break;
                 case "silent one":
-                    embed.setColor("#ffffff");
+                    embed.setColor("#f8f8ff");
                     break;
                 case "neutral":
                     embed.setColor("#343aeb");
