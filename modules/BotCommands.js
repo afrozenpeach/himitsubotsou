@@ -361,8 +361,16 @@ export default class BotCommands {
                     { name: "Status", value: character.status, inline: true },
                     { name: "Sect", value: character.sect, inline: true },
                     { name: "Birthday", value: character.birthmonth + " " + character.birthdate + ", " + character.year + " AR", inline: true },
-                    { name: "Zodiac", value: character.zodiac, inline: true },
-                    { name: "Blood Type", value: character.bloodtype, inline: true },
+                    { name: "Zodiac", value: character.zodiac, inline: true }
+                );
+
+                if (character.bloodtype) {
+                    embed.addFields(                    
+                        { name: "Blood Type", value: character.bloodtype, inline: true }
+                    );
+                }
+
+                embed.addFields(                
                     { name: "Gender", value: character.gender, inline: true },
                     { name: "Orientation", value: character.orientation, inline: true },
                     { name: "Hair Color", value: character.haircolor, inline: true },
