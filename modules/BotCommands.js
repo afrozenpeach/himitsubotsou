@@ -717,12 +717,12 @@ export default class BotCommands {
 
     async archive() {
         var vm = this;
-        var session;
+        var sessions = [];
 
         this.message.channel.send("Starting archive...");
         
         this.sql.getSession()
-        .then(s => { session = s; return session.getSchema(Config.MYSQL_ARCHIVESDB) })
+        .then(s => { session[0] = s; return session.getSchema(Config.MYSQL_ARCHIVESDB) })
         .then(s => { return s.getTable("channels") })
         .then(t => {
             t.insert(['category', 'channel'])
@@ -737,13 +737,13 @@ export default class BotCommands {
                 allMessagesRaw.forEach(m => {
                     promises.push(
                         this.sql.getSession()
-                        .then(s => { session = s; return session.getSchema(Config.MYSQL_ARCHIVESDB) })
+                        .then(s => { session[m.id] = s; return session.getSchema(Config.MYSQL_ARCHIVESDB) })
                         .then(s => { return s.getTable("messages") })
                         .then(t => {
                             t.insert(['channelId', 'content', 'poster', 'timestamp', 'discordid'])
                             .values(channelId, m.content, m.author.username, m.createdTimestamp, m.id)
                             .execute()
-                            .then(() => session.close())
+                            .then(() => session[m.id].close())
                         })
                     );
                 });
@@ -752,7 +752,7 @@ export default class BotCommands {
                 this.message.channel.send("Archive complete. Found: " + allMessagesRaw.length + " messages.");
             });
         })
-        .then(() => session.close())
+        .then(() => session[0].close())
     }
 
     archiveHelp() {
