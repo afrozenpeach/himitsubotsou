@@ -750,6 +750,13 @@ export default class BotCommands {
 
                 await Promise.all(promises);
                 this.message.channel.send("Archive complete. Found: " + allMessagesRaw.length + " messages.");
+
+                //attempt to fix server going away after multiple archives
+                this.sql.close();
+                this.sql = mysqlx.getClient(
+                    { host: Config.MYSQL_HOST, user: Config.MYSQL_USER, password: Config.MYSQL_PASSWORD },
+                    { pooling: { enabled: true, maxIdleTime: 30000, maxSize: 25, queueTimeout: 0 } }
+                );
             });
         })
         .then(() => session.close())
