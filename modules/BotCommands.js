@@ -737,7 +737,7 @@ export default class BotCommands {
                 allMessagesRaw.forEach(m => {
                     promises.push(
                         this.sql.getSession()
-                        .then(s => { sessions[m.id] = s; return session.getSchema(Config.MYSQL_ARCHIVESDB) })
+                        .then(s => { sessions[m.id] = s; return sessions[m.id].getSchema(Config.MYSQL_ARCHIVESDB) })
                         .then(s => { return s.getTable("messages") })
                         .then(t => {
                             t.insert(['channelId', 'content', 'poster', 'timestamp', 'discordid'])
