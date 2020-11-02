@@ -856,7 +856,7 @@ export default class BotCommands {
             if (character[1] || character[2]) {
                 nameLine += ")";
             }
-        } else if (typeof character === 'string' || character instanceof string) {
+        } else if (typeof character === 'string') {
             nameLine += character;
         } else {
             nameLine += character.name;
