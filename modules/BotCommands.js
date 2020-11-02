@@ -8,7 +8,7 @@ export default class BotCommands {
 
         this.sql = mysqlx.getClient(
             { host: Config.MYSQL_HOST, user: Config.MYSQL_USER, password: Config.MYSQL_PASSWORD },
-            { pooling: { enabled: true, maxIdleTime: 30000, maxSize: 200, queueTimeout: 10000 } }
+            { pooling: { enabled: true, maxIdleTime: 30000, maxSize: 25, queueTimeout: 10000 } }
         )
     }
 
