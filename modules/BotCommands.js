@@ -192,7 +192,6 @@ export default class BotCommands {
             activeOnly = "";
         }
 
-        var vm = this;
         var session;
         var characters = [];
 
@@ -248,7 +247,6 @@ export default class BotCommands {
     }
 
     profile(args) {
-        var vm = this;
         var session;
         var result = [];
 
@@ -275,7 +273,7 @@ export default class BotCommands {
             var character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
 
             if (character.ID === undefined) {
-                vm.message.channel.send("Character profile not found.");
+                this.message.channel.send("Character profile not found.");
                 return;
             }
 
@@ -457,7 +455,7 @@ export default class BotCommands {
                     );
                 }
 
-                vm.message.channel.send(embed);
+                this.message.channel.send(embed);
             })
             .then(() => session.close())
         })
@@ -474,7 +472,6 @@ export default class BotCommands {
     }
 
     npc(args) {
-        var vm = this;
         var session;
         var result = [];
 
@@ -499,7 +496,7 @@ export default class BotCommands {
             var npc = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
 
             if (npc.ID === undefined) {
-                vm.message.channel.send("NPC profile not found.");
+                this.message.channel.send("NPC profile not found.");
                 return;
             }
 
@@ -614,7 +611,7 @@ export default class BotCommands {
                 );
             }
 
-            vm.message.channel.send(embed);
+            this.message.channel.send(embed);
         })
         .then(() => session.close());
     }
@@ -629,7 +626,6 @@ export default class BotCommands {
     }
 
     birthmonth(args) {
-        var vm = this;
         var session;
 
         this.sql.getSession()
@@ -659,7 +655,7 @@ export default class BotCommands {
 
             embed.setDescription(finalMessage.slice(0, -1));
 
-            vm.message.channel.send(embed);
+            this.message.channel.send(embed);
         })
         .then(() => session.close())
     }
@@ -674,7 +670,6 @@ export default class BotCommands {
     }
 
     search(args) {
-        var vm = this;
         var session;
 
         this.sql.getSession()
@@ -716,7 +711,6 @@ export default class BotCommands {
     }
 
     async archive() {
-        var vm = this;
         var sessions = [];
 
         this.message.channel.send("Starting archive...");
