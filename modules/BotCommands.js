@@ -722,7 +722,7 @@ export default class BotCommands {
         this.message.channel.send("Starting archive...");
         
         this.sql.getSession()
-        .then(s => { session[0] = s; return session.getSchema(Config.MYSQL_ARCHIVESDB) })
+        .then(s => { sessions[0] = s; return sessions[0].getSchema(Config.MYSQL_ARCHIVESDB) })
         .then(s => { return s.getTable("channels") })
         .then(t => {
             t.insert(['category', 'channel'])
