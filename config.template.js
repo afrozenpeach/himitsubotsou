@@ -6,5 +6,6 @@ export const Config = {
     "MYSQL_USER": "username",
     "MYSQL_PASSWORD": "password",
     "MYSQL_CHARDB": "characters_database",
-    "MYSQL_FICDB": "fic_database"
+    "MYSQL_FICDB": "fic_database",
+    "MYSQL_ARCHIVESDB": "archives_database"
 }

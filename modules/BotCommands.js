@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { Message, MessageEmbed } from "discord.js";
 import { Config } from "../config.js";
 import mysqlx from "@mysql/xdevapi";
 
@@ -8,7 +8,7 @@ export default class BotCommands {
 
         this.sql = mysqlx.getClient(
             { host: Config.MYSQL_HOST, user: Config.MYSQL_USER, password: Config.MYSQL_PASSWORD },
-            { pooling: { enabled: true, maxIdleTime: 30000, maxSize: 25, queueTimeout: 10000 } }
+            { pooling: { enabled: true, maxIdleTime: 30000, maxSize: 100, queueTimeout: 0 } }
         )
     }
 
@@ -236,9 +236,6 @@ export default class BotCommands {
             this.message.channel.send(embed);
         })
         .then(() => session.close())
-        .catch(e => {
-            vm.message.channel.send(e.message);
-        })
     }
 
     charactersHelp() {
@@ -462,14 +459,9 @@ export default class BotCommands {
 
                 vm.message.channel.send(embed);
             })
-            .catch(e => {
-                vm.message.channel.send(e.message);
-            })
+            .then(() => session.close())
         })
         .then(() => session.close())
-        .catch(e => {
-            vm.message.channel.send(e.message);
-        })
     }
 
     profileHelp() {
@@ -623,7 +615,8 @@ export default class BotCommands {
             }
 
             vm.message.channel.send(embed);
-        });
+        })
+        .then(() => session.close());
     }
 
     npcHelp() {
@@ -669,9 +662,6 @@ export default class BotCommands {
             vm.message.channel.send(embed);
         })
         .then(() => session.close())
-        .catch(e => {
-            vm.message.channel.send(e.message);
-        })
     }
 
     birthmonthHelp() {
@@ -714,9 +704,6 @@ export default class BotCommands {
             this.#sendCharacterEmbed(characters, "#ffffff", "Search where " + args.join(' '));
         })
         .then(() => session.close())
-        .catch(function (err) {
-            vm.message.channel.send(err.message);
-        })
     }
 
     searchHelp() {
@@ -724,6 +711,55 @@ export default class BotCommands {
             .setColor("#ff0000")
             .setTitle("Help - SQL Search")
             .setDescription("Returns a list of characters and their players for a given where clause.\n\nAvailable Fields:\n`ID`, `picture`, `name`, `nickname1`, `nickname2`, `journal`, `jobs`, `subjobs`, `socialclass`, `country`, `hometown`, `house`, `birthmonth`, `birthdate`, `year`, `zodiac`, `bloodtype`, `sect`, `status`, `player`, `queued`, `adoptable`, `haircolor`, `eyecolor`, `heightfeet`, `heightinches`, `heightcms`, `build`, `skintone`, `cupsize`, `domhand`, `identifiers`, `class`, `pastclasses`, `mountcombat`, `orientation`, `noncombat`, `gender`, `Special`\n\nExamples:\nname = 'Fayre' -> Just 'Fayre'\nname like 'ra%' -> Starts with 'ra'\nyear < 600 -> Born before 600 AR");
+
+        this.message.channel.send(embed);
+    }
+
+    async archive() {
+        var vm = this;
+        var session;
+
+        this.message.channel.send("Starting archive...");
+        
+        this.sql.getSession()
+        .then(s => { session = s; return session.getSchema(Config.MYSQL_ARCHIVESDB) })
+        .then(s => { return s.getTable("channels") })
+        .then(t => {
+            t.insert(['category', 'channel'])
+            .values(this.message.channel.parent.name, this.message.channel.name)
+            .execute()
+            .then(async r => {
+                var channelId = r.getAutoIncrementValue();
+                var promises = [];
+    
+                var allMessagesRaw = await this.#getAllMessages(this.message.channel);
+    
+                allMessagesRaw.forEach(m => {
+                    promises.push(
+                        this.sql.getSession()
+                        .then(s => { session = s; return session.getSchema(Config.MYSQL_ARCHIVESDB) })
+                        .then(s => { return s.getTable("messages") })
+                        .then(t => {
+                            t.insert(['channelId', 'content', 'poster', 'timestamp', 'discordid'])
+                            .values(channelId, m.content, m.author.username, m.createdTimestamp, m.id)
+                            .execute()
+                            .then(() => session.close())
+                        })
+                    );
+                });
+
+                await Promise.all(promises);
+                this.message.channel.send("Archive complete. Found: " + allMessagesRaw.length + " messages.");
+            });
+        })
+        .then(() => session.close())
+    }
+
+    archiveHelp() {
+        var embed = new MessageEmbed()
+            .setColor("#ff0000")
+            .setTitle("Help - Archive")
+            .setDescription("Archives the current channel to the database");
 
         this.message.channel.send(embed);
     }
@@ -833,7 +869,7 @@ export default class BotCommands {
 
     #getCharacterName(character) {
         var nameLine = "";
-
+        
         if (Array.isArray(character)) {
             nameLine += character[0];
 
@@ -883,5 +919,27 @@ export default class BotCommands {
         }
 
         return nameLine;
+    }
+
+    async #getAllMessages(channel) {
+        var sum_messages = [];
+        let last_id;
+    
+        while (true) {
+            const options = { limit: 100 };
+            if (last_id) {
+                options.before = last_id;
+            }
+    
+            const messages = await channel.messages.fetch(options);
+            sum_messages.push(...messages.array());                        
+            last_id = messages.last().id;
+    
+            if (messages.size != 100) {
+                break;
+            }
+        }
+    
+        return sum_messages;
     }
 }
