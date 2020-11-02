@@ -10,7 +10,7 @@
   "author": "Mattie Schraeder (AFrozenPeach)",
   "license": "ISC",
   "dependencies": {
-    "@mysql/xdevapi": "^8.0.21",
-    "discord.js": "^12.3.1"
+    "@mysql/xdevapi": "^8.0.22",
+    "discord.js": "^12.4.1"
   }
 }
