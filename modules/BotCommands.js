@@ -202,7 +202,8 @@ export default class BotCommands {
         .then(r => {
             characters = r.fetchAll();
 
-            //Find emojis for each character - emoji must be a custom emoji upload with the character's proper name
+            //Find emojis for each character
+            //emoji must be a custom emoji uploaded with the character's proper name or a defined nickname
             characters.forEach(character => {
                 finalMessage += this.#getCharacterName(character);
 
