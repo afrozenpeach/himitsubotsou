@@ -7,5 +7,6 @@ export const Config = {
     "MYSQL_PASSWORD": "password",
     "MYSQL_CHARDB": "characters_database",
     "MYSQL_FICDB": "fic_database",
-    "MYSQL_ARCHIVESDB": "archives_database"
+    "MYSQL_ARCHIVESDB": "archives_database",
+    "EXPRESS_PORT": 8080
 }

@@ -1,8 +1,18 @@
 import { Client } from "discord.js";
 import { Config } from "./config.js";
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import mysqlx from "@mysql/xdevapi";
+import Channels from './modules/Channels.js';
 import BotCommands from "./modules/BotCommands.js";
 
 const client = new Client();
+
+const sql = mysqlx.getClient(
+    { host: Config.MYSQL_HOST, user: Config.MYSQL_USER, password: Config.MYSQL_PASSWORD },
+    { pooling: { enabled: true, maxIdleTime: 30000, maxSize: 25, queueTimeout: 0 } }
+)
 
 client.on("ready", () => {
     if (Config.VERSION) {
@@ -22,7 +32,7 @@ client.on("message", message => {
         const args = commandBody.split(' ');
         const command = args.shift().toLowerCase();
 
-        const botCommands = new BotCommands(message);
+        const botCommands = new BotCommands(message, sql);
 
         //If the command is a public function of botCommands, do the thing
         if (typeof botCommands[command] === "function") {
@@ -34,3 +44,12 @@ client.on("message", message => {
 });
 
 client.login(Config.BOT_TOKEN);
+
+const app = express()
+  .use(cors())
+  .use(bodyParser.json())
+  .use(Channels(sql));
+
+app.listen(Config.EXPRESS_PORT, () => {
+  console.log(`Express server listening on port ${Config.EXPRESS_PORT}`);
+});

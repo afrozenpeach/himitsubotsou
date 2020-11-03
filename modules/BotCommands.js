@@ -1,15 +1,10 @@
 import { Message, MessageEmbed } from "discord.js";
 import { Config } from "../config.js";
-import mysqlx from "@mysql/xdevapi";
 
 export default class BotCommands {
-    constructor(message) {
+    constructor(message, sql) {
         this.message = message;
-
-        this.sql = mysqlx.getClient(
-            { host: Config.MYSQL_HOST, user: Config.MYSQL_USER, password: Config.MYSQL_PASSWORD },
-            { pooling: { enabled: true, maxIdleTime: 30000, maxSize: 25, queueTimeout: 0 } }
-        )
+        this.sql = sql;
     }
 
     help(args) {
