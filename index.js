@@ -7,12 +7,14 @@ import mysqlx from "@mysql/xdevapi";
 import Channels from './modules/Channels.js';
 import BotCommands from "./modules/BotCommands.js";
 
-const client = new Client();
-
+//SQL
 const sql = mysqlx.getClient(
     { host: Config.MYSQL_HOST, user: Config.MYSQL_USER, password: Config.MYSQL_PASSWORD },
     { pooling: { enabled: true, maxIdleTime: 30000, maxSize: 25, queueTimeout: 0 } }
 )
+
+//Discord Bot
+const client = new Client();
 
 client.on("ready", () => {
     if (Config.VERSION) {
@@ -45,6 +47,7 @@ client.on("message", message => {
 
 client.login(Config.BOT_TOKEN);
 
+//Web API
 const app = express()
   .use(cors())
   .use(bodyParser.json())
