@@ -714,6 +714,9 @@ export default class BotCommands {
         var sessions = [];
 
         this.message.channel.send("Starting archive...");
+
+        //We need to fetch all the members of the guild to make sure they're in the cache
+        await this.message.guild.members.fetch();
         
         this.sql.getSession()
         .then(s => { sessions[0] = s; return sessions[0].getSchema(Config.MYSQL_ARCHIVESDB) })
@@ -728,14 +731,14 @@ export default class BotCommands {
     
                 var allMessagesRaw = await this.#getAllMessages(this.message.channel);
     
-                allMessagesRaw.forEach(m => {
+                allMessagesRaw.forEach(m => {                    
                     promises.push(
                         this.sql.getSession()
                         .then(s => { sessions[m.id] = s; return sessions[m.id].getSchema(Config.MYSQL_ARCHIVESDB) })
                         .then(s => { return s.getTable("messages") })
                         .then(t => {
                             t.insert(['channelId', 'content', 'poster', 'timestamp', 'discordid'])
-                            .values(channelId, m.content, m.author.username, m.createdTimestamp, m.id)
+                            .values(channelId, m.content, (m.member ? m.member.displayName : m.author.username), m.createdTimestamp, m.id)
                             .execute()
                             .then(() => sessions[m.id].close())
                         })
