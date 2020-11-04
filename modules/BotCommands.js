@@ -468,14 +468,30 @@ export default class BotCommands {
         this.message.channel.send(embed);
     }
 
-    proficiencies(args) {
+    weapons(args) {
+        this.#weaponsMagicProficiencies(args);
+    }
+
+    weaponsHelp() {
+        this.#weaponsMagicProficienciesHelp();
+    }
+
+    magic(args) {
+        this.#weaponsMagicProficiencies(args);
+    }
+
+    magicHelp() {
+        this.#weaponsMagicProficienciesHelp();
+    }
+
+    languages(args) {
         var session;
         var result = [];
 
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
         .then(s =>
-            session.sql("SELECT w.CharID, c.name, c.nickname1, c.nickname2, c.sect, w.Axes, w.Swords, w.Daggers, w.Lances, w.Maces, w.QStaves, w.Whips, w.Unnarmed, w.LBows, w.SBows, w.CBows, w.Thrown, w.Fire, w.Wind, w.Thunder, w.Light, w.Dark, w.Staves, w.MagicType, w.Civilian FROM " + Config.MYSQL_CHARDB + ".weapons as w JOIN " + Config.MYSQL_CHARDB + ".characters as c on c.id = w.charid WHERE c.name like CONCAT('%', ?, '%') or c.nickname1 like CONCAT('%', ?, '%') or c.nickname2 like CONCAT('%', ?, '%');")
+            session.sql("SELECT c.ID, c.name, c.nickname1, c.nickname2, c.sect, c.journal, l.Tr, l.TrNotes, l.De, l.ODe, l.HDe, l.OHDe, l.DeNotes, l.Me, l.AMe, l.MeNotes, l.At, l.Az, l.NoAt, l.AtNotes, l.Ki, l.RuKi, l.Da, l.KiNotes, l.Ro, l.RoNotes FROM " + Config.MYSQL_CHARDB + ".languages as l JOIN " + Config.MYSQL_CHARDB + ".characters as c on c.id = l.charid WHERE c.name like CONCAT('%', ?, '%') or c.nickname1 like CONCAT('%', ?, '%') or c.nickname2 like CONCAT('%', ?, '%');")
             .bind([args[0], args[0], args[0]])
             .execute(
                 row => {
@@ -489,10 +505,11 @@ export default class BotCommands {
         .then(() => {
             var character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
 
-            if (character.CharID === undefined) {
-                this.message.channel.send("Character profile not found.");
+            if (character.ID === undefined) {
+                this.message.channel.send("Character proficiencies not found.");
                 return;
             }
+
             var embed = new MessageEmbed();
 
             if (character.journal) {
@@ -533,97 +550,84 @@ export default class BotCommands {
                 embed.setThumbnail("https://host.lgbt/pics/" + character.picture);
             }
 
-            if (character.Axes) {
-                embed.addField('Axes', character.Axes, true);
+            if (character.Tr) {
+                embed.addField('Trade', character.Tr, true);
             }
 
-            if (character.Swords) {
-                embed.addField('Swords', character.Swords, true);
+            if (character.TrNotes) {
+                embed.addField('Trade Notes', character.TrNotes);
             }
 
-            if (character.Daggers) {
-                embed.addField('Daggers', character.Daggers, true);
+            if (character.De) {
+                embed.addField('Dentorian', character.De, true);
             }
 
-            if (character.Lances) {
-                embed.addField('Lances', character.Lances, true);
+            if (character.ODe) {
+                embed.addField('Old Dentorian', character.ODe, true);
             }
 
-            if (character.Maces) {
-                embed.addField('Maces', character.Maces, true);
+            if (character.HDe) {
+                embed.addField('High Dentorian', character.HDe, true);
             }
 
-            if (character.QStaves) {
-                embed.addField('Quarterstaves', character.QStaves, true);
+            if (character.OHDe) {
+                embed.addField('Old High Dentorian', character.OHDe, true);
             }
 
-            if (character.Whips) {
-                embed.addField('Whips', character.Whips, true);
+            if (character.DeNotes) {
+                embed.addField('Dentorian Notes', character.DeNotes);
             }
 
-            if (character.Unarmed) {
-                embed.addField('Unarmed', character.Unarmed, true);
+            if (character.Me) {
+                embed.addField('Megami', character.Me, true);
             }
 
-            if (character.LBows) {
-                embed.addField('Long Bows', character.LBows, true);
+            if (character.AMe) {
+                embed.addField('Ancient Megami', character.AMe, true);
             }
 
-            if (character.SBows) {
-                embed.addField('Short Bows', character.SBows, true);
+            if (character.MeNotes) {
+                embed.addField('Megami Notes', character.MeNotes);
             }
 
-            if (character.CBows) {
-                embed.addField('Crossbows', character.CBows, true);
+            if (character.At) {
+                embed.addField('Atsirian', character.At, true);
             }
 
-            if (character.Thrown) {
-                embed.addField('Thrown', character.Thrown, true);
+            if (character.Az) {
+                embed.addField('Azsharan', character.Az, true);
             }
 
-            if (character.Fire) {
-                embed.addField('Fire', character.Fire, true);
+            if (character.NoAt) {
+                embed.addField('Nomadic Atsirian', character.NoAt, true);
             }
 
-            if (character.Wind) {
-                embed.addField('Wind', character.Wind, true);
+            if (character.AtNotes) {
+                embed.addField('Atsirian Notes', character.AtNotes);
             }
 
-            if (character.Thunder) {
-                embed.addField('Thunder', character.Thunder, true);
+            if (character.Ki) {
+                embed.addField('Kilian', character.Ki, true);
             }
 
-            if (character.Light) {
-                embed.addField('Light', character.Light, true);
+            if (character.RuKi) {
+                embed.addField('Rural Kilian', character.RuKi, true);
             }
 
-            if (character.Dark) {
-                embed.addField('Dark', character.Dark, true);
+            if (character.Da) {
+                embed.addField('Danan', character.Da, true);
             }
 
-            if (character.Staves) {
-                embed.addField('Staves', character.Staves, true);
+            if (character.KiNotes) {
+                embed.addField('Kilian Notes', character.KiNotes);
             }
-            
-            if (character.MagicType) {
-                var textMagicType = "None";
 
-                switch (character.MagicType) {
-                    case '0':
-                        textMagicType = "None";
-                        break;
-                    case '1':
-                        textMagicType = "Combat";
-                        break;
-                    case '2':
-                        textMagicType = "Practical";
-                        break;
-                    case '3':
-                        textMagicType = "Combat & Practical";
-                        break;
-                }
+            if (character.Ro) {
+                embed.addField('Romani', character.Da, true);
+            }
 
-                embed.addField('Magic Type', textMagicType, true);
+            if (character.RoNotes) {
+                embed.addField('Romani Notes', character.RoNotes);
             }
 
             if (character.Civilian) {
@@ -632,23 +636,23 @@ export default class BotCommands {
 
             this.message.channel.send(embed);
         })
-    }f
+    }
 
-    proficienciesHelp() {
+    languagesHelp() {
         var embed = new MessageEmbed()
             .setColor("#ff0000")
-            .setTitle("Help - Proficiencies")
-            .setDescription("Displays the weapon and magic proficiencies for the specified character.");
+            .setTitle("Help - Language Proficiencies")
+            .setDescription("Displays the language proficiencies for the specified character. Aliases: !languages or !lang");
 
         this.message.channel.send(embed);
     }
 
-    prof(args) {
-        this.proficiencies(args);
+    lang(args) {
+        this.languages(args);
     }
 
-    profHelp() {
-        this.proficienciesHelp();
+    langHelp(args) {
+        this.languagesHelp(args);
     }
 
     npc(args) {
@@ -937,6 +941,178 @@ export default class BotCommands {
             .setColor("#ff0000")
             .setTitle("Help - Archive")
             .setDescription("Archives the current channel to the database");
+
+        this.message.channel.send(embed);
+    }
+
+    #weaponsMagicProficiencies(args) {
+        var session;
+        var result = [];
+
+        this.sql.getSession()
+        .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
+        .then(s =>
+            session.sql("SELECT c.ID, c.name, c.nickname1, c.nickname2, c.sect, w.Axes, w.Swords, w.Daggers, w.Lances, w.Maces, w.QStaves, w.Whips, w.Unnarmed, w.LBows, w.SBows, w.CBows, w.Thrown, w.Fire, w.Wind, w.Thunder, w.Light, w.Dark, w.Staves, w.MagicType, w.Civilian FROM " + Config.MYSQL_CHARDB + ".weapons as w JOIN " + Config.MYSQL_CHARDB + ".characters as c on c.id = w.charid WHERE c.name like CONCAT('%', ?, '%') or c.nickname1 like CONCAT('%', ?, '%') or c.nickname2 like CONCAT('%', ?, '%');")
+            .bind([args[0], args[0], args[0]])
+            .execute(
+                row => {
+                    row.forEach((value, i) => { result[i] = Object.assign({}, result[i], { value }) });
+                },
+                columns => {
+                    columns.forEach((key, i) => { result[i] = Object.assign({}, result[i], { key: key.getColumnName() }) });
+                }
+            )
+        )
+        .then(() => {
+            var character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
+
+            if (character.ID === undefined) {
+                this.message.channel.send("Character proficiencies not found.");
+                return;
+            }
+
+            var embed = new MessageEmbed();
+
+            if (character.journal) {
+                embed.setURL("https://himitsu-sensou.dreamwidth.org/?poster=" + character.journal);
+            }
+
+            var nameLine = "";
+
+            var emoji = this.#getCharacterEmoji(character.name, character.nickname1, character.nickname2);
+
+            if (emoji != undefined) {
+                nameLine += `${emoji} `;
+            }
+
+            nameLine += this.#getCharacterName(character);
+
+            embed.setTitle(nameLine);
+
+            switch(character.sect.toLocaleLowerCase()) {
+                case "pillar of light":
+                    embed.setColor("#fcba03");
+                    break;
+                case "messenger of darkness":
+                    embed.setColor("#4a1a7d");
+                    break;
+                case "silent one":
+                    embed.setColor("#f8f8ff");
+                    break;
+                case "neutral":
+                    embed.setColor("#343aeb");
+                    break;
+                default:
+                    embed.setColor("#919191");
+                    break;
+            }
+
+            if (character.picture) {
+                embed.setThumbnail("https://host.lgbt/pics/" + character.picture);
+            }
+
+            if (character.Axes) {
+                embed.addField('Axes', character.Axes, true);
+            }
+
+            if (character.Swords) {
+                embed.addField('Swords', character.Swords, true);
+            }
+
+            if (character.Daggers) {
+                embed.addField('Daggers', character.Daggers, true);
+            }
+
+            if (character.Lances) {
+                embed.addField('Lances', character.Lances, true);
+            }
+
+            if (character.Maces) {
+                embed.addField('Maces', character.Maces, true);
+            }
+
+            if (character.QStaves) {
+                embed.addField('Quarterstaves', character.QStaves, true);
+            }
+
+            if (character.Whips) {
+                embed.addField('Whips', character.Whips, true);
+            }
+
+            if (character.Unarmed) {
+                embed.addField('Unarmed', character.Unarmed, true);
+            }
+
+            if (character.LBows) {
+                embed.addField('Long Bows', character.LBows, true);
+            }
+
+            if (character.SBows) {
+                embed.addField('Short Bows', character.SBows, true);
+            }
+
+            if (character.CBows) {
+                embed.addField('Crossbows', character.CBows, true);
+            }
+
+            if (character.Thrown) {
+                embed.addField('Thrown', character.Thrown, true);
+            }
+
+            if (character.Fire) {
+                embed.addField('Fire', character.Fire, true);
+            }
+
+            if (character.Wind) {
+                embed.addField('Wind', character.Wind, true);
+            }
+
+            if (character.Thunder) {
+                embed.addField('Thunder', character.Thunder, true);
+            }
+
+            if (character.Light) {
+                embed.addField('Light', character.Light, true);
+            }
+
+            if (character.Dark) {
+                embed.addField('Dark', character.Dark, true);
+            }
+
+            if (character.Staves) {
+                embed.addField('Staves', character.Staves, true);
+            }
+            
+            if (character.MagicType) {
+                var textMagicType = "None";
+
+                switch (character.MagicType) {
+                    case '0':
+                        textMagicType = "None";
+                        break;
+                    case '1':
+                        textMagicType = "Combat";
+                        break;
+                    case '2':
+                        textMagicType = "Practical";
+                        break;
+                    case '3':
+                        textMagicType = "Combat & Practical";
+                        break;
+                }
+
+                embed.addField('Magic Type', textMagicType, true);
+            }
+
+            this.message.channel.send(embed);
+        })
+    }
+
+    #weaponsMagicProficienciesHelp() {
+        var embed = new MessageEmbed()
+            .setColor("#ff0000")
+            .setTitle("Help - Weapon and Magic Proficiencies")
+            .setDescription("Displays the weapon and magic proficiencies for the specified character. Aliases: !weapons or !magic");
 
         this.message.channel.send(embed);
     }
