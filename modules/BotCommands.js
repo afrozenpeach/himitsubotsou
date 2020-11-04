@@ -467,6 +467,172 @@ export default class BotCommands {
         this.message.channel.send(embed);
     }
 
+    proficiencies(args) {
+        var session;
+        var result = [];
+
+        this.sql.getSession()
+        .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
+        .then(s =>
+            session.sql("SELECT w.CharID, c.name, c.nickname1, c.nickname2, c.sect, w.Axes, w.Swords, w.Daggers, w.Lances, w.Maces, w.QStaves, w.Whips, w.Unnarmed, w.LBows, w.SBows, w.CBows, w.Thrown, w.Fire, w.Wind, w.Thunder, w.Light, w.Dark, w.Staves, w.MagicType, w.Civilian FROM " + Config.MYSQL_CHARDB + ".weapons as w JOIN " + Config.MYSQL_CHARDB + ".characters as c on c.id = w.charid WHERE c.name like CONCAT('%', ?, '%') or c.nickname1 like CONCAT('%', ?, '%') or c.nickname2 like CONCAT('%', ?, '%');")
+            .bind([args[0], args[0], args[0]])
+            .execute(
+                row => {
+                    row.forEach((value, i) => { result[i] = Object.assign({}, result[i], { value }) });
+                },
+                columns => {
+                    columns.forEach((key, i) => { result[i] = Object.assign({}, result[i], { key: key.getColumnName() }) });
+                }
+            )
+        )
+        .then(() => {
+            var character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
+
+            if (character.CharID === undefined) {
+                this.message.channel.send("Character profile not found.");
+                return;
+            }
+            var embed = new MessageEmbed();
+
+            if (character.journal) {
+                embed.setURL("https://himitsu-sensou.dreamwidth.org/?poster=" + character.journal);
+            }
+
+            var nameLine = "";
+
+            var emoji = this.#getCharacterEmoji(character.name, character.nickname1, character.nickname2);
+
+            if (emoji != undefined) {
+                nameLine += `${emoji} `;
+            }
+
+            nameLine += this.#getCharacterName(character);
+
+            embed.setTitle(nameLine);
+
+            switch(character.sect.toLocaleLowerCase()) {
+                case "pillar of light":
+                    embed.setColor("#fcba03");
+                    break;
+                case "messenger of darkness":
+                    embed.setColor("#4a1a7d");
+                    break;
+                case "silent one":
+                    embed.setColor("#f8f8ff");
+                    break;
+                case "neutral":
+                    embed.setColor("#343aeb");
+                    break;
+                default:
+                    embed.setColor("#919191");
+                    break;
+            }
+
+            if (character.picture) {
+                embed.setThumbnail("https://host.lgbt/pics/" + character.picture);
+            }
+
+            if (character.Axes) {
+                embed.addField('Axes', character.Axes, true);
+            }
+
+            if (character.Swords) {
+                embed.addField('Swords', character.Swords, true);
+            }
+
+            if (character.Daggers) {
+                embed.addField('Daggers', character.Daggers, true);
+            }
+
+            if (character.Lances) {
+                embed.addField('Lances', character.Lances, true);
+            }
+
+            if (character.Maces) {
+                embed.addField('Maces', character.Maces, true);
+            }
+
+            if (character.QStaves) {
+                embed.addField('QStaves', character.QStaves, true);
+            }
+
+            if (character.Whips) {
+                embed.addField('Whips', character.Whips, true);
+            }
+
+            if (character.Unarmed) {
+                embed.addField('Unarmed', character.Unarmed, true);
+            }
+
+            if (character.LBows) {
+                embed.addField('Long Bows', character.LBows, true);
+            }
+
+            if (character.SBows) {
+                embed.addField('Short Bows', character.SBows, true);
+            }
+
+            if (character.CBows) {
+                embed.addField('Crossbows', character.CBows, true);
+            }
+
+            if (character.Thrown) {
+                embed.addField('Thrown', character.Thrown, true);
+            }
+
+            if (character.Fire) {
+                embed.addField('Fire', character.Fire, true);
+            }
+
+            if (character.Wind) {
+                embed.addField('Wind', character.Wind, true);
+            }
+
+            if (character.Thunder) {
+                embed.addField('Thunder', character.Thunder, true);
+            }
+
+            if (character.Light) {
+                embed.addField('Light', character.Light, true);
+            }
+
+            if (character.Dark) {
+                embed.addField('Dark', character.Dark, true);
+            }
+
+            if (character.Staves) {
+                embed.addField('Staves', character.Staves, true);
+            }
+            
+            if (character.MagicType) {
+                embed.addField('Magic Type', character.MagicType, true); // To Do: Figure out what this means
+            }
+
+            if (character.Civilian) {
+                embed.addField('Civilian', character.Civilian, true);
+            }
+
+            this.message.channel.send(embed);
+        })
+    }f
+
+    proficienciesHelp() {
+        var embed = new MessageEmbed()
+            .setColor("#ff0000")
+            .setTitle("Help - Proficiencies")
+            .setDescription("Displays the weapon and magic proficiencies for the specified character.");
+
+        this.message.channel.send(embed);
+    }
+
+    prof(args) {
+        this.proficiencies(args);
+    }
+
+    profHelp() {
+        this.proficienciesHelp();
+    }
+
     npc(args) {
         var session;
         var result = [];
@@ -701,7 +867,7 @@ export default class BotCommands {
         var embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Help - SQL Search")
-            .setDescription("Returns a list of characters and their players for a given where clause.\n\nAvailable Fields:\n`ID`, `picture`, `name`, `nickname1`, `nickname2`, `journal`, `jobs`, `subjobs`, `socialclass`, `country`, `hometown`, `house`, `birthmonth`, `birthdate`, `year`, `zodiac`, `bloodtype`, `sect`, `status`, `player`, `queued`, `adoptable`, `haircolor`, `eyecolor`, `heightfeet`, `heightinches`, `heightcms`, `build`, `skintone`, `cupsize`, `domhand`, `identifiers`, `class`, `pastclasses`, `mountcombat`, `orientation`, `noncombat`, `gender`, `Special`\n\nExamples:\nname = 'Fayre' -> Just 'Fayre'\nname like 'ra%' -> Starts with 'ra'\nyear < 600 -> Born before 600 AR");
+            .setDescription("Returns a list of characters and their players for a given where clause.\n\nAvailable Fields:\nID, picture, name, nickname1, nickname2, journal, jobs, subjobs, socialclass, country, hometown, house, birthmonth, birthdate, year, zodiac, bloodtype, sect, status, player, queued, adoptable, haircolor, eyecolor, heightfeet, heightinches, heightcms, build, skintone, cupsize, domhand, identifiers, class, pastclasses, mountcombat, orientation, noncombat, gender, Special\n\nExamples:\nname = 'Fayre' -> Just 'Fayre'\nname like 'ra%' -> Starts with 'ra'\nyear < 600 -> Born before 600 AR");
 
         this.message.channel.send(embed);
     }
@@ -798,7 +964,7 @@ export default class BotCommands {
                 var emoji = this.#getCharacterEmoji(character);
 
                 if (emoji != undefined) {
-                    characterString += ` ${emoji}`;
+                    characterString +=  ` ${emoji}`;
                 }
 
                 characterString += ", ";
