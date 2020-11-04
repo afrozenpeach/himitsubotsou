@@ -615,7 +615,7 @@ export default class BotCommands {
             }
 
             if (character.Da) {
-                embed.addField('Danan', character.Da, true);
+                embed.addField('Danaan', character.Da, true);
             }
 
             if (character.KiNotes) {
