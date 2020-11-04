@@ -20,6 +20,8 @@ client.on("ready", () => {
     if (Config.VERSION) {
         client.channels.cache.find(channel => channel.name === "botspam").send("Bot loaded. Version: " + Config.VERSION);
     }
+
+    client.user.setPresence({name: "Himitsu no Sensou", type: "PLAYING"});
 });
 
 client.on("message", message => {
