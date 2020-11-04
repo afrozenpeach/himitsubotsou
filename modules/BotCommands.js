@@ -491,7 +491,7 @@ export default class BotCommands {
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
         .then(s =>
-            session.sql("SELECT c.ID, c.name, c.nickname1, c.nickname2, c.sect, c.journal, l.Tr, l.TrNotes, l.De, l.ODe, l.HDe, l.OHDe, l.DeNotes, l.Me, l.AMe, l.MeNotes, l.At, l.Az, l.NoAt, l.AtNotes, l.Ki, l.RuKi, l.Da, l.KiNotes, l.Ro, l.RoNotes FROM " + Config.MYSQL_CHARDB + ".languages as l JOIN " + Config.MYSQL_CHARDB + ".characters as c on c.id = l.charid WHERE c.name like CONCAT('%', ?, '%') or c.nickname1 like CONCAT('%', ?, '%') or c.nickname2 like CONCAT('%', ?, '%');")
+            session.sql("SELECT c.ID, c.name, c.nickname1, c.nickname2, c.sect, c.journal, l.Tr, l.TrNotes, l.De, l.ODe, l.HDe, l.OHDe, l.DeNotes, l.Me, l.AMe, l.MeNotes, l.At, l.Az, l.NoAt, l.AtNotes, l.Ki, l.RuKi, l.Da, l.KiNotes, l.Ro, l.RoNotes FROM " + Config.MYSQL_CHARDB + ".Languages as l JOIN " + Config.MYSQL_CHARDB + ".Characters as c on c.id = l.charid WHERE c.name like CONCAT('%', ?, '%') or c.nickname1 like CONCAT('%', ?, '%') or c.nickname2 like CONCAT('%', ?, '%');")
             .bind([args[0], args[0], args[0]])
             .execute(
                 row => {
