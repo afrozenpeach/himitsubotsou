@@ -357,12 +357,12 @@ export default class BotCommands {
                 );
 
                 if (character.bloodtype) {
-                    embed.addFields(                    
+                    embed.addFields(
                         { name: "Blood Type", value: character.bloodtype, inline: true }
                     );
                 }
 
-                embed.addFields(                
+                embed.addFields(
                     { name: "Gender", value: character.gender, inline: true },
                     { name: "Orientation", value: character.orientation, inline: true },
                     { name: "Hair Color", value: character.haircolor, inline: true },
@@ -550,88 +550,84 @@ export default class BotCommands {
                 embed.setThumbnail("https://host.lgbt/pics/" + character.picture);
             }
 
-            if (character.Tr) {
+            if (character.Tr.trim()) {
                 embed.addField('Trade', character.Tr, true);
             }
 
-            if (character.TrNotes) {
+            if (character.TrNotes.trim()) {
                 embed.addField('Trade Notes', character.TrNotes);
             }
 
-            if (character.De) {
+            if (character.De.trim()) {
                 embed.addField('Dentorian', character.De, true);
             }
 
-            if (character.ODe) {
+            if (character.ODe.trim()) {
                 embed.addField('Old Dentorian', character.ODe, true);
             }
 
-            if (character.HDe) {
+            if (character.HDe.trim()) {
                 embed.addField('High Dentorian', character.HDe, true);
             }
 
-            if (character.OHDe) {
+            if (character.OHDe.trim()) {
                 embed.addField('Old High Dentorian', character.OHDe, true);
             }
 
-            if (character.DeNotes) {
+            if (character.DeNotes.trim()) {
                 embed.addField('Dentorian Notes', character.DeNotes);
             }
 
-            if (character.Me) {
+            if (character.Me.trim()) {
                 embed.addField('Megami', character.Me, true);
             }
 
-            if (character.AMe) {
+            if (character.AMe.trim()) {
                 embed.addField('Ancient Megami', character.AMe, true);
             }
 
-            if (character.MeNotes) {
+            if (character.MeNotes.trim()) {
                 embed.addField('Megami Notes', character.MeNotes);
             }
 
-            if (character.At) {
+            if (character.At.trim()) {
                 embed.addField('Atsirian', character.At, true);
             }
 
-            if (character.Az) {
+            if (character.Az.trim()) {
                 embed.addField('Azsharan', character.Az, true);
             }
 
-            if (character.NoAt) {
+            if (character.NoAt.trim()) {
                 embed.addField('Nomadic Atsirian', character.NoAt, true);
             }
 
-            if (character.AtNotes) {
+            if (character.AtNotes.trim()) {
                 embed.addField('Atsirian Notes', character.AtNotes);
             }
 
-            if (character.Ki) {
+            if (character.Ki.trim()) {
                 embed.addField('Kilian', character.Ki, true);
             }
 
-            if (character.RuKi) {
+            if (character.RuKi.trim()) {
                 embed.addField('Runic Kilian', character.RuKi, true);
             }
 
-            if (character.Da) {
+            if (character.Da.trim()) {
                 embed.addField('Danaan', character.Da, true);
             }
 
-            if (character.KiNotes) {
+            if (character.KiNotes.trim()) {
                 embed.addField('Kilian Notes', character.KiNotes);
             }
 
-            if (character.Ro) {
+            if (character.Ro.trim()) {
                 embed.addField('Romani', character.Da, true);
             }
 
-            if (character.RoNotes) {
+            if (character.RoNotes.trim()) {
                 embed.addField('Romani Notes', character.RoNotes);
-            }
-
-            if (character.Civilian) {
-                embed.addField('Civilian', character.Civilian, true);
             }
 
             this.message.channel.send(embed);
@@ -901,7 +897,7 @@ export default class BotCommands {
 
         //We need to fetch all the members of the guild to make sure they're in the cache
         await this.message.guild.members.fetch();
-        
+
         this.sql.getSession()
         .then(s => { sessions[0] = s; return sessions[0].getSchema(Config.MYSQL_ARCHIVESDB) })
         .then(s => { return s.getTable("channels") })
@@ -912,10 +908,10 @@ export default class BotCommands {
             .then(async r => {
                 var channelId = r.getAutoIncrementValue();
                 var promises = [];
-    
+
                 var allMessagesRaw = await this.#getAllMessages(this.message.channel);
-    
-                allMessagesRaw.forEach(m => {                    
+
+                allMessagesRaw.forEach(m => {
                     promises.push(
                         this.sql.getSession()
                         .then(s => { sessions[m.id] = s; return sessions[m.id].getSchema(Config.MYSQL_ARCHIVESDB) })
@@ -952,7 +948,7 @@ export default class BotCommands {
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
         .then(s =>
-            session.sql("SELECT c.ID, c.name, c.nickname1, c.nickname2, c.sect, w.Axes, w.Swords, w.Daggers, w.Lances, w.Maces, w.QStaves, w.Whips, w.Unnarmed, w.LBows, w.SBows, w.CBows, w.Thrown, w.Fire, w.Wind, w.Thunder, w.Light, w.Dark, w.Staves, w.MagicType, w.Civilian FROM " + Config.MYSQL_CHARDB + ".Weapons as w JOIN " + Config.MYSQL_CHARDB + ".Characters as c on c.id = w.charid WHERE c.name like CONCAT('%', ?, '%') or c.nickname1 like CONCAT('%', ?, '%') or c.nickname2 like CONCAT('%', ?, '%');")
+            session.sql("SELECT c.ID, c.name, c.nickname1, c.nickname2, c.sect, w.Axes, w.Swords, w.Daggers, w.Lances, w.Maces, w.QStaves, w.Whips, w.Unarmed, w.LBows, w.SBows, w.CBows, w.Thrown, w.Fire, w.Wind, w.Thunder, w.Light, w.Dark, w.Staves, w.MagicType, w.Civilian FROM " + Config.MYSQL_CHARDB + ".Weapons as w JOIN " + Config.MYSQL_CHARDB + ".Characters as c on c.id = w.charid WHERE c.name like CONCAT('%', ?, '%') or c.nickname1 like CONCAT('%', ?, '%') or c.nickname2 like CONCAT('%', ?, '%');")
             .bind([args[0], args[0], args[0]])
             .execute(
                 row => {
@@ -1011,78 +1007,78 @@ export default class BotCommands {
                 embed.setThumbnail("https://host.lgbt/pics/" + character.picture);
             }
 
-            if (character.Axes) {
+            if (character.Axes.trim()) {
                 embed.addField('Axes', character.Axes, true);
             }
 
-            if (character.Swords) {
+            if (character.Swords.trim()) {
                 embed.addField('Swords', character.Swords, true);
             }
 
-            if (character.Daggers) {
+            if (character.Daggers.trim()) {
                 embed.addField('Daggers', character.Daggers, true);
             }
 
-            if (character.Lances) {
+            if (character.Lances.trim()) {
                 embed.addField('Lances', character.Lances, true);
             }
 
-            if (character.Maces) {
+            if (character.Maces.trim()) {
                 embed.addField('Maces', character.Maces, true);
             }
 
-            if (character.QStaves) {
+            if (character.QStaves.trim()) {
                 embed.addField('Quarterstaves', character.QStaves, true);
             }
 
-            if (character.Whips) {
+            if (character.Whips.trim()) {
                 embed.addField('Whips', character.Whips, true);
             }
 
-            if (character.Unarmed) {
+            if (character.Unarmed.trim()) {
                 embed.addField('Unarmed', character.Unarmed, true);
             }
 
-            if (character.LBows) {
+            if (character.LBows.trim()) {
                 embed.addField('Long Bows', character.LBows, true);
             }
 
-            if (character.SBows) {
+            if (character.SBows.trim()) {
                 embed.addField('Short Bows', character.SBows, true);
             }
 
-            if (character.CBows) {
+            if (character.CBows.trim()) {
                 embed.addField('Crossbows', character.CBows, true);
             }
 
-            if (character.Thrown) {
+            if (character.Thrown.trim()) {
                 embed.addField('Thrown', character.Thrown, true);
             }
 
-            if (character.Fire) {
+            if (character.Fire.trim()) {
                 embed.addField('Fire', character.Fire, true);
             }
 
-            if (character.Wind) {
+            if (character.Wind.trim()) {
                 embed.addField('Wind', character.Wind, true);
             }
 
-            if (character.Thunder) {
+            if (character.Thunder.trim()) {
                 embed.addField('Thunder', character.Thunder, true);
             }
 
-            if (character.Light) {
+            if (character.Light.trim()) {
                 embed.addField('Light', character.Light, true);
             }
 
-            if (character.Dark) {
+            if (character.Dark.trim()) {
                 embed.addField('Dark', character.Dark, true);
             }
 
-            if (character.Staves) {
+            if (character.Staves.trim()) {
                 embed.addField('Staves', character.Staves, true);
             }
-            
+
             if (character.MagicType) {
                 var textMagicType = "None";
 
@@ -1102,6 +1098,10 @@ export default class BotCommands {
                 }
 
                 embed.addField('Magic Type', textMagicType, true);
+            }
+
+            if (character.Civilian) {
+                embed.addField('Civilian', "Civilian", true);
             }
 
             this.message.channel.send(embed);
@@ -1222,7 +1222,7 @@ export default class BotCommands {
 
     #getCharacterName(character) {
         var nameLine = "";
-        
+
         if (Array.isArray(character)) {
             nameLine += character[0];
 
@@ -1277,22 +1277,22 @@ export default class BotCommands {
     async #getAllMessages(channel) {
         var sum_messages = [];
         let last_id;
-    
+
         while (true) {
             const options = { limit: 100 };
             if (last_id) {
                 options.before = last_id;
             }
-    
+
             const messages = await channel.messages.fetch(options);
-            sum_messages.push(...messages.array());                        
+            sum_messages.push(...messages.array());
             last_id = messages.last().id;
-    
+
             if (messages.size != 100) {
                 break;
             }
         }
-    
+
         return sum_messages;
     }
 }
