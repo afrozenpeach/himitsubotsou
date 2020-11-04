@@ -1,3 +1,4 @@
+import { text } from "body-parser";
 import { MessageEmbed } from "discord.js";
 import { Config } from "../config.js";
 
@@ -605,7 +606,24 @@ export default class BotCommands {
             }
             
             if (character.MagicType) {
-                embed.addField('Magic Type', character.MagicType, true); // To Do: Figure out what this means
+                var textMagicType = "None";
+
+                switch (character.MagicType) {
+                    case '0':
+                        textMagicType = "None";
+                        break;
+                    case '1':
+                        textMagicType = "Combat";
+                        break;
+                    case '2':
+                        textMagicType = "Practical";
+                        break;
+                    case '3':
+                        textMagicType = "Combat & Practical";
+                        break;
+                }
+
+                embed.addField('Magic Type', textMagicType, true);
             }
 
             if (character.Civilian) {
