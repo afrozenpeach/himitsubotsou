@@ -611,7 +611,7 @@ export default class BotCommands {
             }
 
             if (character.RuKi) {
-                embed.addField('Rural Kilian', character.RuKi, true);
+                embed.addField('Runic Kilian', character.RuKi, true);
             }
 
             if (character.Da) {
