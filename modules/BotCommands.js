@@ -553,7 +553,7 @@ export default class BotCommands {
             }
 
             if (character.QStaves) {
-                embed.addField('QStaves', character.QStaves, true);
+                embed.addField('Quarterstaves', character.QStaves, true);
             }
 
             if (character.Whips) {
