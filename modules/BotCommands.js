@@ -1,4 +1,3 @@
-import { text } from "body-parser";
 import { MessageEmbed } from "discord.js";
 import { Config } from "../config.js";
 
@@ -10,7 +9,7 @@ export default class BotCommands {
 
     help(args) {
         if (args[0] !== undefined) {
-            var argHelp = args[0] + "Help";
+            let argHelp = args[0] + "Help";
 
             if (typeof this[argHelp] === 'function') {
                 this[argHelp]();
@@ -46,7 +45,7 @@ export default class BotCommands {
             return props;
         }
 
-        var embed = new MessageEmbed()
+        let embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Available commands")
             .setDescription(getAllMethods(this).join(", "));
@@ -55,7 +54,7 @@ export default class BotCommands {
     }
 
     franelcrew(args) {
-        var franelcrew = [
+        let franelcrew = [
             { player: "Rosa", characters: ["Aileen", "Celeste", "Crionna", "Eabhan (Eabh)", "Korvin", "Maeryn/\"Ethniu\"", "Nessa", "Suaimeas"] },
             { player: "Elzie", characters: ["Amalea", "Elliot", "Gaibrial (Gabe)", "Jace", "Lauren", "Patience", "Sawyer"] },
             { player: "Dots", characters: ["Faith", "Jonathan", "Kail", "Prudence"] },
@@ -67,7 +66,7 @@ export default class BotCommands {
     }
 
     franelcrewHelp() {
-        var embed = new MessageEmbed()
+        let embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Help - Franelcrew")
             .setDescription("Lists characters in the Franelcrew plotline.\n\nOptional Parameters: player name to filter by");
@@ -76,7 +75,7 @@ export default class BotCommands {
     }
 
     hanalan(args) {
-        var hanalanCommons = [
+        let hanalanCommons = [
             { player: "Frozen", characters: ["Lenore", "Inara", "Kimberly"] },
             { player: "Dots", characters: ["Mark", "Eri"] },
             { player: "Elzie", characters: ["Demi", "Daisy"] },
@@ -87,7 +86,7 @@ export default class BotCommands {
     }
 
     hanalanHelp() {
-        var embed = new MessageEmbed()
+        let embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Help - Franelcrew")
             .setDescription("Lists characters in the Hanalan Commons plotline.\n\nOptional Parameters: player name to filter by");
@@ -96,7 +95,7 @@ export default class BotCommands {
     }
 
     eina(args) {
-        var eina = [
+        let eina = [
             { player: "Frozen", characters: ["Gebann", "Rae"] },
             { player: "Nin", characters: ["Dagda"] },
             { player: "Rosa", characters: ["April"] },
@@ -107,7 +106,7 @@ export default class BotCommands {
     }
 
     einaHelp() {
-        var embed = new MessageEmbed()
+        let embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Help - Franelcrew")
             .setDescription("Lists characters in the Eina plotline.\n\nOptional Parameters: player name to filter by");
@@ -116,11 +115,11 @@ export default class BotCommands {
     }
 
     characters(args) {
-        var player = "";
-        var characters = [];
-        var color = "";
-        var user = undefined;
-        var finalMessage = "";
+        let player = "";
+        let characters = [];
+        let color = "";
+        let user = undefined;
+        let finalMessage = "";
 
         //If there is an arg find the characters for that player
         //Otherwise find the characters for the player that activated the command
@@ -182,14 +181,14 @@ export default class BotCommands {
                 return;
         }
 
-        var activeOnly = " && status = 'Normal'";
+        let activeOnly = " && status = 'Normal'";
 
         if (args[1] === "all") {
             activeOnly = "";
         }
 
-        var session;
-        var characters = [];
+        let session;
+        let chars = [];
 
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
@@ -201,14 +200,14 @@ export default class BotCommands {
             .bind("player", player)
             .execute())
         .then(r => {
-            characters = r.fetchAll();
+            chars = r.fetchAll();
 
             //Find emojis for each character
             //emoji must be a custom emoji uploaded with the character's proper name or a defined nickname
-            characters.forEach(character => {
+            chars.forEach(character => {
                 finalMessage += this.#getCharacterName(character);
 
-                var emoji = this.#getCharacterEmoji(character[0], character[1], character[2]);
+                let emoji = this.#getCharacterEmoji(character[0], character[1], character[2]);
 
                 if (emoji != undefined) {
                     finalMessage += ` ${emoji}`;
@@ -217,7 +216,7 @@ export default class BotCommands {
                 finalMessage += ", ";
             }, this)
 
-            var embed = new MessageEmbed()
+            let embed = new MessageEmbed()
                 .setTitle(player.slice(0, 1).toLocaleUpperCase() + player.slice(1).toLocaleLowerCase() + (player.slice(-1) == "s" ? "'" : "'s") + " characters")
                 .setDescription(finalMessage.slice(0, -2));
 
@@ -235,7 +234,7 @@ export default class BotCommands {
     }
 
     charactersHelp() {
-        var embed = new MessageEmbed()
+        let embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Help - Franelcrew")
             .setDescription("Lists characters played by the current user.\n\nOptional Parameters:\n\n0: alternative player name to filter by\n\n1: 'all'0 to include inactive characters");
@@ -244,8 +243,8 @@ export default class BotCommands {
     }
 
     profile(args) {
-        var session;
-        var result = [];
+        let session;
+        let result = [];
 
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
@@ -267,16 +266,16 @@ export default class BotCommands {
             )
         )
         .then(() => {
-            var character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
+            let character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
 
             if (character.ID === undefined) {
                 this.message.channel.send("Character profile not found.");
                 return;
             }
 
-            var mounts = [];
-            var relationships = [];
-            var connections = [];
+            let mounts = [];
+            let relationships = [];
+            let connections = [];
 
             this.sql.getSession()
             .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
@@ -291,15 +290,15 @@ export default class BotCommands {
                 ]);
             })
             .then(() => {
-                var embed = new MessageEmbed();
+                let embed = new MessageEmbed();
 
                 if (character.journal) {
                     embed.setURL("https://himitsu-sensou.dreamwidth.org/?poster=" + character.journal);
                 }
 
-                var nameLine = "";
+                let nameLine = "";
 
-                var emoji = this.#getCharacterEmoji(character.name, character.nickname1, character.nickname2);
+                let emoji = this.#getCharacterEmoji(character.name, character.nickname1, character.nickname2);
 
                 if (emoji != undefined) {
                     nameLine += `${emoji} `;
@@ -332,7 +331,7 @@ export default class BotCommands {
                 }
 
                 //There can only be 25 fields, so we're combining some things so everything fits
-                var noncombatLine = "";
+                let noncombatLine = "";
 
                 if (character.identifiers) {
                     noncombatLine += character.identifiers + "\n";
@@ -378,7 +377,7 @@ export default class BotCommands {
                     )
                 }
 
-                var hometownLine = "";
+                let hometownLine = "";
 
                 if (character.hometown) {
                     hometownLine += character.hometown + ", ";
@@ -419,7 +418,7 @@ export default class BotCommands {
                 }
 
                 if (mounts.length > 0) {
-                    var mountLine = "";
+                    let mountLine = "";
 
                     mounts.forEach(m => {
                         mountLine += m[1] + " - " + m[2] + " " + m[3] + " " + m[4] + " - " + m[6];
@@ -436,7 +435,7 @@ export default class BotCommands {
                     );
                 }
 
-                var relationshipLine = "";
+                let relationshipLine = "";
 
                 relationships.forEach(r => {
                     relationshipLine += r[0] + " - " + r[1] + "\n";
@@ -460,7 +459,7 @@ export default class BotCommands {
     }
 
     profileHelp() {
-        var embed = new MessageEmbed()
+        let embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Help - Profile")
             .setDescription("Displays a profile for the specified character.");
@@ -485,8 +484,8 @@ export default class BotCommands {
     }
 
     languages(args) {
-        var session;
-        var result = [];
+        let session;
+        let result = [];
 
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
@@ -503,22 +502,22 @@ export default class BotCommands {
             )
         )
         .then(() => {
-            var character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
+            let character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
 
             if (character.ID === undefined) {
                 this.message.channel.send("Character proficiencies not found.");
                 return;
             }
 
-            var embed = new MessageEmbed();
+            let embed = new MessageEmbed();
 
             if (character.journal) {
                 embed.setURL("https://himitsu-sensou.dreamwidth.org/?poster=" + character.journal);
             }
 
-            var nameLine = "";
+            let nameLine = "";
 
-            var emoji = this.#getCharacterEmoji(character.name, character.nickname1, character.nickname2);
+            let emoji = this.#getCharacterEmoji(character.name, character.nickname1, character.nickname2);
 
             if (emoji != undefined) {
                 nameLine += `${emoji} `;
@@ -635,7 +634,7 @@ export default class BotCommands {
     }
 
     languagesHelp() {
-        var embed = new MessageEmbed()
+        let embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Help - Language Proficiencies")
             .setDescription("Displays the language proficiencies for the specified character. Aliases: !languages or !lang");
@@ -652,8 +651,8 @@ export default class BotCommands {
     }
 
     npc(args) {
-        var session;
-        var result = [];
+        let session;
+        let result = [];
 
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
@@ -673,14 +672,14 @@ export default class BotCommands {
             )
         )
         .then(() => {
-            var npc = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
+            let npc = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
 
             if (npc.ID === undefined) {
                 this.message.channel.send("NPC profile not found.");
                 return;
             }
 
-            var embed = new MessageEmbed();
+            let embed = new MessageEmbed();
 
             embed.setTitle(npc.npcName);
 
@@ -714,7 +713,7 @@ export default class BotCommands {
                 { name: "Sect", value: npc.npcSect, inline: true }
             )
 
-            var birthdateLine = "";
+            let birthdateLine = "";
 
             if (npc.npcBirthMonth && npc.npcBirthMonth != 'Unspecified') {
                 birthdateLine += npc.npcBirthMonth;
@@ -765,7 +764,7 @@ export default class BotCommands {
                 );
             }
 
-            var hometownLine = "";
+            let hometownLine = "";
 
             if (npc.npcCity) {
                 hometownLine += npc.npcCity + ", ";
@@ -797,7 +796,7 @@ export default class BotCommands {
     }
 
     npcHelp() {
-        var embed = new MessageEmbed()
+        let embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Help - NPC")
             .setDescription("Displays a profile for the specified npc.");
@@ -806,7 +805,7 @@ export default class BotCommands {
     }
 
     birthmonth(args) {
-        var session;
+        let session;
 
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
@@ -819,11 +818,11 @@ export default class BotCommands {
             .execute()
         )
         .then(r => {
-            var characters = r.fetchAll();
+            let characters = r.fetchAll();
 
-            var embed = new MessageEmbed().setTitle("Birthdays for " + characters[0][3]);
+            let embed = new MessageEmbed().setTitle("Birthdays for " + characters[0][3]);
 
-            var finalMessage = "";
+            let finalMessage = "";
 
             characters.forEach(character => {
                 finalMessage += character[3] + " " + character[4] + ", " + character[5] + " AR - ";
@@ -841,7 +840,7 @@ export default class BotCommands {
     }
 
     birthmonthHelp() {
-        var embed = new MessageEmbed()
+        let embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Help - Birth Month")
             .setDescription("Lists characters that have a birthday in the designated month.");
@@ -850,7 +849,7 @@ export default class BotCommands {
     }
 
     search(args) {
-        var session;
+        let session;
 
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
@@ -862,11 +861,11 @@ export default class BotCommands {
             .execute()
         )
         .then(r => {
-            var results = r.fetchAll();
-            var characters = [];
+            let results = r.fetchAll();
+            let characters = [];
 
             results.forEach(result => {
-                var playerObj = characters.find(c => c.player === result[3])
+                let playerObj = characters.find(c => c.player === result[3])
 
                 if (playerObj === undefined) {
                     characters.push({ player: result[3], characters: [] })
@@ -882,7 +881,7 @@ export default class BotCommands {
     }
 
     searchHelp() {
-        var embed = new MessageEmbed()
+        let embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Help - SQL Search")
             .setDescription("Returns a list of characters and their players for a given where clause.\n\nAvailable Fields:\nID, picture, name, nickname1, nickname2, journal, jobs, subjobs, socialclass, country, hometown, house, birthmonth, birthdate, year, zodiac, bloodtype, sect, status, player, queued, adoptable, haircolor, eyecolor, heightfeet, heightinches, heightcms, build, skintone, cupsize, domhand, identifiers, class, pastclasses, mountcombat, orientation, noncombat, gender, Special\n\nExamples:\nname = 'Fayre' -> Just 'Fayre'\nname like 'ra%' -> Starts with 'ra'\nyear < 600 -> Born before 600 AR");
@@ -891,7 +890,7 @@ export default class BotCommands {
     }
 
     async archive() {
-        var sessions = [];
+        let sessions = [];
 
         this.message.channel.send("Starting archive...");
 
@@ -906,10 +905,10 @@ export default class BotCommands {
             .values(this.message.channel.parent.name, this.message.channel.name)
             .execute()
             .then(async r => {
-                var channelId = r.getAutoIncrementValue();
-                var promises = [];
+                let channelId = r.getAutoIncrementValue();
+                let promises = [];
 
-                var allMessagesRaw = await this.#getAllMessages(this.message.channel);
+                let allMessagesRaw = await this.#getAllMessages(this.message.channel);
 
                 allMessagesRaw.forEach(m => {
                     promises.push(
@@ -933,7 +932,7 @@ export default class BotCommands {
     }
 
     archiveHelp() {
-        var embed = new MessageEmbed()
+        let embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Help - Archive")
             .setDescription("Archives the current channel to the database");
@@ -942,8 +941,8 @@ export default class BotCommands {
     }
 
     #weaponsMagicProficiencies(args) {
-        var session;
-        var result = [];
+        let session;
+        let result = [];
 
         this.sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
@@ -960,22 +959,22 @@ export default class BotCommands {
             )
         )
         .then(() => {
-            var character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
+            let character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
 
             if (character.ID === undefined) {
                 this.message.channel.send("Character proficiencies not found.");
                 return;
             }
 
-            var embed = new MessageEmbed();
+            let embed = new MessageEmbed();
 
             if (character.journal) {
                 embed.setURL("https://himitsu-sensou.dreamwidth.org/?poster=" + character.journal);
             }
 
-            var nameLine = "";
+            let nameLine = "";
 
-            var emoji = this.#getCharacterEmoji(character.name, character.nickname1, character.nickname2);
+            let emoji = this.#getCharacterEmoji(character.name, character.nickname1, character.nickname2);
 
             if (emoji != undefined) {
                 nameLine += `${emoji} `;
@@ -1080,7 +1079,7 @@ export default class BotCommands {
             }
 
             if (character.MagicType) {
-                var textMagicType = "None";
+                let textMagicType = "None";
 
                 switch (character.MagicType) {
                     case 0:
@@ -1109,7 +1108,7 @@ export default class BotCommands {
     }
 
     #weaponsMagicProficienciesHelp() {
-        var embed = new MessageEmbed()
+        let embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Help - Weapon and Magic Proficiencies")
             .setDescription("Displays the weapon and magic proficiencies for the specified character. Aliases: !weapons or !magic");
@@ -1123,7 +1122,7 @@ export default class BotCommands {
             playerCharacters = playerCharacters.filter(row => row.player.toLocaleLowerCase() === filterPlayer.toLocaleLowerCase())
         }
 
-        var embed =  new MessageEmbed()
+        let embed =  new MessageEmbed()
             .setColor(color)
             .setTitle(title);
 
@@ -1138,7 +1137,7 @@ export default class BotCommands {
         });
 
         playerCharacters.forEach(function(pc) {
-            var characterString = "";
+            let characterString = "";
 
             if (Array.isArray(pc.characters[0])) {
                 pc.characters.sort();
@@ -1146,7 +1145,7 @@ export default class BotCommands {
 
             //For each character find a matching emoji if possible - must be the character's proper name
             pc.characters.forEach(function(character) {
-                var characterName = this.#getCharacterName(character);
+                let characterName = this.#getCharacterName(character);
 
                 if (characterString.length + characterName.length > 1024) {
                     embed.addField(pc.player, characterString.slice(0, -2))
@@ -1155,7 +1154,7 @@ export default class BotCommands {
 
                 characterString += characterName;
 
-                var emoji = this.#getCharacterEmoji(character);
+                let emoji = this.#getCharacterEmoji(character);
 
                 if (emoji != undefined) {
                     characterString +=  ` ${emoji}`;
@@ -1172,7 +1171,7 @@ export default class BotCommands {
 
     //Gets the emoji based on a character name
     #getCharacterEmoji(character, nickname1 = undefined, nickname2 = undefined) {
-        var emoji;
+        let emoji;
 
         if (typeof character === 'object') {
             //proper name
@@ -1221,7 +1220,7 @@ export default class BotCommands {
     }
 
     #getCharacterName(character) {
-        var nameLine = "";
+        let nameLine = "";
 
         if (Array.isArray(character)) {
             nameLine += character[0];
@@ -1275,7 +1274,7 @@ export default class BotCommands {
     }
 
     async #getAllMessages(channel) {
-        var sum_messages = [];
+        let sum_messages = [];
         let last_id;
 
         while (true) {
