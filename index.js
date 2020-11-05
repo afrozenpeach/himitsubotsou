@@ -14,7 +14,9 @@ const sql = mysqlx.getClient(
 )
 
 //Discord Bot
-const client = new Client();
+const client = new Client({
+    fetchAllMembers: true
+});
 
 client.on("ready", () => {
     if (Config.VERSION) {
