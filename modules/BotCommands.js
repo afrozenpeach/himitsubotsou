@@ -1083,16 +1083,16 @@ export default class BotCommands {
                 var textMagicType = "None";
 
                 switch (character.MagicType) {
-                    case '0':
+                    case 0:
                         textMagicType = "None";
                         break;
-                    case '1':
+                    case 1:
                         textMagicType = "Combat";
                         break;
-                    case '2':
+                    case 2:
                         textMagicType = "Practical";
                         break;
-                    case '3':
+                    case 3:
                         textMagicType = "Combat & Practical";
                         break;
                 }
