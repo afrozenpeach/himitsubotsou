@@ -15,15 +15,14 @@ const sql = mysqlx.getClient(
 
 //Discord Bot
 const client = new Client({
-    fetchAllMembers: true
+    fetchAllMembers: true,
+    presence: {activity: {name: "Himitsu no Sensou", type: "PLAYING"}, status: 'online'}
 });
 
 client.on("ready", () => {
     if (Config.VERSION) {
         client.channels.cache.find(channel => channel.name === "botspam").send("Bot loaded. Version: " + Config.VERSION);
     }
-
-    client.user.setPresence({activity: {name: "Himitsu no Sensou", type: "PLAYING"}, status: 'online'});
 });
 
 client.on("message", message => {
