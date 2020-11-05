@@ -550,83 +550,83 @@ export default class BotCommands {
                 embed.setThumbnail("https://host.lgbt/pics/" + character.picture);
             }
 
-            if (character.Tr.trim()) {
+            if (character.Tr && character.Tr.trim()) {
                 embed.addField('Trade', character.Tr, true);
             }
 
-            if (character.TrNotes.trim()) {
+            if (character.TrNotes && character.TrNotes.trim()) {
                 embed.addField('Trade Notes', character.TrNotes);
             }
 
-            if (character.De.trim()) {
+            if (character.De && character.De.trim()) {
                 embed.addField('Dentorian', character.De, true);
             }
 
-            if (character.ODe.trim()) {
+            if (character.ODe && character.ODe.trim()) {
                 embed.addField('Old Dentorian', character.ODe, true);
             }
 
-            if (character.HDe.trim()) {
+            if (charactetr.HDe && character.HDe.trim()) {
                 embed.addField('High Dentorian', character.HDe, true);
             }
 
-            if (character.OHDe.trim()) {
+            if (character.OHDe && character.OHDe.trim()) {
                 embed.addField('Old High Dentorian', character.OHDe, true);
             }
 
-            if (character.DeNotes.trim()) {
+            if (character.DeNotes && character.DeNotes.trim()) {
                 embed.addField('Dentorian Notes', character.DeNotes);
             }
 
-            if (character.Me.trim()) {
+            if (character.Me && character.Me.trim()) {
                 embed.addField('Megami', character.Me, true);
             }
 
-            if (character.AMe.trim()) {
+            if (character.AMe && character.AMe.trim()) {
                 embed.addField('Ancient Megami', character.AMe, true);
             }
 
-            if (character.MeNotes.trim()) {
+            if (character.MeNotes && character.MeNotes.trim()) {
                 embed.addField('Megami Notes', character.MeNotes);
             }
 
-            if (character.At.trim()) {
+            if (character.At && character.At.trim()) {
                 embed.addField('Atsirian', character.At, true);
             }
 
-            if (character.Az.trim()) {
+            if (character.Az && character.Az.trim()) {
                 embed.addField('Azsharan', character.Az, true);
             }
 
-            if (character.NoAt.trim()) {
+            if (character.NoAt && character.NoAt.trim()) {
                 embed.addField('Nomadic Atsirian', character.NoAt, true);
             }
 
-            if (character.AtNotes.trim()) {
+            if (character.AtNotes && character.AtNotes.trim()) {
                 embed.addField('Atsirian Notes', character.AtNotes);
             }
 
-            if (character.Ki.trim()) {
+            if (character.Ki && character.Ki.trim()) {
                 embed.addField('Kilian', character.Ki, true);
             }
 
-            if (character.RuKi.trim()) {
+            if (character.RuKi && character.RuKi.trim()) {
                 embed.addField('Runic Kilian', character.RuKi, true);
             }
 
-            if (character.Da.trim()) {
+            if (character.Da && character.Da.trim()) {
                 embed.addField('Danaan', character.Da, true);
             }
 
-            if (character.KiNotes.trim()) {
+            if (character.KiNotes && character.KiNotes.trim()) {
                 embed.addField('Kilian Notes', character.KiNotes);
             }
 
-            if (character.Ro.trim()) {
+            if (character.Ro && character.Ro.trim()) {
                 embed.addField('Romani', character.Da, true);
             }
 
-            if (character.RoNotes.trim()) {
+            if (character.RoNotes && character.RoNotes.trim()) {
                 embed.addField('Romani Notes', character.RoNotes);
             }
 
@@ -1007,75 +1007,75 @@ export default class BotCommands {
                 embed.setThumbnail("https://host.lgbt/pics/" + character.picture);
             }
 
-            if (character.Axes.trim()) {
+            if (character.Axes && character.Axes.trim()) {
                 embed.addField('Axes', character.Axes, true);
             }
 
-            if (character.Swords.trim()) {
+            if (character.Swords && character.Swords.trim()) {
                 embed.addField('Swords', character.Swords, true);
             }
 
-            if (character.Daggers.trim()) {
+            if (character.Daggers && character.Daggers.trim()) {
                 embed.addField('Daggers', character.Daggers, true);
             }
 
-            if (character.Lances.trim()) {
+            if (character.Lances && character.Lances.trim()) {
                 embed.addField('Lances', character.Lances, true);
             }
 
-            if (character.Maces.trim()) {
+            if (character.Maces && character.Maces.trim()) {
                 embed.addField('Maces', character.Maces, true);
             }
 
-            if (character.QStaves.trim()) {
+            if (character.QStaves && character.QStaves.trim()) {
                 embed.addField('Quarterstaves', character.QStaves, true);
             }
 
-            if (character.Whips.trim()) {
+            if (character.Whips && character.Whips.trim()) {
                 embed.addField('Whips', character.Whips, true);
             }
 
-            if (character.Unarmed.trim()) {
+            if (character.Unarmed && character.Unarmed.trim()) {
                 embed.addField('Unarmed', character.Unarmed, true);
             }
 
-            if (character.LBows.trim()) {
+            if (character.LBows && character.LBows.trim()) {
                 embed.addField('Long Bows', character.LBows, true);
             }
 
-            if (character.SBows.trim()) {
+            if (character.SBows && character.SBows.trim()) {
                 embed.addField('Short Bows', character.SBows, true);
             }
 
-            if (character.CBows.trim()) {
+            if (character.CBows && character.CBows.trim()) {
                 embed.addField('Crossbows', character.CBows, true);
             }
 
-            if (character.Thrown.trim()) {
+            if (character.Thrown && character.Thrown.trim()) {
                 embed.addField('Thrown', character.Thrown, true);
             }
 
-            if (character.Fire.trim()) {
+            if (character.Fire && character.Fire.trim()) {
                 embed.addField('Fire', character.Fire, true);
             }
 
-            if (character.Wind.trim()) {
+            if (character.Wind && character.Wind.trim()) {
                 embed.addField('Wind', character.Wind, true);
             }
 
-            if (character.Thunder.trim()) {
+            if (character.Thunder && character.Thunder.trim()) {
                 embed.addField('Thunder', character.Thunder, true);
             }
 
-            if (character.Light.trim()) {
+            if (character.Light && character.Light.trim()) {
                 embed.addField('Light', character.Light, true);
             }
 
-            if (character.Dark.trim()) {
+            if (character.Dark && character.Dark.trim()) {
                 embed.addField('Dark', character.Dark, true);
             }
 
-            if (character.Staves.trim()) {
+            if (character.Staves && character.Staves.trim()) {
                 embed.addField('Staves', character.Staves, true);
             }
 
