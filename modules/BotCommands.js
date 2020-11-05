@@ -894,9 +894,6 @@ export default class BotCommands {
 
         this.message.channel.send("Starting archive...");
 
-        //We need to fetch all the members of the guild to make sure they're in the cache
-        await this.message.guild.members.fetch();
-
         this.sql.getSession()
         .then(s => { sessions[0] = s; return sessions[0].getSchema(Config.MYSQL_ARCHIVESDB) })
         .then(s => { return s.getTable("channels") })
