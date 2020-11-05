@@ -566,7 +566,7 @@ export default class BotCommands {
                 embed.addField('Old Dentorian', character.ODe, true);
             }
 
-            if (charactetr.HDe && character.HDe.trim()) {
+            if (character.HDe && character.HDe.trim()) {
                 embed.addField('High Dentorian', character.HDe, true);
             }
 
