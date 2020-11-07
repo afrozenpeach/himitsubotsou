@@ -25,6 +25,62 @@ client.on("ready", () => {
     }
 });
 
+client.on("channelUpdate", (oldChannel, newChannel) => {
+    if (newChannel.parent.name.toLowerCase().startsWith("archive") && oldChannel.parent.name.toLowerCase().startsWith("current")) {
+        let sessions = [];
+
+        newChannel.send("Starting archive...");
+
+        sql.getSession()
+        .then(s => { sessions[0] = s; return sessions[0].getSchema(Config.MYSQL_ARCHIVESDB) })
+        .then(s => { return s.getTable("channels") })
+        .then(t => {
+            t.insert(['category', 'channel'])
+            .values(newChannel.parent.name, newChannel.name)
+            .execute()
+            .then(async r => {
+                let channelId = r.getAutoIncrementValue();
+                let promises = [];                
+                let allMessagesRaw = [];
+                let last_id;
+
+                while (true) {
+                    const options = { limit: 100 };
+                    if (last_id) {
+                        options.before = last_id;
+                    }
+
+                    const messages = await newChannel.messages.fetch(options);
+                    allMessagesRaw.push(...messages.array());
+                    last_id = messages.last().id;
+
+                    if (messages.size != 100) {
+                        break;
+                    }
+                }
+
+                allMessagesRaw.forEach(m => {
+                    promises.push(
+                        sql.getSession()
+                        .then(s => { sessions[m.id] = s; return sessions[m.id].getSchema(Config.MYSQL_ARCHIVESDB) })
+                        .then(s => { return s.getTable("messages") })
+                        .then(t => {
+                            t.insert(['channelId', 'content', 'poster', 'timestamp', 'discordid'])
+                            .values(channelId, m.content, (m.member ? m.member.displayName : m.author.username), m.createdTimestamp, m.id)
+                            .execute()
+                            .then(() => sessions[m.id].close())
+                        })
+                    );
+                });
+
+                await Promise.all(promises);
+                newChannel.send("Archive complete. Found: " + allMessagesRaw.length + " messages.");
+            });
+        })
+        .then(() => sessions[0].close())
+    }
+})
+
 client.on("message", message => {
     try {
         //Ignore this and other bots' messages

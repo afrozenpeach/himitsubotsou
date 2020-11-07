@@ -889,54 +889,6 @@ export default class BotCommands {
         this.message.channel.send(embed);
     }
 
-    async archive() {
-        let sessions = [];
-
-        this.message.channel.send("Starting archive...");
-
-        this.sql.getSession()
-        .then(s => { sessions[0] = s; return sessions[0].getSchema(Config.MYSQL_ARCHIVESDB) })
-        .then(s => { return s.getTable("channels") })
-        .then(t => {
-            t.insert(['category', 'channel'])
-            .values(this.message.channel.parent.name, this.message.channel.name)
-            .execute()
-            .then(async r => {
-                let channelId = r.getAutoIncrementValue();
-                let promises = [];
-
-                let allMessagesRaw = await this.#getAllMessages(this.message.channel);
-
-                allMessagesRaw.forEach(m => {
-                    promises.push(
-                        this.sql.getSession()
-                        .then(s => { sessions[m.id] = s; return sessions[m.id].getSchema(Config.MYSQL_ARCHIVESDB) })
-                        .then(s => { return s.getTable("messages") })
-                        .then(t => {
-                            t.insert(['channelId', 'content', 'poster', 'timestamp', 'discordid'])
-                            .values(channelId, m.content, (m.member ? m.member.displayName : m.author.username), m.createdTimestamp, m.id)
-                            .execute()
-                            .then(() => sessions[m.id].close())
-                        })
-                    );
-                });
-
-                await Promise.all(promises);
-                this.message.channel.send("Archive complete. Found: " + allMessagesRaw.length + " messages.");
-            });
-        })
-        .then(() => sessions[0].close())
-    }
-
-    archiveHelp() {
-        let embed = new MessageEmbed()
-            .setColor("#ff0000")
-            .setTitle("Help - Archive")
-            .setDescription("Archives the current channel to the database");
-
-        this.message.channel.send(embed);
-    }
-
     #weaponsMagicProficiencies(args) {
         let session;
         let result = [];
@@ -1268,27 +1220,5 @@ export default class BotCommands {
         }
 
         return nameLine;
-    }
-
-    async #getAllMessages(channel) {
-        let sum_messages = [];
-        let last_id;
-
-        while (true) {
-            const options = { limit: 100 };
-            if (last_id) {
-                options.before = last_id;
-            }
-
-            const messages = await channel.messages.fetch(options);
-            sum_messages.push(...messages.array());
-            last_id = messages.last().id;
-
-            if (messages.size != 100) {
-                break;
-            }
-        }
-
-        return sum_messages;
     }
 }
