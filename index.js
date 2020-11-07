@@ -60,17 +60,19 @@ client.on("channelUpdate", (oldChannel, newChannel) => {
                 }
 
                 allMessagesRaw.forEach(m => {
-                    promises.push(
-                        sql.getSession()
-                        .then(s => { sessions[m.id] = s; return sessions[m.id].getSchema(Config.MYSQL_ARCHIVESDB) })
-                        .then(s => { return s.getTable("messages") })
-                        .then(t => {
-                            t.insert(['channelId', 'content', 'poster', 'timestamp', 'discordid'])
-                            .values(channelId, m.content, (m.member ? m.member.displayName : m.author.username), m.createdTimestamp, m.id)
-                            .execute()
-                            .then(() => sessions[m.id].close())
-                        })
-                    );
+                    if (!m.author.bot) {
+                        promises.push(
+                            sql.getSession()
+                            .then(s => { sessions[m.id] = s; return sessions[m.id].getSchema(Config.MYSQL_ARCHIVESDB) })
+                            .then(s => { return s.getTable("messages") })
+                            .then(t => {
+                                t.insert(['channelId', 'content', 'poster', 'timestamp', 'discordid'])
+                                .values(channelId, m.content, (m.member ? m.member.displayName : m.author.username), m.createdTimestamp, m.id)
+                                .execute()
+                                .then(() => sessions[m.id].close())
+                            })
+                        );
+                    }
                 });
 
                 await Promise.all(promises);
