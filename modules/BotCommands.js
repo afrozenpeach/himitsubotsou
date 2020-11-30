@@ -367,9 +367,14 @@ export default class BotCommands {
                     { name: "Hair Color", value: character.haircolor, inline: true },
                     { name: "Eye Color", value: character.eyecolor, inline: true },
                     { name: "Height", value: character.heightfeet + "'" + character.heightinches + " (" + character.heightcms + " cm)", inline: true },
-                    { name: "Build", value: character.build, inline: true },
-                    { name: "Skin Tone", value: character.skintone, inline: true }
+                    { name: "Build", value: character.build, inline: true }
                 );
+
+                if (character.skintone) {
+                    embed.addFields(
+                        { name: "Skin Tone", value: character.skintone, inline: true }
+                    );
+                }
 
                 if (character.cupsize) {
                     embed.addFields(
