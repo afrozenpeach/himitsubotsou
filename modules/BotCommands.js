@@ -231,6 +231,9 @@ export default class BotCommands {
             this.message.channel.send(embed);
         })
         .then(() => session.close())
+        .catch(e => {
+            this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+        }); 
     }
 
     charactersHelp() {
@@ -372,8 +375,8 @@ export default class BotCommands {
 
                 if (character.skintone) {
                     embed.addFields(
-                        { name: "Skin Tone", value: character.skintone, inline: true }
-                    );
+                    { name: "Skin Tone", value: character.skintone, inline: true }
+                );
                 }
 
                 if (character.cupsize) {
@@ -459,8 +462,14 @@ export default class BotCommands {
                 this.message.channel.send(embed);
             })
             .then(() => session.close())
+            .catch(e => {
+                this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+            });
         })
         .then(() => session.close())
+        .catch(e => {
+            this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+        });
     }
 
     profileHelp() {
@@ -636,6 +645,9 @@ export default class BotCommands {
 
             this.message.channel.send(embed);
         })
+        .catch(e => {
+            this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+        });
     }
 
     languagesHelp() {
@@ -797,7 +809,10 @@ export default class BotCommands {
 
             this.message.channel.send(embed);
         })
-        .then(() => session.close());
+        .then(() => session.close())
+        .catch(e => {
+            this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+        });
     }
 
     npcHelp() {
@@ -883,6 +898,9 @@ export default class BotCommands {
             this.#sendCharacterEmbed(characters, "#ffffff", "Search where " + args.join(' '));
         })
         .then(() => session.close())
+        .catch(e => {
+            this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+        });
     }
 
     searchHelp() {
@@ -1059,6 +1077,9 @@ export default class BotCommands {
 
             this.message.channel.send(embed);
         })
+        .catch(e => {
+            this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+        });
     }
 
     #weaponsMagicProficienciesHelp() {
