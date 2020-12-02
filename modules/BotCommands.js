@@ -346,7 +346,7 @@ export default class BotCommands {
 
                 if (noncombatLine) {
                     embed.addFields(
-                        { name: "Noncombat", value: character.noncombat.split('<br>').join('\n') }
+                        { name: "Noncombat", value: noncombatLine }
                     )
                 }
 
