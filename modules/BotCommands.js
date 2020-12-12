@@ -695,7 +695,7 @@ export default class BotCommands {
             )
         )
         .then(() => {
-            if (!r.length) {
+            if (!results.length) {
                 this.message.channel.send("No NPCs found.")
             } else {
                 for (const r of results) {
