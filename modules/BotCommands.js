@@ -176,6 +176,12 @@ export default class BotCommands {
                 user = this.message.client.users.cache.find(user => user.username == "ROSA");
                 color = "#800080";
                 break;
+            case "playerless":
+            case "unplayed":
+                user = undefined;
+                color = "#000000";
+                player = "playerless";
+                break;
             default:
                 this.message.channel.send("Player not found.");
                 return;
