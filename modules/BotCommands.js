@@ -277,8 +277,11 @@ export default class BotCommands {
         .then(() => {
             let character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
 
-            if (character.ID === undefined && error) {
-                this.message.channel.send("Character profile not found.");
+            if (character.ID === undefined) {
+                if (error) {
+                    this.message.channel.send("Character profile not found.");
+                }
+
                 return;
             }
 
