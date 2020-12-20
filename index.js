@@ -101,7 +101,8 @@ client.on("message", message => {
         if (typeof botCommands[command] === "function") {
             botCommands[command](args);
         } else {
-            botCommands.profile(command, false);
+            args.push(command);
+            botCommands.profile(args, false);
         }
     } catch (error) {
         message.channel.send("Error: " + error.message)
