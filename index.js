@@ -40,7 +40,7 @@ client.on("channelUpdate", (oldChannel, newChannel) => {
             .execute()
             .then(async r => {
                 let channelId = r.getAutoIncrementValue();
-                let promises = [];                
+                let promises = [];
                 let allMessagesRaw = [];
                 let last_id;
 
@@ -90,7 +90,7 @@ client.on("message", message => {
 
         //Ignore anything without the prefix
         if (!message.content.startsWith(Config.PREFIX)) return;
-        
+
         const commandBody = message.content.slice(Config.PREFIX.length);
         const args = commandBody.split(' ');
         const command = args.shift().toLowerCase();
@@ -100,6 +100,8 @@ client.on("message", message => {
         //If the command is a public function of botCommands, do the thing
         if (typeof botCommands[command] === "function") {
             botCommands[command](args);
+        } else {
+            botCommands.profile(command, false);
         }
     } catch (error) {
         message.channel.send("Error: " + error.message)

@@ -245,7 +245,7 @@ export default class BotCommands {
         this.message.channel.send(embed);
     }
 
-    profile(args) {
+    profile(args, error = true) {
         let session;
         let result = [];
 
@@ -271,7 +271,7 @@ export default class BotCommands {
         .then(() => {
             let character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
 
-            if (character.ID === undefined) {
+            if (character.ID === undefined && error) {
                 this.message.channel.send("Character profile not found.");
                 return;
             }
