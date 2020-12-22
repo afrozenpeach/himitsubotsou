@@ -350,7 +350,7 @@ export default class BotCommands {
                 }
 
                 if (character.noncombat) {
-                    noncombatLine += character.noncombat.split('<br>').join('\n');
+                    noncombatLine += character.noncombat.split('<br>').join('\n').split('<br/>').join('\n');
                 }
 
                 if (noncombatLine) {
