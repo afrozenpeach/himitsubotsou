@@ -355,7 +355,7 @@ export default class BotCommands {
 
                 if (noncombatLine) {
                     embed.addFields(
-                        { name: "Noncombat", value: noncombatLine }
+                        { name: "Notes", value: noncombatLine }
                     )
                 }
 
