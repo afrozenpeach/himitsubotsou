@@ -967,10 +967,13 @@ export default class BotCommands {
     }
 
     day(args) {
-        let date = Date.parse(args.join(' '));
-        let dateTime = new Date(date);
-
-        dateTime.setFullYear(dateTime.getFullYear() + 1382);
+        if (args.length > 0) {
+            date = Date.parse(args.join(' '));
+            dateTime = new Date(date);
+            dateTime.setFullYear(dateTime.getFullYear() + 1382);
+        } else {
+            this.message.channel.send("No date specified.");
+        }
 
         this.message.channel.send("Day of the week: " + dateTime.toLocaleString('en-us', {  weekday: 'long' }));
     }
