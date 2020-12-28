@@ -966,6 +966,24 @@ export default class BotCommands {
         this.message.channel.send(embed);
     }
 
+    day(args) {
+        let date = Date.parse(args.join(' '));
+        let dateTime = new Date(date);
+
+        dateTime.setFullYear(dateTime.getFullYear() + 1382);
+
+        this.message.channel.send("Day of the week: " + dateTime.toLocaleString('en-us', {  weekday: 'long' }));
+    }
+
+    dayHelp() {
+        let embed = new MessageEmbed()
+            .setColor("#ff0000")
+            .setTitle("Help - Day")
+            .setDescription("Converts the specified in-game date to a day of the week. Parameters: Date");
+
+        this.message.channel.send(embed);
+    }
+
     #weaponsMagicProficiencies(args) {
         let session;
         let result = [];
