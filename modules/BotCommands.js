@@ -362,10 +362,15 @@ export default class BotCommands {
                 embed.addFields(
                     { name: "Player", value: character.player , inline: true },
                     { name: "Status", value: character.status, inline: true },
-                    { name: "Sect", value: character.sect, inline: true },
-                    { name: "Birthday", value: character.birthmonth + " " + character.birthdate + ", " + character.year + " AR", inline: true },
-                    { name: "Zodiac", value: character.zodiac, inline: true }
+                    { name: "Sect", value: character.sect, inline: true }
                 );
+
+                if (character.birthmonth && character.birthdate && character.year && character.zodiac) {
+                    embed.addFields(
+                        { name: "Birthday", value: character.birthmonth + " " + character.birthdate + ", " + character.year + " AR", inline: true },
+                        { name: "Zodiac", value: character.zodiac, inline: true }
+                    );
+                }
 
                 if (character.bloodtype) {
                     embed.addFields(
