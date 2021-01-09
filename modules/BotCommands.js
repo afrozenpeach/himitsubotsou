@@ -415,10 +415,17 @@ export default class BotCommands {
 
                 hometownLine += character.country;
 
-                embed.addFields(
-                    { name: "Dominant Hand", value: character.domhand, inline: true },
-                    { name: "Hometown/Country", value: hometownLine, inline: true }
-                );
+                if (character.domhand) {
+                    embed.addFields(
+                        { name: "Dominant Hand", value: character.domhand, inline: true }
+                    )
+                }
+
+                if (character.hometownLine) {
+                    embed.addFields(
+                        { name: "Hometown/Country", value: hometownLine, inline: true }
+                    );
+                }
 
                 if (character.house) {
                     embed.addFields(
