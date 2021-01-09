@@ -379,8 +379,16 @@ export default class BotCommands {
                 }
 
                 embed.addFields(
-                    { name: "Gender", value: character.gender, inline: true },
-                    { name: "Orientation", value: character.orientation, inline: true },
+                    { name: "Gender", value: character.gender, inline: true }
+                );
+
+                if (character.orientation) {
+                    embed.addFields(
+                        { name: "Orientation", value: character.orientation, inline: true }
+                    );
+                }
+
+                embed.addFields(
                     { name: "Hair Color", value: character.haircolor, inline: true },
                     { name: "Eye Color", value: character.eyecolor, inline: true },
                     { name: "Height", value: character.heightfeet + "'" + character.heightinches + " (" + character.heightcms + " cm)", inline: true },
