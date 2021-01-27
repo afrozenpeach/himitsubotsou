@@ -26,8 +26,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
-      - run: npm run build
-      - run: npm test
       - name: ssh deploy
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
