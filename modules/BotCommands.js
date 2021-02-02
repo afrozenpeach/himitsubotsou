@@ -430,18 +430,25 @@ export default class BotCommands {
                 if (character.house) {
                     embed.addFields(
                         { name: "House", value: character.house, inline: true }
-                    )
+                    );
                 }
 
-                embed.addFields(
-                    { name: "Social Class", value: character.socialclass, inline: true },
-                    { name: "Jobs", value: character.jobs, inline: true }
-                )
+                if (character.socialClass) {
+                    embed.addFields(
+                        { name: "Social Class", value: character.socialclass, inline: true },
+                    );
+                }
+
+                if (character.jobs) {
+                    embed.addFields(
+                        { name: "Jobs", value: character.jobs, inline: true }
+                    );
+                }
 
                 if (character.subjobs) {
                     embed.addFields(
                         { name: "Sub Jobs", value: character.subjobs, inline: true }
-                    )
+                    );
                 }
 
                 embed.addFields(
