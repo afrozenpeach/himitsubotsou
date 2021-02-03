@@ -794,7 +794,7 @@ export default class BotCommands {
                         if (npc.npcBirthMonth && npc.npcBirthMonth != 'Unspecified') {
                             birthdateLine += npc.npcBirthMonth;
 
-                            if (npcBirthDate) {
+                            if (npc.npcBirthDate) {
                                 birthdateLine += " " + npc.npcBirthDate
                             }
 
