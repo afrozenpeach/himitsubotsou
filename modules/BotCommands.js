@@ -464,7 +464,7 @@ export default class BotCommands {
 
                 if (character.socialClass) {
                     embed.addFields(
-                        { name: "Social Class", value: character.socialclass, inline: true },
+                        { name: "Social Class", value: character.socialclass, inline: true }
                     );
                 }
 
@@ -488,7 +488,7 @@ export default class BotCommands {
 
                 if (character.pastclasses) {
                     embed.addFields(
-                        { name: "Pass Classes", value: character.pastclasses ?? '', inline: true },
+                        { name: "Past Classes", value: character.pastclasses ?? '', inline: true }
                     );
                 }
 
