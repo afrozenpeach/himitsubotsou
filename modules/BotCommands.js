@@ -480,9 +480,11 @@ export default class BotCommands {
                     );
                 }
 
-                embed.addFields(
-                    { name: "Class", value: character.class, inline: true }
-                );
+                if (character.class) {
+                    embed.addFields(
+                        { name: "Class", value: character.class, inline: true }
+                    );
+                }
 
                 if (character.pastclasses) {
                     embed.addFields(
