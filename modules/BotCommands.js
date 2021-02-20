@@ -359,11 +359,23 @@ export default class BotCommands {
                     )
                 }
 
-                embed.addFields(
-                    { name: "Player", value: character.player , inline: true },
-                    { name: "Status", value: character.status, inline: true },
-                    { name: "Sect", value: character.sect, inline: true }
-                );
+                if (character.player) {
+                    embed.addFields(
+                        { name: "Player", value: character.player , inline: true }
+                    );
+                }
+
+                if (character.status) {
+                    embed.addFields(
+                    { name: "Status", value: character.status, inline: true }
+                    );
+                }
+
+                if (character.sect) {
+                    embed.addFields(
+                        { name: "Sect", value: character.sect, inline: true }
+                    );
+                }
 
                 if (character.birthmonth && character.birthdate && character.year && character.zodiac) {
                     embed.addFields(
@@ -388,17 +400,34 @@ export default class BotCommands {
                     );
                 }
 
-                embed.addFields(
-                    { name: "Hair Color", value: character.haircolor, inline: true },
-                    { name: "Eye Color", value: character.eyecolor, inline: true },
-                    { name: "Height", value: character.heightfeet + "'" + character.heightinches + " (" + character.heightcms + " cm)", inline: true },
-                    { name: "Build", value: character.build, inline: true }
-                );
+                if (character.haircolor) {
+                    embed.addFields(
+                        { name: "Hair Color", value: character.haircolor, inline: true }
+                    );
+                }
+
+                if (character.eyecolor) {
+                    embed.addFields(
+                        { name: "Eye Color", value: character.eyecolor, inline: true }
+                    );
+                }
+
+                if (character.heightfeet && character.heightinches && character.heightcms) {
+                    embed.addFields(
+                        { name: "Height", value: character.heightfeet + "'" + character.heightinches + " (" + character.heightcms + " cm)", inline: true }
+                    );
+                }
+
+                if (character.build) {
+                    embed.addFields(
+                        { name: "Build", value: character.build, inline: true }
+                    );
+                }
 
                 if (character.skintone) {
                     embed.addFields(
                     { name: "Skin Tone", value: character.skintone, inline: true }
-                );
+                )
                 }
 
                 if (character.cupsize) {
