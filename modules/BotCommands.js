@@ -450,7 +450,7 @@ export default class BotCommands {
                     )
                 }
 
-                if (character.hometownLine) {
+                if (hometownLine) {
                     embed.addFields(
                         { name: "Hometown/Country", value: hometownLine, inline: true }
                     );
@@ -462,7 +462,7 @@ export default class BotCommands {
                     );
                 }
 
-                if (character.socialClass) {
+                if (character.socialclass) {
                     embed.addFields(
                         { name: "Social Class", value: character.socialclass, inline: true }
                     );
