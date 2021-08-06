@@ -1,4 +1,4 @@
-import { Client } from "discord.js";
+import { Client, Intents } from "discord.js";
 import { Config } from "./config.js";
 import express from 'express';
 import cors from 'cors';
@@ -17,7 +17,7 @@ const sql = mysqlx.getClient(
 const client = new Client({
     fetchAllMembers: true,
     presence: {activity: {name: "Himitsu no Sensou", type: "PLAYING"}, status: 'online'},
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.GUILD_PRESENCES, Intents.GUILD_MEMBERS]
+    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS]
 });
 
 client.on("ready", () => {
