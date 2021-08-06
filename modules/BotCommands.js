@@ -50,7 +50,7 @@ export default class BotCommands {
             .setTitle("Available commands")
             .setDescription(getAllMethods(this).join(", "));
 
-        this.message.channel.send(embed);
+        this.message.channel.send({ embeds: [embed] });
     }
 
     franelcrew(args) {
@@ -71,7 +71,7 @@ export default class BotCommands {
             .setTitle("Help - Franelcrew")
             .setDescription("Lists characters in the Franelcrew plotline.\n\nOptional Parameters: player name to filter by");
 
-        this.message.channel.send(embed);
+        this.message.channel.send({ embeds: [embed] });
     }
 
     hanalan(args) {
@@ -91,7 +91,7 @@ export default class BotCommands {
             .setTitle("Help - Franelcrew")
             .setDescription("Lists characters in the Hanalan Commons plotline.\n\nOptional Parameters: player name to filter by");
 
-        this.message.channel.send(embed);
+        this.message.channel.send({ embeds: [embed] });
     }
 
     eina(args) {
@@ -111,7 +111,7 @@ export default class BotCommands {
             .setTitle("Help - Franelcrew")
             .setDescription("Lists characters in the Eina plotline.\n\nOptional Parameters: player name to filter by");
 
-        this.message.channel.send(embed);
+        this.message.channel.send({ embeds: [embed] });
     }
 
     characters(args) {
@@ -234,7 +234,7 @@ export default class BotCommands {
                 embed.setThumbnail(user.displayAvatarURL("webp", true, "64"));
             }
 
-            this.message.channel.send(embed);
+            this.message.channel.send({ embeds: [embed] });
         })
         .then(() => session.close())
         .catch(e => {
@@ -248,7 +248,7 @@ export default class BotCommands {
             .setTitle("Help - Franelcrew")
             .setDescription("Lists characters played by the current user.\n\nOptional Parameters:\n\n0: alternative player name to filter by\n\n1: 'all'0 to include inactive characters");
 
-        this.message.channel.send(embed);
+        this.message.channel.send({ embeds: [embed] });
     }
 
     profile(args, error = true) {
@@ -526,7 +526,7 @@ export default class BotCommands {
                     );
                 }
 
-                this.message.channel.send(embed);
+                this.message.channel.send({ embeds: [embed] });
             })
             .then(() => session.close())
             .catch(e => {
@@ -545,7 +545,7 @@ export default class BotCommands {
             .setTitle("Help - Profile")
             .setDescription("Displays a profile for the specified character.");
 
-        this.message.channel.send(embed);
+        this.message.channel.send({ embeds: [embed] });
     }
 
     weapons(args) {
@@ -710,7 +710,7 @@ export default class BotCommands {
                 embed.addField('Romani Notes', character.RoNotes);
             }
 
-            this.message.channel.send(embed);
+            this.message.channel.send({ embeds: [embed] });
         })
         .catch(e => {
             this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
@@ -723,7 +723,7 @@ export default class BotCommands {
             .setTitle("Help - Language Proficiencies")
             .setDescription("Displays the language proficiencies for the specified character. Aliases: !languages or !lang");
 
-        this.message.channel.send(embed);
+        this.message.channel.send({ embeds: [embed] });
     }
 
     lang(args) {
@@ -913,7 +913,7 @@ export default class BotCommands {
                             );
                         }
 
-                        this.message.channel.send(embed);
+                        this.message.channel.send({ embeds: [embed] });
                     })
                     .catch(e => {
                         this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
@@ -933,7 +933,7 @@ export default class BotCommands {
             .setTitle("Help - NPC")
             .setDescription("Displays a profile for the specified npc.");
 
-        this.message.channel.send(embed);
+        this.message.channel.send({ embeds: [embed] });
     }
 
     birthmonth(args) {
@@ -966,7 +966,7 @@ export default class BotCommands {
 
             embed.setDescription(finalMessage.slice(0, -1));
 
-            this.message.channel.send(embed);
+            this.message.channel.send({ embeds: [embed] });
         })
         .then(() => session.close())
     }
@@ -977,7 +977,7 @@ export default class BotCommands {
             .setTitle("Help - Birth Month")
             .setDescription("Lists characters that have a birthday in the designated month.");
 
-        this.message.channel.send(embed);
+        this.message.channel.send({ embeds: [embed] });
     }
 
     search(args) {
@@ -1021,7 +1021,7 @@ export default class BotCommands {
             .setTitle("Help - SQL Search")
             .setDescription("Returns a list of characters and their players for a given where clause.\n\nAvailable Fields:\nID, picture, name, nickname1, nickname2, journal, jobs, subjobs, socialclass, country, hometown, house, birthmonth, birthdate, year, zodiac, bloodtype, sect, status, player, queued, adoptable, haircolor, eyecolor, heightfeet, heightinches, heightcms, build, skintone, cupsize, domhand, identifiers, class, pastclasses, mountcombat, orientation, noncombat, gender, Special\n\nExamples:\nname = 'Fayre' -> Just 'Fayre'\nname like 'ra%' -> Starts with 'ra'\nyear < 600 -> Born before 600 AR");
 
-        this.message.channel.send(embed);
+        this.message.channel.send({ embeds: [embed] });
     }
 
     day(args) {
@@ -1042,7 +1042,7 @@ export default class BotCommands {
             .setTitle("Help - Day")
             .setDescription("Converts the specified in-game date to a day of the week. Parameters: Date");
 
-        this.message.channel.send(embed);
+        this.message.channel.send({ embeds: [embed] });
     }
 
     #weaponsMagicProficiencies(args) {
@@ -1208,7 +1208,7 @@ export default class BotCommands {
                 embed.addField('Civilian', "Civilian", true);
             }
 
-            this.message.channel.send(embed);
+            this.message.channel.send({ embeds: [embed] });
         })
         .catch(e => {
             this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
@@ -1221,7 +1221,7 @@ export default class BotCommands {
             .setTitle("Help - Weapon and Magic Proficiencies")
             .setDescription("Displays the weapon and magic proficiencies for the specified character. Aliases: !weapons or !magic");
 
-        this.message.channel.send(embed);
+        this.message.channel.send({ embeds: [embed] });
     }
 
     //Takes a list of players/characters, a color, and a title, and creates a custom embed
@@ -1274,7 +1274,7 @@ export default class BotCommands {
             embed.addField(pc.player, characterString.slice(0, -2))
         }, this);
 
-        this.message.channel.send(embed);
+        this.message.channel.send({ embeds: [embed] });
     }
 
     //Gets the emoji based on a character name

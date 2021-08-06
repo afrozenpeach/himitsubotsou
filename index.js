@@ -16,7 +16,8 @@ const sql = mysqlx.getClient(
 //Discord Bot
 const client = new Client({
     fetchAllMembers: true,
-    presence: {activity: {name: "Himitsu no Sensou", type: "PLAYING"}, status: 'online'}
+    presence: {activity: {name: "Himitsu no Sensou", type: "PLAYING"}, status: 'online'},
+    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.GUILD_PRESENCES, Intents.GUILD_MEMBERS]
 });
 
 client.on("ready", () => {
@@ -83,7 +84,7 @@ client.on("channelUpdate", (oldChannel, newChannel) => {
     }
 })
 
-client.on("message", message => {
+client.on("messageCreate", message => {
     try {
         //Ignore this and other bots' messages
         if (message.author.bot) return;
