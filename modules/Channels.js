@@ -70,7 +70,15 @@ export default function createRouter(sql) {
                 }
             });
 
-            res.status(200).json(output);
+            res.status(200).json(output.sort((a, b) => {
+                if (a.date > b.date) {
+                    return 1;
+                } else if (a.date === b.date) {
+                    return 0;
+                } else {
+                    return -1;
+                }
+            }));
         }
     })
   });
