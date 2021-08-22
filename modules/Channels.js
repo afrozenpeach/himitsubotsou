@@ -29,7 +29,7 @@ export default function createRouter(sql) {
     var session;
 
     if (req.params.category === 'Archive - All Channels') {
-        req.params.category = '';
+        req.params.category = '%';
     }
 
     sql.getSession()
