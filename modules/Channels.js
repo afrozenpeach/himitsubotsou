@@ -18,6 +18,7 @@ export default function createRouter(sql) {
     .then(r => {
         if (r) {
             var output = r.fetchAll();
+            output.push('Archives - All Channels');
             res.status(200).json(output);
         }
     })
@@ -26,6 +27,10 @@ export default function createRouter(sql) {
   //Get all channels for a category
   router.get('/api/channels/category/:category', function (req, res, next) {
     var session;
+
+    if (req.params.category === 'Archives - All Channels') {
+        req.params.category = '';
+    }
 
     sql.getSession()
     .then(s => { session = s; return session.getSchema(Config.MYSQL_ARCHIVESDB) })
