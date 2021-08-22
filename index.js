@@ -36,8 +36,8 @@ client.on("channelUpdate", (oldChannel, newChannel) => {
         .then(s => { sessions[0] = s; return sessions[0].getSchema(Config.MYSQL_ARCHIVESDB) })
         .then(s => { return s.getTable("channels") })
         .then(t => {
-            t.insert(['category', 'channel'])
-            .values(newChannel.parent.name, newChannel.name)
+            t.insert(['category', 'channel', 'discordid'])
+            .values(newChannel.parent.name, newChannel.name, newChannel.id)
             .execute()
             .then(async r => {
                 let channelId = r.getAutoIncrementValue();
