@@ -41,7 +41,21 @@ export default function createRouter(sql) {
         }))
     .then(r => {
         if (r) {
-            var output = r.fetchAll();
+            let fetched = r.fetchAll();
+            let output = [];
+
+            fetched.forEach(f => {
+                let d = f[2].split('_');
+
+                output.push({
+                    id: f[0],
+                    category: f[1],
+                    channel: f[2],
+                    location: d[0],
+                    characters: d[1],
+                    date: new Date(d[2].replace('-ar', '').replace('ar', ''))
+                })
+            });
 
             res.status(200).json(output);
         }
