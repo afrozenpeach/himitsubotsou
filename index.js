@@ -16,8 +16,8 @@ const sql = mysqlx.getClient(
 //Discord Bot
 const client = new Client({
     fetchAllMembers: true,
-    presence: {activity: {name: "Himitsu no Sensou", type: "PLAYING"}, status: 'online'},
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS]
+    presence: {activities: [{name: "Himitsu no Sensou", type: "PLAYING"}], status: 'online'},
+    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_PRESENCES]
 });
 
 client.on("ready", () => {
