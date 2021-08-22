@@ -53,24 +53,6 @@ export default class BotCommands {
         this.message.channel.send({ embeds: [embed] });
     }
 
-    fixdb() {
-        let session;
-
-        this.sql.getSession()
-        .then(s => { session = s; return session.getSchema(Config.MYSQL_ARCHIVESDB) })
-        .then(s => { return s.getTable("channels") })
-        .then(t =>
-            this.message.guild.channels.cache.forEach(c => {
-                t.update()
-                .where('channel like :name')
-                .bind('name', c.name)
-                .set('discordid', c.id)
-                .execute()
-            })
-        )
-        .then(() => session.close())
-    }
-
     franelcrew(args) {
         let franelcrew = [
             { player: "Rosa", characters: ["Aileen", "Celeste", "Crionna", "Eabhan (Eabh)", "Korvin", "Maeryn/\"Ethniu\"", "Nessa", "Suaimeas"] },
