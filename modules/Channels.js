@@ -74,7 +74,11 @@ export default function createRouter(sql) {
                 if (a.date > b.date) {
                     return 1;
                 } else if (a.date === b.date) {
-                    return 0;
+                    if (a.id > b.id) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
                 } else {
                     return -1;
                 }
