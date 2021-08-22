@@ -30,6 +30,34 @@ client.on("channelUpdate", (oldChannel, newChannel) => {
     if (newChannel.parent.name.toLowerCase().startsWith("archive") && oldChannel.parent.name.toLowerCase().startsWith("current")) {
         let sessions = [];
 
+        let d = newChannel.name.split('_');
+
+        try {
+            if (d.length != 3) {
+                throw 'invalid format for channel name';
+            }
+
+            d[0].replaceAll('-', ' ').split(' ').map(function(word) {
+                return (word.charAt(0).toUpperCase() + word.slice(1));
+            }).join(' ');
+
+            d[1].split('-').map(function(word) {
+                return (word.charAt(0).toUpperCase() + word.slice(1));
+            });
+
+            let date = new Date(d[2].replace('-ar', '').replace('ar', ''));
+
+            if (date.getFullYear > 650) {
+                throw 'invalid  year';
+            }
+        } catch (error) {
+            newChannel.send('Archive failed - Channel name must be in the format location_characters_date');
+
+            newChannel.setParent(oldChannel.parent)
+
+            return;
+        }
+
         newChannel.send("Starting archive...");
 
         sql.getSession()
