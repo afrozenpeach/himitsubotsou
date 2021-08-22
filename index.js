@@ -52,7 +52,7 @@ client.on("channelUpdate", (oldChannel, newChannel) => {
                     }
 
                     const messages = await newChannel.messages.fetch(options);
-                    allMessagesRaw.push(...messages.array());
+                    allMessagesRaw.push(...messages.values());
                     last_id = messages.last().id;
 
                     if (messages.size != 100) {
