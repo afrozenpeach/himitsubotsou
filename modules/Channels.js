@@ -47,14 +47,27 @@ export default function createRouter(sql) {
             fetched.forEach(f => {
                 let d = f[2].split('_');
 
-                output.push({
-                    id: f[0],
-                    category: f[1],
-                    channel: f[2],
-                    location: d[0],
-                    characters: d[1],
-                    date: new Date(d[2].replace('-ar', '').replace('ar', ''))
-                })
+                try {
+                    output.push({
+                        id: f[0],
+                        category: f[1],
+                        channel: f[2],
+                        location: d[0].replaceAll('-', ' ').split(' ').map(function(word) {
+                            return (word.charAt(0).toUpperCase() + word.slice(1));
+                        }).join(' '),
+                        characters: d[1].split('-').map(function(word) {
+                            return (word.charAt(0).toUpperCase() + word.slice(1));
+                        }),
+                        date: new Date(d[2].replace('-ar', '').replace('ar', '')),
+                        discordId: f[3]
+                    })
+                } catch (error) {
+                    output.push({
+                        id: f[0],
+                        category: f[1],
+                        channel: f[2]
+                    })
+                }
             });
 
             res.status(200).json(output);
