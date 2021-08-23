@@ -120,7 +120,13 @@ export default class BotCommands {
         if (args.length > 0 && args[0] != undefined && args[0].length > 0) {
             player = args[0].toLocaleLowerCase();
         } else {
-            switch (this.message.author.username.toLocaleLowerCase()) {
+            let userName = this.message.author.username;
+
+            if (userName === undefined) {
+                userName = this.message.user.username;
+            }
+
+            switch (userName.toLocaleLowerCase()) {
                 case "frozenpeach":
                     player = "Frozen";
                     break;
