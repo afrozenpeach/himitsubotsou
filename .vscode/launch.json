@@ -8,6 +8,15 @@
         {
             "type": "pwa-node",
             "request": "launch",
+            "name": "Deploy Slash Commands",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\deploy_commands.js"
+        },
+        {
+            "type": "pwa-node",
+            "request": "launch",
             "name": "Launch Program",
             "skipFiles": [
                 "<node_internals>/**"

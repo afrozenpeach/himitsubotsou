@@ -138,6 +138,16 @@ client.on("messageCreate", message => {
     }
 });
 
+client.on('interactionCreate', async interaction => {
+	if (!interaction.isCommand()) return;
+
+	const { commandName } = interaction;
+
+    const botCommands = new BotCommands(interaction, sql);
+
+    botCommands[commandName]([interaction.options.getString('arg')]);
+});
+
 client.login(Config.BOT_TOKEN);
 
 //Web API

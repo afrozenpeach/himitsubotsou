@@ -1,5 +1,6 @@
 import { MessageEmbed } from "discord.js";
 import { Config } from "../config.js";
+import { SlashCommandBuilder } from '@discordjs/builders';
 
 export default class BotCommands {
     constructor(message, sql) {
@@ -7,50 +8,42 @@ export default class BotCommands {
         this.sql = sql;
     }
 
+    buildSlashCommands() {
+        let commands = [];
+
+        this.#getAllMethods(this).forEach(m => {
+            try {
+                let mh = m + 'Help';
+                let md = this[mh]();
+
+                commands.push(new SlashCommandBuilder().setName(m).setDescription(md.description.split('\n')[0]).addStringOption(o => o.setName('arg').setDescription('arg')));
+            } catch (error) {
+                //do nothing!
+            }
+        }, this);
+
+        return commands.map(c => c.toJSON());
+    }
+
     help(args) {
         if (args[0] !== undefined) {
             let argHelp = args[0] + "Help";
 
             if (typeof this[argHelp] === 'function') {
-                this[argHelp]();
+                this.message.reply({ embeds: [this[argHelp]()] });
             } else {
-                this.message.channel.send("No additional help.");
+                this.message.reply("No additional help.");
             }
 
             return;
         }
 
-        //Thanks for the snippet https://stackoverflow.com/a/35033472
-        const getAllMethods = (obj) => {
-            let props = [];
-
-            do {
-                const l = Object.getOwnPropertyNames(obj)
-                    .concat(Object.getOwnPropertySymbols(obj).map(s => s.toString()))
-                    .sort()
-                    .filter((p, i, arr) =>
-                        typeof obj[p] === 'function' &&  //only the methods
-                        p !== 'constructor' &&           //not the constructor
-                        (i == 0 || p !== arr[i - 1]) &&  //not overriding in this prototype
-                        props.indexOf(p) === -1 &&       //not overridden in a child
-                        !p.endsWith("Help")              //not a help function
-                    );
-                props = props.concat(l);
-            }
-            while (
-                (obj = Object.getPrototypeOf(obj)) &&   //walk-up the prototype chain
-                Object.getPrototypeOf(obj)              //not the the Object prototype methods (hasOwnProperty, etc...)
-            )
-
-            return props;
-        }
-
         let embed = new MessageEmbed()
             .setColor("#ff0000")
             .setTitle("Available commands")
-            .setDescription(getAllMethods(this).join(", "));
+            .setDescription(this.#getAllMethods(this).join(", "));
 
-        this.message.channel.send({ embeds: [embed] });
+        this.message.reply({ embeds: [embed] });
     }
 
     franelcrew(args) {
@@ -71,7 +64,7 @@ export default class BotCommands {
             .setTitle("Help - Franelcrew")
             .setDescription("Lists characters in the Franelcrew plotline.\n\nOptional Parameters: player name to filter by");
 
-        this.message.channel.send({ embeds: [embed] });
+            return embed;
     }
 
     hanalan(args) {
@@ -91,7 +84,7 @@ export default class BotCommands {
             .setTitle("Help - Franelcrew")
             .setDescription("Lists characters in the Hanalan Commons plotline.\n\nOptional Parameters: player name to filter by");
 
-        this.message.channel.send({ embeds: [embed] });
+            return embed;
     }
 
     eina(args) {
@@ -111,7 +104,7 @@ export default class BotCommands {
             .setTitle("Help - Franelcrew")
             .setDescription("Lists characters in the Eina plotline.\n\nOptional Parameters: player name to filter by");
 
-        this.message.channel.send({ embeds: [embed] });
+            return embed;
     }
 
     characters(args) {
@@ -183,7 +176,7 @@ export default class BotCommands {
                 player = "playerless";
                 break;
             default:
-                this.message.channel.send("Player not found.");
+                this.message.reply("Player not found.");
                 return;
         }
 
@@ -234,11 +227,11 @@ export default class BotCommands {
                 embed.setThumbnail(user.displayAvatarURL("webp", true, "64"));
             }
 
-            this.message.channel.send({ embeds: [embed] });
+            this.message.reply({ embeds: [embed] });
         })
         .then(() => session.close())
         .catch(e => {
-            this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+            this.message.reply(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
         });
     }
 
@@ -248,7 +241,7 @@ export default class BotCommands {
             .setTitle("Help - Franelcrew")
             .setDescription("Lists characters played by the current user.\n\nOptional Parameters:\n\n0: alternative player name to filter by\n\n1: 'all'0 to include inactive characters");
 
-        this.message.channel.send({ embeds: [embed] });
+            return embed;
     }
 
     profile(args, error = true) {
@@ -279,7 +272,7 @@ export default class BotCommands {
 
             if (character.ID === undefined) {
                 if (error) {
-                    this.message.channel.send("Character profile not found.");
+                    this.message.reply("Character profile not found.");
                 }
 
                 return;
@@ -526,16 +519,16 @@ export default class BotCommands {
                     );
                 }
 
-                this.message.channel.send({ embeds: [embed] });
+                this.message.reply({ embeds: [embed] });
             })
             .then(() => session.close())
             .catch(e => {
-                this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+                this.message.reply(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
             });
         })
         .then(() => session.close())
         .catch(e => {
-            this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+            this.message.reply(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
         });
     }
 
@@ -545,7 +538,7 @@ export default class BotCommands {
             .setTitle("Help - Profile")
             .setDescription("Displays a profile for the specified character.");
 
-        this.message.channel.send({ embeds: [embed] });
+            return embed;
     }
 
     weapons(args) {
@@ -586,7 +579,7 @@ export default class BotCommands {
             let character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
 
             if (character.ID === undefined) {
-                this.message.channel.send("Character proficiencies not found.");
+                this.message.reply("Character proficiencies not found.");
                 return;
             }
 
@@ -710,10 +703,10 @@ export default class BotCommands {
                 embed.addField('Romani Notes', character.RoNotes);
             }
 
-            this.message.channel.send({ embeds: [embed] });
+            this.message.reply({ embeds: [embed] });
         })
         .catch(e => {
-            this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+            this.message.reply(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
         });
     }
 
@@ -723,7 +716,7 @@ export default class BotCommands {
             .setTitle("Help - Language Proficiencies")
             .setDescription("Displays the language proficiencies for the specified character. Aliases: !languages or !lang");
 
-        this.message.channel.send({ embeds: [embed] });
+            return embed;
     }
 
     lang(args) {
@@ -763,13 +756,13 @@ export default class BotCommands {
         )
         .then(() => {
             if (!results.length) {
-                this.message.channel.send("No NPCs found.")
+                this.message.reply("No NPCs found.")
             } else {
                 for (const r of results) {
                     let npc = r.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
 
                     if (npc.ID === undefined) {
-                        this.message.channel.send("NPC profile not found.");
+                        this.message.reply("NPC profile not found.");
                         return;
                     }
 
@@ -913,17 +906,17 @@ export default class BotCommands {
                             );
                         }
 
-                        this.message.channel.send({ embeds: [embed] });
+                        this.message.reply({ embeds: [embed] });
                     })
                     .catch(e => {
-                        this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+                        this.message.reply(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
                     });
                 }
             }
         })
         .then(() => session.close())
         .catch(e => {
-            this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+            this.message.reply(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
         });
     }
 
@@ -933,7 +926,7 @@ export default class BotCommands {
             .setTitle("Help - NPC")
             .setDescription("Displays a profile for the specified npc.");
 
-        this.message.channel.send({ embeds: [embed] });
+            return embed;
     }
 
     birthmonth(args) {
@@ -966,7 +959,7 @@ export default class BotCommands {
 
             embed.setDescription(finalMessage.slice(0, -1));
 
-            this.message.channel.send({ embeds: [embed] });
+            this.message.reply({ embeds: [embed] });
         })
         .then(() => session.close())
     }
@@ -977,7 +970,7 @@ export default class BotCommands {
             .setTitle("Help - Birth Month")
             .setDescription("Lists characters that have a birthday in the designated month.");
 
-        this.message.channel.send({ embeds: [embed] });
+            return embed;
     }
 
     search(args) {
@@ -1011,7 +1004,7 @@ export default class BotCommands {
         })
         .then(() => session.close())
         .catch(e => {
-            this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+            this.message.reply(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
         });
     }
 
@@ -1021,7 +1014,7 @@ export default class BotCommands {
             .setTitle("Help - SQL Search")
             .setDescription("Returns a list of characters and their players for a given where clause.\n\nAvailable Fields:\nID, picture, name, nickname1, nickname2, journal, jobs, subjobs, socialclass, country, hometown, house, birthmonth, birthdate, year, zodiac, bloodtype, sect, status, player, queued, adoptable, haircolor, eyecolor, heightfeet, heightinches, heightcms, build, skintone, cupsize, domhand, identifiers, class, pastclasses, mountcombat, orientation, noncombat, gender, Special\n\nExamples:\nname = 'Fayre' -> Just 'Fayre'\nname like 'ra%' -> Starts with 'ra'\nyear < 600 -> Born before 600 AR");
 
-        this.message.channel.send({ embeds: [embed] });
+            return embed;
     }
 
     day(args) {
@@ -1030,9 +1023,9 @@ export default class BotCommands {
             let dateTime = new Date(date);
             dateTime.setFullYear(dateTime.getFullYear() + 1382);
 
-            this.message.channel.send("Day of the week: " + dateTime.toLocaleString('en-us', {  weekday: 'long' }));
+            this.message.reply("Day of the week: " + dateTime.toLocaleString('en-us', {  weekday: 'long' }));
         } else {
-            this.message.channel.send("No date specified.");
+            this.message.reply("No date specified.");
         }
     }
 
@@ -1042,7 +1035,7 @@ export default class BotCommands {
             .setTitle("Help - Day")
             .setDescription("Converts the specified in-game date to a day of the week. Parameters: Date");
 
-        this.message.channel.send({ embeds: [embed] });
+            return embed;
     }
 
     #weaponsMagicProficiencies(args) {
@@ -1067,7 +1060,7 @@ export default class BotCommands {
             let character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
 
             if (character.ID === undefined) {
-                this.message.channel.send("Character proficiencies not found.");
+                this.message.reply("Character proficiencies not found.");
                 return;
             }
 
@@ -1208,10 +1201,10 @@ export default class BotCommands {
                 embed.addField('Civilian', "Civilian", true);
             }
 
-            this.message.channel.send({ embeds: [embed] });
+            this.message.reply({ embeds: [embed] });
         })
         .catch(e => {
-            this.message.channel.send(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+            this.message.reply(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
         });
     }
 
@@ -1221,7 +1214,7 @@ export default class BotCommands {
             .setTitle("Help - Weapon and Magic Proficiencies")
             .setDescription("Displays the weapon and magic proficiencies for the specified character. Aliases: !weapons or !magic");
 
-        this.message.channel.send({ embeds: [embed] });
+        return embed;
     }
 
     //Takes a list of players/characters, a color, and a title, and creates a custom embed
@@ -1274,7 +1267,7 @@ export default class BotCommands {
             embed.addField(pc.player, characterString.slice(0, -2))
         }, this);
 
-        this.message.channel.send({ embeds: [embed] });
+        this.message.reply({ embeds: [embed] });
     }
 
     //Gets the emoji based on a character name
@@ -1379,5 +1372,32 @@ export default class BotCommands {
         }
 
         return nameLine;
+    }
+
+    //Thanks for the snippet https://stackoverflow.com/a/35033472
+    #getAllMethods = (obj) => {
+        let props = [];
+
+        do {
+            const l = Object.getOwnPropertyNames(obj)
+                .concat(Object.getOwnPropertySymbols(obj).map(s => s.toString()))
+                .sort()
+                .filter((p, i, arr) =>
+                    typeof obj[p] === 'function' &&  //only the methods
+                    p !== 'constructor' &&           //not the constructor
+                    (i == 0 || p !== arr[i - 1]) &&  //not overriding in this prototype
+                    props.indexOf(p) === -1 &&       //not overridden in a child
+                    !p.endsWith("Help") &&           //not a help function
+                    !p.endsWith("buildSlashCommands") &&
+                    !p.endsWith("getAllMethods")
+                );
+            props = props.concat(l);
+        }
+        while (
+            (obj = Object.getPrototypeOf(obj)) &&   //walk-up the prototype chain
+            Object.getPrototypeOf(obj)              //not the the Object prototype methods (hasOwnProperty, etc...)
+        )
+
+        return props;
     }
 }
