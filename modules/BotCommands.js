@@ -117,7 +117,7 @@ export default class BotCommands {
 
         //If there is an arg find the characters for that player
         //Otherwise find the characters for the player that activated the command
-        if (args.length > 0 && args[0].length > 0) {
+        if (args.length > 0 && args[0] != undefined && args[0].length > 0) {
             player = args[0].toLocaleLowerCase();
         } else {
             switch (this.message.author.username.toLocaleLowerCase()) {
