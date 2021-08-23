@@ -123,7 +123,7 @@ export default class BotCommands {
             user = this.message.author;
 
             if (user === undefined) {
-                userName = this.message.user;
+                user = this.message.user;
             }
 
             switch (user.username.toLocaleLowerCase()) {
