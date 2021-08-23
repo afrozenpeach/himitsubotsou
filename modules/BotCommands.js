@@ -232,7 +232,7 @@ export default class BotCommands {
         })
         .then(() => session.close())
         .catch(e => {
-            this.message.reply({ content: e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/), , ephemeral: this.ephemeral });
+            this.message.reply({ content: e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/), ephemeral: this.ephemeral });
         });
     }
 
