@@ -124,7 +124,7 @@ client.on("messageCreate", message => {
         const args = commandBody.split(' ');
         const command = args.shift().toLowerCase();
 
-        const botCommands = new BotCommands(message, sql);
+        const botCommands = new BotCommands(message, sql, false);
 
         //If the command is a public function of botCommands, do the thing
         if (typeof botCommands[command] === "function") {
@@ -143,7 +143,7 @@ client.on('interactionCreate', async interaction => {
 
 	const { commandName } = interaction;
 
-    const botCommands = new BotCommands(interaction, sql);
+    const botCommands = new BotCommands(interaction, sql, true);
 
     botCommands[commandName]([interaction.options.getString('arg')]);
 });

@@ -3,9 +3,10 @@ import { Config } from "../config.js";
 import { SlashCommandBuilder } from '@discordjs/builders';
 
 export default class BotCommands {
-    constructor(message, sql) {
+    constructor(message, sql, ephemeral) {
         this.message = message;
         this.sql = sql;
+        this.ephemeral = ephemeral;
     }
 
     buildSlashCommands() {
@@ -30,9 +31,9 @@ export default class BotCommands {
             let argHelp = args[0] + "Help";
 
             if (typeof this[argHelp] === 'function') {
-                this.message.reply({ embeds: [this[argHelp]()] });
+                this.message.reply({ embeds: [this[argHelp]()], ephemeral: this.ephemeral  });
             } else {
-                this.message.reply("No additional help.");
+                this.message.reply({ content: "No additional help.", ephemeral: this.ephemeral });
             }
 
             return;
@@ -43,7 +44,7 @@ export default class BotCommands {
             .setTitle("Available commands")
             .setDescription(this.#getAllMethods(this).join(", "));
 
-        this.message.reply({ embeds: [embed] });
+        this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  });
     }
 
     franelcrew(args) {
@@ -176,7 +177,7 @@ export default class BotCommands {
                 player = "playerless";
                 break;
             default:
-                this.message.reply("Player not found.");
+                this.message.reply({ content: "Player not found.", ephemeral: this.ephemeral });
                 return;
         }
 
@@ -227,11 +228,11 @@ export default class BotCommands {
                 embed.setThumbnail(user.displayAvatarURL("webp", true, "64"));
             }
 
-            this.message.reply({ embeds: [embed] });
+            this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  });
         })
         .then(() => session.close())
         .catch(e => {
-            this.message.reply(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+            this.message.reply({ content: e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/), , ephemeral: this.ephemeral });
         });
     }
 
@@ -272,7 +273,7 @@ export default class BotCommands {
 
             if (character.ID === undefined) {
                 if (error) {
-                    this.message.reply("Character profile not found.");
+                    this.message.reply({ content: "Character profile not found.", ephemeral: this.ephemeral });
                 }
 
                 return;
@@ -519,16 +520,16 @@ export default class BotCommands {
                     );
                 }
 
-                this.message.reply({ embeds: [embed] });
+                this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  });
             })
             .then(() => session.close())
             .catch(e => {
-                this.message.reply(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+                this.message.reply({ content: e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/), ephemeral: this.ephemeral });
             });
         })
         .then(() => session.close())
         .catch(e => {
-            this.message.reply(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+            this.message.reply({ content: e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/), ephemeral: this.ephemeral });
         });
     }
 
@@ -703,10 +704,10 @@ export default class BotCommands {
                 embed.addField('Romani Notes', character.RoNotes);
             }
 
-            this.message.reply({ embeds: [embed] });
+            this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  });
         })
         .catch(e => {
-            this.message.reply(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+            this.message.reply({ content: e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/), ephemeral: this.ephemeral });
         });
     }
 
@@ -756,13 +757,13 @@ export default class BotCommands {
         )
         .then(() => {
             if (!results.length) {
-                this.message.reply("No NPCs found.")
+                this.message.reply({ content: "No NPCs found.", ephemeral: this.ephemeral })
             } else {
                 for (const r of results) {
                     let npc = r.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
 
                     if (npc.ID === undefined) {
-                        this.message.reply("NPC profile not found.");
+                        this.message.reply({ content: "NPC profile not found.", ephemeral: this.ephemeral });
                         return;
                     }
 
@@ -906,17 +907,17 @@ export default class BotCommands {
                             );
                         }
 
-                        this.message.reply({ embeds: [embed] });
+                        this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  });
                     })
                     .catch(e => {
-                        this.message.reply(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+                        this.message.reply({ content: e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/), ephemeral: this.ephemeral });
                     });
                 }
             }
         })
         .then(() => session.close())
         .catch(e => {
-            this.message.reply(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+            this.message.reply({ content: e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/), ephemeral: this.ephemeral });
         });
     }
 
@@ -959,7 +960,7 @@ export default class BotCommands {
 
             embed.setDescription(finalMessage.slice(0, -1));
 
-            this.message.reply({ embeds: [embed] });
+            this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  });
         })
         .then(() => session.close())
     }
@@ -1004,7 +1005,7 @@ export default class BotCommands {
         })
         .then(() => session.close())
         .catch(e => {
-            this.message.reply(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+            this.message.reply({ content: e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/), ephemeral: this.ephemeral });
         });
     }
 
@@ -1023,9 +1024,9 @@ export default class BotCommands {
             let dateTime = new Date(date);
             dateTime.setFullYear(dateTime.getFullYear() + 1382);
 
-            this.message.reply("Day of the week: " + dateTime.toLocaleString('en-us', {  weekday: 'long' }));
+            this.message.reply({ content: "Day of the week: " + dateTime.toLocaleString('en-us', {  weekday: 'long' }), ephemeral: this.ephemeral });
         } else {
-            this.message.reply("No date specified.");
+            this.message.reply({ content: "No date specified.", ephemeral: this.ephemeral });
         }
     }
 
@@ -1060,7 +1061,7 @@ export default class BotCommands {
             let character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
 
             if (character.ID === undefined) {
-                this.message.reply("Character proficiencies not found.");
+                this.message.reply({ content: "Character proficiencies not found.", ephemeral: this.ephemeral });
                 return;
             }
 
@@ -1201,10 +1202,10 @@ export default class BotCommands {
                 embed.addField('Civilian', "Civilian", true);
             }
 
-            this.message.reply({ embeds: [embed] });
+            this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  });
         })
         .catch(e => {
-            this.message.reply(e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/));
+            this.message.reply({ content: e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/), ephemeral: this.ephemeral });
         });
     }
 
@@ -1267,7 +1268,7 @@ export default class BotCommands {
             embed.addField(pc.player, characterString.slice(0, -2))
         }, this);
 
-        this.message.reply({ embeds: [embed] });
+        this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  });
     }
 
     //Gets the emoji based on a character name
