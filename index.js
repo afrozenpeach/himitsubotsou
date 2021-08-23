@@ -145,7 +145,7 @@ client.on('interactionCreate', async interaction => {
 
     const botCommands = new BotCommands(interaction, sql, true);
 
-    botCommands[commandName]([interaction.options.getString('arg') ?? '']);
+    botCommands[commandName]([interaction.options.getString('arg') ?? undefined]);
 });
 
 client.login(Config.BOT_TOKEN);
