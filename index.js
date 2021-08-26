@@ -17,7 +17,12 @@ const sql = mysqlx.getClient(
 const client = new Client({
     fetchAllMembers: true,
     presence: {activities: [{name: "Himitsu no Sensou", type: "PLAYING"}], status: 'online'},
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_PRESENCES]
+    intents: [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MEMBERS,
+        Intents.FLAGS.GUILD_PRESENCES
+    ]
 });
 
 client.on("ready", () => {
