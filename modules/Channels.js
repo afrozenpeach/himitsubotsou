@@ -209,10 +209,66 @@ export default function createRouter(sql) {
     )
     .then(() => {
         let character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
-
-        res.status(200).json(character);
-
         session.close();
+
+        let mounts = [];
+        let relationships = [];
+        let connections = [];
+
+        sql.getSession()
+        .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
+        .then(() => {
+            return Promise.all([
+                session.sql("USE " + Config.MYSQL_CHARDB).execute(),
+                session.sql("select * from Mounts where charid = ?;").bind([character.ID]).execute(row => { mounts.push(row) }),
+                session.sql("select c.name, r.reltype, 'pc' as chartype, r.pcid from Relationships r join Characters c on r.pcID = c.id where r.char1 = ?;").bind([character.ID]).execute(row => { relationships.push(row) }),
+                session.sql("select c.npcname as name, r.reltype, 'npc' as chartype, r.npcid from Relationships r join npcMainTable c on r.npcID = c.id where r.char1 = ?;").bind([character.ID]).execute(row => { relationships.push(row) }),
+                session.sql("select c.name, cn.connectionType, 'pc' as chartype, c.id, from pcConnections cn join Characters c on c.id = cn.familypcid where cn.basepcid = ?").bind([character.ID]).execute(row => { connections.push(row); }),
+                session.sql("select c.npcname as name, cn.connectionType, 'npc' as chartype, c.id from npcConnections cn join npcMainTable c on c.id = cn.npcid where cn.pcid = ?").bind([character.ID]).execute(row => { connections.push(row); })
+            ]);
+        })
+        .then(() => {
+            character.mounts = [];
+
+            mounts.forEach(m => {
+                character.mounts.push({
+                    CharID: m[0],
+                    MountName: m[1],
+                    MountGender: m[2],
+                    MountColor: m[3],
+                    MountType: m[4],
+                    Current: m[5],
+                    Status: m[6],
+                    Notes: m[7]
+                })
+            });
+
+            character.relationships = [];
+
+            relationships.forEach(r => {
+                character.relationships.push({
+                    Name: r[0],
+                    Relationship: r[1],
+                    CharType: r[2],
+                    CharID: r[3]
+                })
+            });
+
+            character.connections = [];
+
+            connections.forEach(c => {
+                character.connections.push({
+                    Name: c[0],
+                    Relationship: c[1],
+                    CharType: c[2],
+                    CharID: c[3]
+                });
+            });
+
+            res.status(200).json(character);
+
+            session.close();
+        });
     });
   });
 
