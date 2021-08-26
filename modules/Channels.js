@@ -18,7 +18,7 @@ export default function createRouter(sql) {
     .then(r => {
         if (r) {
             var output = r.fetchAll();
-            output.push('Archive - All Channels');
+            output.push(['Archive - All Channels']);
             res.status(200).json(output);
             session.close();
         }
