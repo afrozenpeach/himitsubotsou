@@ -154,7 +154,7 @@ export default function createRouter(sql) {
 
     sql.getSession()
     .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
-    .then(s => { return s.getTable("characters") })
+    .then(s => { return s.getTable("Characters") })
     .then(t =>
         t.select()
         .orderBy("name ASC")
