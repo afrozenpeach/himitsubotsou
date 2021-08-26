@@ -22,6 +22,9 @@ export default function createRouter(sql) {
             res.status(200).json(output);
             session.close();
         }
+    })
+    .catch(e => {
+        res.status(503).json("API Error");
     });
   });
 
@@ -93,6 +96,9 @@ export default function createRouter(sql) {
             session.close();
         }
     })
+    .catch(e => {
+        res.status(503).json("API Error");
+    });
   });
 
   //Get all channels
@@ -118,6 +124,9 @@ export default function createRouter(sql) {
             session.close();
         }
     })
+    .catch(e => {
+        res.status(503).json("API Error");
+    });
   });
 
   //Get all messages for a channel
@@ -144,6 +153,9 @@ export default function createRouter(sql) {
             session.close();
         }
     })
+    .catch(e => {
+        res.status(503).json("API Error");
+    });
   });
 
   //Get all characters
@@ -185,6 +197,9 @@ export default function createRouter(sql) {
         res.status(200).json(output);
         session.close();
     })
+    .catch(e => {
+        res.status(503).json("API Error");
+    });
   });
 
   router.get('/api/characters/:id', function (req, res, next) {
@@ -294,6 +309,9 @@ export default function createRouter(sql) {
 
             session.close();
         });
+    })
+    .catch(e => {
+        res.status(503).json("API Error");
     });
   });
 
