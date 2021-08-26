@@ -146,5 +146,75 @@ export default function createRouter(sql) {
     })
   });
 
+  //Get all characters
+  router.get('/api/characters', function (req, res, next) {
+    var session;
+    let result = [];
+    let results = [];
+
+    sql.getSession()
+    .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
+    .then(s => { return s.getTable("characters") })
+    .then(t =>
+        t.select()
+        .orderBy("name ASC")
+        .execute(
+            row => {
+                row.forEach((value, i) => {
+                    result[i] = Object.assign({}, result[i], { value });
+                });
+
+                let resultCopy = [...result];
+                results.push(resultCopy);
+            },
+            columns => {
+                columns.forEach((key, i) => { result[i] = Object.assign({}, result[i], { key: key.getColumnName() }) });
+            }
+        )
+        .catch(err => {
+            res.status(500).json({status: err});
+        }))
+    .then(() => {
+        let output = [];
+
+        for (const r of results) {
+            let npc = r.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
+            output.push(npc);
+        }
+
+        res.status(200).json(output);
+        session.close();
+    })
+  });
+
+  router.get('/api/characters/:id', function (req, res, next) {
+    let session;
+    let result = [];
+
+    sql.getSession()
+    .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
+    .then(s => { return s.getTable("Characters") })
+    .then(t =>
+        t.select()
+        .where("id = :id")
+        .bind("id", req.params.id)
+        .execute(
+            row => {
+                row.forEach((value, i) => { result[i] = Object.assign({}, result[i], { value }) });
+            },
+            columns => {
+                columns.forEach((key, i) => { result[i] = Object.assign({}, result[i], { key: key.getColumnName() }) });
+            }
+        )
+    )
+    .then(() => {
+        let character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
+
+        res.status(200).json(character);
+
+        session.close();
+    });
+  });
+
   return router;
 }
