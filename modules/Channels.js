@@ -247,87 +247,97 @@ export default function createRouter(sql) {
             ]);
         })
         .then(() => {
-            character.mounts = [];
+            if (mounts.length > 0) {
+                character.mounts = [];
 
-            mounts.forEach(m => {
-                character.mounts.push({
-                    CharID: m[0],
-                    MountName: m[1],
-                    MountGender: m[2],
-                    MountColor: m[3],
-                    MountType: m[4],
-                    Current: m[5],
-                    Status: m[6],
-                    Notes: m[7]
-                })
-            });
-
-            character.relationships = [];
-
-            relationships.forEach(r => {
-                character.relationships.push({
-                    Name: r[0],
-                    Relationship: r[1],
-                    CharType: r[2],
-                    CharID: r[3]
-                })
-            });
-
-            character.connections = [];
-
-            connections.forEach(c => {
-                character.connections.push({
-                    Name: c[0],
-                    Relationship: c[1],
-                    CharType: c[2],
-                    CharID: c[3]
+                mounts.forEach(m => {
+                    character.mounts.push({
+                        CharID: m[0],
+                        MountName: m[1],
+                        MountGender: m[2],
+                        MountColor: m[3],
+                        MountType: m[4],
+                        Current: m[5],
+                        Status: m[6],
+                        Notes: m[7]
+                    })
                 });
-            });
-
-            character.weapons = {
-                Axes: weapons[0][0]?.trim() ?? '',
-                Swords: weapons[0][1]?.trim() ?? '',
-                Daggers: weapons[0][2]?.trim() ?? '',
-                Lances: weapons[0][3]?.trim() ?? '',
-                Maces: weapons[0][4]?.trim() ?? '',
-                QStaves: weapons[0][5]?.trim() ?? '',
-                Whips: weapons[0][6]?.trim() ?? '',
-                Unarmed: weapons[0][7]?.trim() ?? '',
-                LBows: weapons[0][8]?.trim() ?? '',
-                SBows: weapons[0][9]?.trim() ?? '',
-                CBows: weapons[0][10]?.trim() ?? '',
-                Thrown: weapons[0][11]?.trim() ?? '',
-                Fire: weapons[0][12]?.trim() ?? '',
-                Wind: weapons[0][13]?.trim() ?? '',
-                Thunder: weapons[0][14]?.trim() ?? '',
-                Light: weapons[0][15]?.trim() ?? '',
-                Dark: weapons[0][16]?.trim() ?? '',
-                Staves: weapons[0][17]?.trim() ?? '',
-                MagicType: weapons[0][18],
-                Civilian: weapons[0][19]
             }
 
-            character.languages = {
-                Trade: languages[0][0]?.trim() ?? '',
-                TradeNotes: languages[0][1]?.trim() ?? '',
-                Dentorian: languages[0][2]?.trim() ?? '',
-                OldDentorian: languages[0][3]?.trim() ?? '',
-                HighDentorian: languages[0][4]?.trim() ?? '',
-                OldHighDentorian: languages[0][5]?.trim() ?? '',
-                DentorianNotes: languages[0][6]?.trim() ?? '',
-                Megami: languages[0][7]?.trim() ?? '',
-                AncientMegami: languages[0][8]?.trim() ?? '',
-                MegamiNotes: languages[0][9]?.trim() ?? '',
-                Atsirian: languages[0][10]?.trim() ?? '',
-                Azsharan: languages[0][11]?.trim() ?? '',
-                NomadicAtsirian: languages[0][12]?.trim() ?? '',
-                AtsirianNotes: languages[0][13]?.trim() ?? '',
-                Kilian: languages[0][14]?.trim() ?? '',
-                RunicKilian: languages[0][15]?.trim() ?? '',
-                Danaan: languages[0][16]?.trim() ?? '',
-                KilianNotes: languages[0][17]?.trim() ?? '',
-                Romani: languages[0][18]?.trim() ?? '',
-                RomaniNotes: languages[0][19]?.trim() ?? ''
+            if (relationships.length > 0) {
+                character.relationships = [];
+
+                relationships.forEach(r => {
+                    character.relationships.push({
+                        Name: r[0],
+                        Relationship: r[1],
+                        CharType: r[2],
+                        CharID: r[3]
+                    })
+                });
+            }
+
+            if (connections.length > 0) {
+                character.connections = [];
+
+                connections.forEach(c => {
+                    character.connections.push({
+                        Name: c[0],
+                        Relationship: c[1],
+                        CharType: c[2],
+                        CharID: c[3]
+                    });
+                });
+            }
+
+            if (weapons.length > 0) {
+                character.weapons = {
+                    Axes: weapons[0][0]?.trim() ?? '',
+                    Swords: weapons[0][1]?.trim() ?? '',
+                    Daggers: weapons[0][2]?.trim() ?? '',
+                    Lances: weapons[0][3]?.trim() ?? '',
+                    Maces: weapons[0][4]?.trim() ?? '',
+                    QStaves: weapons[0][5]?.trim() ?? '',
+                    Whips: weapons[0][6]?.trim() ?? '',
+                    Unarmed: weapons[0][7]?.trim() ?? '',
+                    LBows: weapons[0][8]?.trim() ?? '',
+                    SBows: weapons[0][9]?.trim() ?? '',
+                    CBows: weapons[0][10]?.trim() ?? '',
+                    Thrown: weapons[0][11]?.trim() ?? '',
+                    Fire: weapons[0][12]?.trim() ?? '',
+                    Wind: weapons[0][13]?.trim() ?? '',
+                    Thunder: weapons[0][14]?.trim() ?? '',
+                    Light: weapons[0][15]?.trim() ?? '',
+                    Dark: weapons[0][16]?.trim() ?? '',
+                    Staves: weapons[0][17]?.trim() ?? '',
+                    MagicType: weapons[0][18],
+                    Civilian: weapons[0][19]
+                }
+            }
+
+            if (languages.length > 0) {
+                character.languages = {
+                    Trade: languages[0][0]?.trim() ?? '',
+                    TradeNotes: languages[0][1]?.trim() ?? '',
+                    Dentorian: languages[0][2]?.trim() ?? '',
+                    OldDentorian: languages[0][3]?.trim() ?? '',
+                    HighDentorian: languages[0][4]?.trim() ?? '',
+                    OldHighDentorian: languages[0][5]?.trim() ?? '',
+                    DentorianNotes: languages[0][6]?.trim() ?? '',
+                    Megami: languages[0][7]?.trim() ?? '',
+                    AncientMegami: languages[0][8]?.trim() ?? '',
+                    MegamiNotes: languages[0][9]?.trim() ?? '',
+                    Atsirian: languages[0][10]?.trim() ?? '',
+                    Azsharan: languages[0][11]?.trim() ?? '',
+                    NomadicAtsirian: languages[0][12]?.trim() ?? '',
+                    AtsirianNotes: languages[0][13]?.trim() ?? '',
+                    Kilian: languages[0][14]?.trim() ?? '',
+                    RunicKilian: languages[0][15]?.trim() ?? '',
+                    Danaan: languages[0][16]?.trim() ?? '',
+                    KilianNotes: languages[0][17]?.trim() ?? '',
+                    Romani: languages[0][18]?.trim() ?? '',
+                    RomaniNotes: languages[0][19]?.trim() ?? ''
+                }
             }
 
             res.status(200).json(character);
