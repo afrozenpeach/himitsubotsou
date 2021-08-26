@@ -214,6 +214,7 @@ export default function createRouter(sql) {
         let mounts = [];
         let relationships = [];
         let connections = [];
+        let weapons = [];
 
         sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
@@ -224,7 +225,8 @@ export default function createRouter(sql) {
                 session.sql("select c.name, r.reltype, 'pc' as chartype, r.pcid from Relationships r join Characters c on r.pcID = c.id where r.char1 = ?;").bind([character.ID]).execute(row => { relationships.push(row) }),
                 session.sql("select c.npcname as name, r.reltype, 'npc' as chartype, r.npcid from Relationships r join npcMainTable c on r.npcID = c.id where r.char1 = ?;").bind([character.ID]).execute(row => { relationships.push(row) }),
                 session.sql("select c.name, cn.connectionType, 'pc' as chartype, c.id from pcConnections cn join Characters c on c.id = cn.familypcid where cn.basepcid = ?").bind([character.ID]).execute(row => { connections.push(row); }),
-                session.sql("select c.npcname as name, cn.connectionType, 'npc' as chartype, c.id from npcConnections cn join npcMainTable c on c.id = cn.npcid where cn.pcid = ?").bind([character.ID]).execute(row => { connections.push(row); })
+                session.sql("select c.npcname as name, cn.connectionType, 'npc' as chartype, c.id from npcConnections cn join npcMainTable c on c.id = cn.npcid where cn.pcid = ?").bind([character.ID]).execute(row => { connections.push(row); }),
+                session.sql("select Axes, Swords, Daggers, Lances, Maces, QStaves, Whips, Unarmed, LBows, SBows, CBows, Thrown, Fire, Wind, Thunder, Light, Dark, Staves, MagicType, Civilian FROM Weapons WHERE charid = ?").bind([character.ID]).execute(row => { weapons.push(row); })
             ]);
         })
         .then(() => {
@@ -264,6 +266,29 @@ export default function createRouter(sql) {
                     CharID: c[3]
                 });
             });
+
+            character.weapons = {
+                Axes: weapons[0][0]?.trim() ?? '',
+                Swords: weapons[0][1]?.trim() ?? '',
+                Daggers: weapons[0][2]?.trim() ?? '',
+                Lances: weapons[0][3]?.trim() ?? '',
+                Maces: weapons[0][4]?.trim() ?? '',
+                QStaves: weapons[0][5]?.trim() ?? '',
+                Whips: weapons[0][6]?.trim() ?? '',
+                Unarmed: weapons[0][7]?.trim() ?? '',
+                LBows: weapons[0][8]?.trim() ?? '',
+                SBows: weapons[0][9]?.trim() ?? '',
+                CBows: weapons[0][10]?.trim() ?? '',
+                Thrown: weapons[0][11]?.trim() ?? '',
+                Fire: weapons[0][12]?.trim() ?? '',
+                Wind: weapons[0][13]?.trim() ?? '',
+                Thunder: weapons[0][14]?.trim() ?? '',
+                Light: weapons[0][15]?.trim() ?? '',
+                Dark: weapons[0][16]?.trim() ?? '',
+                Staves: weapons[0][17]?.trim() ?? '',
+                MagicType: weapons[0][18],
+                Civilian: weapons[0][19]
+            }
 
             res.status(200).json(character);
 
