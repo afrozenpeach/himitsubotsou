@@ -20,8 +20,9 @@ export default function createRouter(sql) {
             var output = r.fetchAll();
             output.push('Archive - All Channels');
             res.status(200).json(output);
+            session.close();
         }
-    })
+    });
   });
 
   //Get all channels for a category
@@ -88,6 +89,8 @@ export default function createRouter(sql) {
                     return -1;
                 }
             }));
+
+            session.close();
         }
     })
   });
@@ -112,6 +115,7 @@ export default function createRouter(sql) {
             var output = r.fetchAll();
 
             res.status(200).json(output);
+            session.close();
         }
     })
   });
@@ -137,6 +141,7 @@ export default function createRouter(sql) {
             var output = r.fetchAll();
 
             res.status(200).json(output);
+            session.close();
         }
     })
   });
