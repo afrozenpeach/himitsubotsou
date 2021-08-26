@@ -230,18 +230,20 @@ export default function createRouter(sql) {
         let relationships = [];
         let connections = [];
         let weapons = [];
+        let languages = [];
 
         sql.getSession()
         .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
         .then(() => {
             return Promise.all([
                 session.sql("USE " + Config.MYSQL_CHARDB).execute(),
-                session.sql("select * from Mounts where charid = ?;").bind([character.ID]).execute(row => { mounts.push(row) }),
+                session.sql("select * from Mounts where charid = ? order by current desc;").bind([character.ID]).execute(row => { mounts.push(row) }),
                 session.sql("select c.name, r.reltype, 'pc' as chartype, r.pcid from Relationships r join Characters c on r.pcID = c.id where r.char1 = ?;").bind([character.ID]).execute(row => { relationships.push(row) }),
                 session.sql("select c.npcname as name, r.reltype, 'npc' as chartype, r.npcid from Relationships r join npcMainTable c on r.npcID = c.id where r.char1 = ?;").bind([character.ID]).execute(row => { relationships.push(row) }),
                 session.sql("select c.name, cn.connectionType, 'pc' as chartype, c.id from pcConnections cn join Characters c on c.id = cn.familypcid where cn.basepcid = ?").bind([character.ID]).execute(row => { connections.push(row); }),
                 session.sql("select c.npcname as name, cn.connectionType, 'npc' as chartype, c.id from npcConnections cn join npcMainTable c on c.id = cn.npcid where cn.pcid = ?").bind([character.ID]).execute(row => { connections.push(row); }),
-                session.sql("select Axes, Swords, Daggers, Lances, Maces, QStaves, Whips, Unarmed, LBows, SBows, CBows, Thrown, Fire, Wind, Thunder, Light, Dark, Staves, MagicType, Civilian FROM Weapons WHERE charid = ?").bind([character.ID]).execute(row => { weapons.push(row); })
+                session.sql("select Axes, Swords, Daggers, Lances, Maces, QStaves, Whips, Unarmed, LBows, SBows, CBows, Thrown, Fire, Wind, Thunder, Light, Dark, Staves, MagicType, Civilian FROM Weapons WHERE charid = ?").bind([character.ID]).execute(row => { weapons.push(row); }),
+                session.sql("select Tr, TrNotes, De, ODe, HDe, OHDe, DeNotes, Me, AMe, MeNotes, At, Az, NoAt, AtNotes, Ki, RuKi, Da, KiNotes, Ro, RoNotes FROM Languages WHERE charid = ?").bind([character.ID]).execute(row => { languages.push(row); })
             ]);
         })
         .then(() => {
@@ -303,6 +305,29 @@ export default function createRouter(sql) {
                 Staves: weapons[0][17]?.trim() ?? '',
                 MagicType: weapons[0][18],
                 Civilian: weapons[0][19]
+            }
+
+            character.languages = {
+                Trade: languages[0][0]?.trim() ?? '',
+                TradeNotes: languages[0][1]?.trim() ?? '',
+                Dentorian: languages[0][2]?.trim() ?? '',
+                OldDentorian: languages[0][3]?.trim() ?? '',
+                HighDentorian: languages[0][4]?.trim() ?? '',
+                OldHighDentorian: languages[0][5]?.trim() ?? '',
+                DentorianNotes: languages[0][6]?.trim() ?? '',
+                Megami: languages[0][7]?.trim() ?? '',
+                AncientMegami: languages[0][8]?.trim() ?? '',
+                MegamiNotes: languages[0][9]?.trim() ?? '',
+                Atsirian: languages[0][10]?.trim() ?? '',
+                Azsharan: languages[0][11]?.trim() ?? '',
+                NomadicAtsirian: languages[0][12]?.trim() ?? '',
+                AtsirianNotes: languages[0][13]?.trim() ?? '',
+                Kilian: languages[0][14]?.trim() ?? '',
+                RunicKilian: languages[0][15]?.trim() ?? '',
+                Danaan: languages[0][16]?.trim() ?? '',
+                KilianNotes: languages[0][17]?.trim() ?? '',
+                Romani: languages[0][18]?.trim() ?? '',
+                RomaniNotes: languages[0][19]?.trim() ?? ''
             }
 
             res.status(200).json(character);
