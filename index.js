@@ -163,12 +163,14 @@ if (Config.BOT_TOKEN) {
     client.login(Config.BOT_TOKEN);
 }
 
-//Web API
-const app = express()
-  .use(cors())
-  .use(bodyParser.json())
-  .use(Channels(sql));
+if (Config.EXPRESS_PORT) {
+    //Web API
+    const app = express()
+    .use(cors())
+    .use(bodyParser.json())
+    .use(Channels(sql));
 
-app.listen(Config.EXPRESS_PORT, () => {
-  console.log(`Express server listening on port ${Config.EXPRESS_PORT}`);
-});
+    app.listen(Config.EXPRESS_PORT, () => {
+    console.log(`Express server listening on port ${Config.EXPRESS_PORT}`);
+    });
+}
