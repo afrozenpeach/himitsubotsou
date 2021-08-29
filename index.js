@@ -139,18 +139,22 @@ client.on("messageCreate", message => {
             botCommands.profile(args, false);
         }
     } catch (error) {
-        message.channel.send("Error: " + error.message)
+        message.channel.send("Error: " + error.message);
     }
 });
 
 client.on('interactionCreate', async interaction => {
-	if (!interaction.isCommand()) return;
+    try {
+        if (!interaction.isCommand()) return;
 
-	const { commandName } = interaction;
+        const { commandName } = interaction;
 
-    const botCommands = new BotCommands(interaction, sql, true);
+        const botCommands = new BotCommands(interaction, sql, true);
 
-    botCommands[commandName]([interaction.options.getString('arg') ?? undefined]);
+        botCommands[commandName]([interaction.options.getString('arg') ?? undefined]);
+    } catch (error) {
+        interaction.message.reply('Error: ' + error.message);
+    }
 });
 
 client.login(Config.BOT_TOKEN);
