@@ -14,150 +14,154 @@ const sql = mysqlx.getClient(
 )
 
 //Discord Bot
-const client = new Client({
-    fetchAllMembers: true,
-    presence: {activities: [{name: "Himitsu no Sensou", type: "PLAYING"}], status: 'online'},
-    intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MEMBERS,
-        Intents.FLAGS.GUILD_PRESENCES
-    ]
-});
+if (Config.BOT_TOKEN) {
+    const client = new Client({
+        fetchAllMembers: true,
+        presence: {activities: [{name: "Himitsu no Sensou", type: "PLAYING"}], status: 'online'},
+        intents: [
+            Intents.FLAGS.GUILDS,
+            Intents.FLAGS.GUILD_MESSAGES,
+            Intents.FLAGS.GUILD_MEMBERS,
+            Intents.FLAGS.GUILD_PRESENCES
+        ]
+    });
 
-client.on("ready", () => {
-    if (Config.VERSION) {
-        client.channels.cache.find(channel => channel.name === "botspam").send("Bot loaded. Version: " + Config.VERSION);
-    }
-});
-
-client.on("channelUpdate", (oldChannel, newChannel) => {
-    if (newChannel.parent.name.toLowerCase().startsWith("archive") && oldChannel.parent.name.toLowerCase().startsWith("current")) {
-        let sessions = [];
-
-        let d = newChannel.name.split('_');
-
-        try {
-            if (d.length != 3) {
-                throw 'invalid format for channel name';
-            }
-
-            d[0].replaceAll('-', ' ').split(' ').map(function(word) {
-                return (word.charAt(0).toUpperCase() + word.slice(1));
-            }).join(' ');
-
-            d[1].split('-').map(function(word) {
-                return (word.charAt(0).toUpperCase() + word.slice(1));
-            });
-
-            let date = new Date(d[2].replace('-ar', '').replace('ar', ''));
-
-            if (date.getFullYear > 650) {
-                throw 'invalid  year';
-            }
-        } catch (error) {
-            newChannel.send('Archive failed - Channel name must be in the format location_characters_date');
-
-            newChannel.setParent(oldChannel.parent)
-
-            return;
+    client.on("ready", () => {
+        if (Config.VERSION) {
+            client.channels.cache.find(channel => channel.name === "botspam").send("Bot loaded. Version: " + Config.VERSION);
         }
 
-        newChannel.send("Starting archive...");
+        console.log('Bot listening');
+    });
 
-        sql.getSession()
-        .then(s => { sessions[0] = s; return sessions[0].getSchema(Config.MYSQL_ARCHIVESDB) })
-        .then(s => { return s.getTable("channels") })
-        .then(t => {
-            t.insert(['category', 'channel', 'discordid'])
-            .values(newChannel.parent.name, newChannel.name, newChannel.id)
-            .execute()
-            .then(async r => {
-                let channelId = r.getAutoIncrementValue();
-                let promises = [];
-                let allMessagesRaw = [];
-                let last_id;
+    client.on("channelUpdate", (oldChannel, newChannel) => {
+        if (newChannel.parent.name.toLowerCase().startsWith("archive") && oldChannel.parent.name.toLowerCase().startsWith("current")) {
+            let sessions = [];
 
-                while (true) {
-                    const options = { limit: 100 };
-                    if (last_id) {
-                        options.before = last_id;
-                    }
+            let d = newChannel.name.split('_');
 
-                    const messages = await newChannel.messages.fetch(options);
-                    allMessagesRaw.push(...messages.values());
-                    last_id = messages.last().id;
-
-                    if (messages.size != 100) {
-                        break;
-                    }
+            try {
+                if (d.length != 3) {
+                    throw 'invalid format for channel name';
                 }
 
-                allMessagesRaw.forEach(m => {
-                    if (!m.author.bot) {
-                        promises.push(
-                            sql.getSession()
-                            .then(s => { sessions[m.id] = s; return sessions[m.id].getSchema(Config.MYSQL_ARCHIVESDB) })
-                            .then(s => { return s.getTable("messages") })
-                            .then(t => {
-                                t.insert(['channelId', 'content', 'poster', 'timestamp', 'discordid'])
-                                .values(channelId, m.content, (m.member ? m.member.displayName : m.author.username), m.createdTimestamp, m.id)
-                                .execute()
-                                .then(() => sessions[m.id].close())
-                            })
-                        );
-                    }
+                d[0].replaceAll('-', ' ').split(' ').map(function(word) {
+                    return (word.charAt(0).toUpperCase() + word.slice(1));
+                }).join(' ');
+
+                d[1].split('-').map(function(word) {
+                    return (word.charAt(0).toUpperCase() + word.slice(1));
                 });
 
-                await Promise.all(promises);
-                newChannel.send("Archive complete. Found: " + allMessagesRaw.length + " messages.");
-            });
-        })
-        .then(() => sessions[0].close())
-    }
-})
+                let date = new Date(d[2].replace('-ar', '').replace('ar', ''));
 
-client.on("messageCreate", message => {
-    try {
-        //Ignore this and other bots' messages
-        if (message.author.bot) return;
+                if (date.getFullYear > 650) {
+                    throw 'invalid  year';
+                }
+            } catch (error) {
+                newChannel.send('Archive failed - Channel name must be in the format location_characters_date');
 
-        //Ignore anything without the prefix
-        if (!message.content.startsWith(Config.PREFIX)) return;
+                newChannel.setParent(oldChannel.parent)
 
-        const commandBody = message.content.slice(Config.PREFIX.length);
-        const args = commandBody.split(' ');
-        const command = args.shift().toLowerCase();
+                return;
+            }
 
-        const botCommands = new BotCommands(message, sql, false);
+            newChannel.send("Starting archive...");
 
-        //If the command is a public function of botCommands, do the thing
-        if (typeof botCommands[command] === "function") {
-            botCommands[command](args);
-        } else {
-            args.push(command);
-            botCommands.profile(args, false);
+            sql.getSession()
+            .then(s => { sessions[0] = s; return sessions[0].getSchema(Config.MYSQL_ARCHIVESDB) })
+            .then(s => { return s.getTable("channels") })
+            .then(t => {
+                t.insert(['category', 'channel', 'discordid'])
+                .values(newChannel.parent.name, newChannel.name, newChannel.id)
+                .execute()
+                .then(async r => {
+                    let channelId = r.getAutoIncrementValue();
+                    let promises = [];
+                    let allMessagesRaw = [];
+                    let last_id;
+
+                    while (true) {
+                        const options = { limit: 100 };
+                        if (last_id) {
+                            options.before = last_id;
+                        }
+
+                        const messages = await newChannel.messages.fetch(options);
+                        allMessagesRaw.push(...messages.values());
+                        last_id = messages.last().id;
+
+                        if (messages.size != 100) {
+                            break;
+                        }
+                    }
+
+                    allMessagesRaw.forEach(m => {
+                        if (!m.author.bot) {
+                            promises.push(
+                                sql.getSession()
+                                .then(s => { sessions[m.id] = s; return sessions[m.id].getSchema(Config.MYSQL_ARCHIVESDB) })
+                                .then(s => { return s.getTable("messages") })
+                                .then(t => {
+                                    t.insert(['channelId', 'content', 'poster', 'timestamp', 'discordid'])
+                                    .values(channelId, m.content, (m.member ? m.member.displayName : m.author.username), m.createdTimestamp, m.id)
+                                    .execute()
+                                    .then(() => sessions[m.id].close())
+                                })
+                            );
+                        }
+                    });
+
+                    await Promise.all(promises);
+                    newChannel.send("Archive complete. Found: " + allMessagesRaw.length + " messages.");
+                });
+            })
+            .then(() => sessions[0].close())
         }
-    } catch (error) {
-        message.channel.send("Error: " + error.message);
-    }
-});
+    })
 
-client.on('interactionCreate', async interaction => {
-    try {
-        if (!interaction.isCommand()) return;
+    client.on("messageCreate", message => {
+        try {
+            //Ignore this and other bots' messages
+            if (message.author.bot) return;
 
-        const { commandName } = interaction;
+            //Ignore anything without the prefix
+            if (!message.content.startsWith(Config.PREFIX)) return;
 
-        const botCommands = new BotCommands(interaction, sql, true);
+            const commandBody = message.content.slice(Config.PREFIX.length);
+            const args = commandBody.split(' ');
+            const command = args.shift().toLowerCase();
 
-        botCommands[commandName]([interaction.options.getString('arg') ?? undefined]);
-    } catch (error) {
-        interaction.message.reply('Error: ' + error.message);
-    }
-});
+            const botCommands = new BotCommands(message, sql, false);
 
-client.login(Config.BOT_TOKEN);
+            //If the command is a public function of botCommands, do the thing
+            if (typeof botCommands[command] === "function") {
+                botCommands[command](args);
+            } else {
+                args.push(command);
+                botCommands.profile(args, false);
+            }
+        } catch (error) {
+            message.channel.send("Error: " + error.message);
+        }
+    });
+
+    client.on('interactionCreate', async interaction => {
+        try {
+            if (!interaction.isCommand()) return;
+
+            const { commandName } = interaction;
+
+            const botCommands = new BotCommands(interaction, sql, true);
+
+            botCommands[commandName]([interaction.options.getString('arg') ?? undefined]);
+        } catch (error) {
+            interaction.message.reply('Error: ' + error.message);
+        }
+    });
+
+    client.login(Config.BOT_TOKEN);
+}
 
 //Web API
 const app = express()
