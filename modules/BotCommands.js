@@ -19,7 +19,7 @@ export default class BotCommands {
 
                 commands.push(new SlashCommandBuilder().setName(m).setDescription(md.description.split('\n')[0]).addStringOption(o => o.setName('arg').setDescription('arg')));
             } catch (error) {
-                //do nothing!
+                console.log('error loading slashcommand: ' + m + ' - ' + error);
             }
         }, this);
 
@@ -45,6 +45,15 @@ export default class BotCommands {
             .setDescription(this.#getAllMethods(this).join(", "));
 
         this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  });
+    }
+
+    helpHelp() {
+        let embed = new MessageEmbed()
+            .setColor("#ff0000")
+            .setTitle("Help")
+            .setDescription('Get help for various commands');
+
+        return embed;
     }
 
     franelcrew(args) {
@@ -553,7 +562,7 @@ export default class BotCommands {
     }
 
     weaponsHelp() {
-        this.#weaponsMagicProficienciesHelp();
+        return this.#weaponsMagicProficienciesHelp();
     }
 
     magic(args) {
@@ -561,7 +570,7 @@ export default class BotCommands {
     }
 
     magicHelp() {
-        this.#weaponsMagicProficienciesHelp();
+        return this.#weaponsMagicProficienciesHelp();
     }
 
     languages(args) {
@@ -731,7 +740,7 @@ export default class BotCommands {
     }
 
     langHelp(args) {
-        this.languagesHelp(args);
+        return this.languagesHelp(args);
     }
 
     npc(args) {
