@@ -166,11 +166,11 @@ if (Config.BOT_TOKEN) {
 if (Config.EXPRESS_PORT) {
     //Web API
     const app = express()
-    .use(cors())
-    .use(bodyParser.json())
-    .use(Channels(sql));
+        .use(cors())
+        .use(bodyParser.json())
+        .use(Channels(sql));
 
     app.listen(Config.EXPRESS_PORT, () => {
-    console.log(`Express server listening on port ${Config.EXPRESS_PORT}`);
+        console.log(`Express server listening on port ${Config.EXPRESS_PORT}`);
     });
 }
