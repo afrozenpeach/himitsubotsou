@@ -38,7 +38,14 @@ export default class BotCommands {
             let argHelp = args[0] + "Help";
 
             if (typeof this[argHelp] === 'function') {
-                this.message.reply({ embeds: [this[argHelp]()], ephemeral: this.ephemeral  });
+                let helpHelp = this[argHelp]();
+
+                let messageEmbed = new MessageEmbed()
+                    .setColor("#ff0000")
+                    .setTitle("Help - " + helpHelp.title)
+                    .setDescription(helpHelp.description);
+
+                this.message.reply({ embeds: [messageEmbed], ephemeral: this.ephemeral  });
             } else {
                 this.message.reply({ content: "No additional help.", ephemeral: this.ephemeral });
             }
@@ -55,12 +62,10 @@ export default class BotCommands {
     }
 
     helpHelp() {
-        let embed = new MessageEmbed()
-            .setColor("#ff0000")
-            .setTitle("Help")
-            .setDescription('Get help for various commands');
-
-        return embed;
+        return {
+            title: 'Help',
+            description: 'Get help for various commands'
+        };
     }
 
     franelcrew(args) {
@@ -76,12 +81,10 @@ export default class BotCommands {
     }
 
     franelcrewHelp() {
-        let embed = new MessageEmbed()
-            .setColor("#ff0000")
-            .setTitle("Help - Franelcrew")
-            .setDescription("Lists characters in the Franelcrew plotline.\n\nOptional Parameters: player name to filter by");
-
-            return embed;
+        return {
+            title: 'Franelcrew',
+            description: 'Lists characters in the Franelcrew plotline.\n\nOptional Parameters: player name to filter by'
+        };
     }
 
     hanalan(args) {
@@ -96,12 +99,10 @@ export default class BotCommands {
     }
 
     hanalanHelp() {
-        let embed = new MessageEmbed()
-            .setColor("#ff0000")
-            .setTitle("Help - Franelcrew")
-            .setDescription("Lists characters in the Hanalan Commons plotline.\n\nOptional Parameters: player name to filter by");
-
-            return embed;
+        return {
+            title: 'Hanalan',
+            description: 'Lists characters in the Hanalan Commons plotline.\n\nOptional Parameters: player name to filter by'
+        };
     }
 
     eina(args) {
@@ -116,30 +117,24 @@ export default class BotCommands {
     }
 
     einaHelp() {
-        let embed = new MessageEmbed()
-            .setColor("#ff0000")
-            .setTitle("Help - Franelcrew")
-            .setDescription("Lists characters in the Eina plotline.\n\nOptional Parameters: player name to filter by");
-
-            return embed;
+        return {
+            title: 'Eina',
+            description: 'Lists characters in the Eina plotline.\n\nOptional Parameters: player name to filter by'
+        };
     }
 
     charactersHelp() {
-        let embed = new MessageEmbed()
-            .setColor("#ff0000")
-            .setTitle("Help - Franelcrew")
-            .setDescription("Lists characters played by the current user.\n\nOptional Parameters:\n\n0: alternative player name to filter by\n\n1: 'all'0 to include inactive characters");
-
-            return embed;
+        return {
+            title: 'Characters',
+            description: 'Lists characters played by the current user.\n\nOptional Parameters:\n\n0: alternative player name to filter by\n\n1: \'all\'0 to include inactive characters'
+        };
     }
 
     profileHelp() {
-        let embed = new MessageEmbed()
-            .setColor("#ff0000")
-            .setTitle("Help - Profile")
-            .setDescription("Displays a profile for the specified character.");
-
-            return embed;
+        return {
+            title: 'Profile',
+            description: 'Displays a profile for the specified character.'
+        };
     }
 
     weaponsHelp() {
@@ -151,12 +146,10 @@ export default class BotCommands {
     }
 
     languagesHelp() {
-        let embed = new MessageEmbed()
-            .setColor("#ff0000")
-            .setTitle("Help - Language Proficiencies")
-            .setDescription("Displays the language proficiencies for the specified character. Aliases: !languages or !lang");
-
-            return embed;
+        return {
+            title: 'Languages',
+            description: 'Displays the language proficiencies for the specified character. Aliases: !languages or !lang'
+        };
     }
 
     langHelp(args) {
@@ -164,30 +157,24 @@ export default class BotCommands {
     }
 
     npcHelp() {
-        let embed = new MessageEmbed()
-            .setColor("#ff0000")
-            .setTitle("Help - NPC")
-            .setDescription("Displays a profile for the specified npc.");
-
-            return embed;
+        return {
+            title: 'NPC',
+            description: 'Displays a profile for the specified npc.'
+        };
     }
 
     birthmonthHelp() {
-        let embed = new MessageEmbed()
-            .setColor("#ff0000")
-            .setTitle("Help - Birth Month")
-            .setDescription("Lists characters that have a birthday in the designated month.");
-
-            return embed;
+        return {
+            title: 'Birthmonth',
+            description: 'Lists characters that have a birthday in the designated month.'
+        };
     }
 
     searchHelp() {
-        let embed = new MessageEmbed()
-            .setColor("#ff0000")
-            .setTitle("Help - SQL Search")
-            .setDescription("Returns a list of characters and their players for a given where clause.\n\nAvailable Fields:\nID, picture, name, nickname1, nickname2, journal, jobs, subjobs, socialclass, country, hometown, house, birthmonth, birthdate, year, zodiac, bloodtype, sect, status, player, queued, adoptable, haircolor, eyecolor, heightfeet, heightinches, heightcms, build, skintone, cupsize, domhand, identifiers, class, pastclasses, mountcombat, orientation, noncombat, gender, Special\n\nExamples:\nname = 'Fayre' -> Just 'Fayre'\nname like 'ra%' -> Starts with 'ra'\nyear < 600 -> Born before 600 AR");
-
-            return embed;
+        return {
+            title: 'SQL Search',
+            description: 'Returns a list of characters and their players for a given where clause.\n\nAvailable Fields:\nID, picture, name, nickname1, nickname2, journal, jobs, subjobs, socialclass, country, hometown, house, birthmonth, birthdate, year, zodiac, bloodtype, sect, status, player, queued, adoptable, haircolor, eyecolor, heightfeet, heightinches, heightcms, build, skintone, cupsize, domhand, identifiers, class, pastclasses, mountcombat, orientation, noncombat, gender, Special\n\nExamples:\nname = \'Fayre\' -> Just \'Fayre\'\nname like \'ra%\' -> Starts with \'ra\'\nyear < 600 -> Born before 600 AR'
+        };
     }
 
     day(args) {
@@ -203,12 +190,10 @@ export default class BotCommands {
     }
 
     dayHelp() {
-        let embed = new MessageEmbed()
-            .setColor("#ff0000")
-            .setTitle("Help - Day")
-            .setDescription("Converts the specified in-game date to a day of the week. Parameters: Date");
-
-            return embed;
+        return {
+            title: 'Day',
+            description: 'Converts the specified in-game date to a day of the week. Parameters: Date'
+        };
     }
 
     //Takes a list of players/characters, a color, and a title, and creates a custom embed
@@ -369,12 +354,10 @@ export default class BotCommands {
     }
 
     #weaponsMagicProficienciesHelp() {
-        let embed = new MessageEmbed()
-            .setColor("#ff0000")
-            .setTitle("Help - Weapon and Magic Proficiencies")
-            .setDescription("Displays the weapon and magic proficiencies for the specified character. Aliases: !weapons or !magic");
-
-        return embed;
+        return {
+            title: 'Weapons/Magic',
+            description: 'Displays the weapon and magic proficiencies for the specified character. Aliases: !weapons or !magic'
+        };
     }
 
     //Thanks for the snippet https://stackoverflow.com/a/35033472

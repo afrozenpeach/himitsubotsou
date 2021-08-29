@@ -3,7 +3,7 @@ import { Routes } from 'discord-api-types/v9';
 import { Config } from "./config.js";
 import BotCommands from "./modules/BotCommands.js";
 
-const commands = new BotCommands(undefined, undefined).buildSlashCommands();
+const commands = new BotCommands(undefined, undefined, undefined).buildSlashCommands();
 
 const rest = new REST({ version: '9' }).setToken(Config.BOT_TOKEN);
 
