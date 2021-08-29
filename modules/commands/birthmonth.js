@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { Config } from "../../config.js";
 
-export default function birthmonth(args) {
+export default function(args) {
     let session;
 
     this.sql.getSession()
