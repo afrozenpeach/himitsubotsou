@@ -6,7 +6,7 @@ export default function createRouter(sql) {
 
   //Get all categories
   router.get('/api/categories', function (req, res, next) {
-    var session;
+    let session;
 
     sql.getSession()
     .then(s => { session = s; return session.getSchema(Config.MYSQL_ARCHIVESDB) })
@@ -17,7 +17,7 @@ export default function createRouter(sql) {
     })
     .then(r => {
         if (r) {
-            var output = r.fetchAll();
+            let output = r.fetchAll();
             output.push(['Archive - All Channels']);
             res.status(200).json(output);
             session.close();
@@ -30,7 +30,7 @@ export default function createRouter(sql) {
 
   //Get all channels for a category
   router.get('/api/channels/category/:category', function (req, res, next) {
-    var session;
+    let session;
 
     if (req.params.category === 'Archive - All Channels') {
         req.params.category = '%';
@@ -103,7 +103,7 @@ export default function createRouter(sql) {
 
   //Get all channels
   router.get('/api/channels', function (req, res, next) {
-    var session;
+    let session;
 
     sql.getSession()
     .then(s => { session = s; return session.getSchema(Config.MYSQL_ARCHIVESDB) })
@@ -118,7 +118,7 @@ export default function createRouter(sql) {
         }))
     .then(r => {
         if (r) {
-            var output = r.fetchAll();
+            let output = r.fetchAll();
 
             res.status(200).json(output);
             session.close();
@@ -131,7 +131,7 @@ export default function createRouter(sql) {
 
   //Get all messages for a channel
   router.get('/api/messages/channel/:channelId', function (req, res, next) {
-    var session;
+    let session;
 
     sql.getSession()
     .then(s => { session = s; return session.getSchema(Config.MYSQL_ARCHIVESDB) })
@@ -147,7 +147,7 @@ export default function createRouter(sql) {
         }))
     .then(r => {
         if (r) {
-            var output = r.fetchAll();
+            let output = r.fetchAll();
 
             res.status(200).json(output);
             session.close();
@@ -160,7 +160,7 @@ export default function createRouter(sql) {
 
   //Get all characters
   router.get('/api/characters', function (req, res, next) {
-    var session;
+    let session;
     let result = [];
     let results = [];
 
@@ -353,7 +353,7 @@ export default function createRouter(sql) {
 
   //Get all NPCs
   router.get('/api/npcs', function (req, res, next) {
-    var session;
+    let session;
     let result = [];
     let results = [];
 
