@@ -181,9 +181,7 @@ export default class BotCommands {
                 {
                     type: 'bool',
                     argument: 'all',
-                    description: 'Include inactive characters in list',
-                    trueValue: 'all',
-                    falseValue: 'notall'
+                    description: 'Include inactive characters in list'
                 }
             ]
         };

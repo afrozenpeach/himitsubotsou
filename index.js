@@ -165,18 +165,16 @@ if (Config.BOT_TOKEN) {
             //Load optional arguments
             if (md.optionalArguments) {
                 md.optionalArguments.forEach(a => {
+                    let interactionArgument = null;
+
                     if (a.type === 'bool') {
-                        let interactionArgument = interaction.options.getBoolean(a.argument);
-
-                        if (interactionArgument != null) {
-                            args[a.argument] = interactionArgument ? a.trueValue : a.falseValue;
-                        }
+                        interactionArgument = interaction.options.getBoolean(a.argument);
                     } else {
-                        let interactionArgument = interaction.options.getString(a.argument);
+                        interactionArgument = interaction.options.getString(a.argument);
+                    }
 
-                        if (interactionArgument != null) {
-                            args[a.argument] = interactionArgument;
-                        }
+                    if (interactionArgument != null) {
+                        args[a.argument] = interactionArgument;
                     }
                 });
             }
