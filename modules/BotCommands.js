@@ -489,7 +489,6 @@ export default class BotCommands {
 BotCommands.prototype.characters = characters;
 BotCommands.prototype.profile = profile;
 BotCommands.prototype.languages = languages;
-BotCommands.prototype.lang = languages;
 BotCommands.prototype.npc = npc;
 BotCommands.prototype.birthmonth = birthmonth;
 BotCommands.prototype.search = search;
