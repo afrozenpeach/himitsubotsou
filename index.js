@@ -120,39 +120,19 @@ if (Config.BOT_TOKEN) {
         }
     })
 
-    client.on("messageCreate", message => {
-        try {
-            //Ignore this and other bots' messages
-            if (message.author.bot) return;
-
-            //Ignore anything without the prefix
-            if (!message.content.startsWith(Config.PREFIX)) return;
-
-            const commandBody = message.content.slice(Config.PREFIX.length);
-            const args = commandBody.split(' ');
-            const command = args.shift().toLowerCase();
-
-            const botCommands = new BotCommands(message, sql, false);
-
-            //If the command is a public function of botCommands, do the thing
-            if (typeof botCommands[command] === "function") {
-                botCommands[command](args);
-            } else {
-                args.push(command);
-                botCommands.profile(args, false);
-            }
-        } catch (error) {
-            message.channel.send("Error: " + error.message);
-        }
-    });
-
     client.on('interactionCreate', async interaction => {
         try {
             if (!interaction.isCommand()) return;
 
             const { commandName } = interaction;
 
-            const botCommands = new BotCommands(interaction, sql, true);
+            let public = interaction.options.getBoolean('public');
+
+            if (public === null) {
+                public = false;
+            }
+
+            const botCommands = new BotCommands(interaction, sql, !public);
 
             let mh = commandName + 'Help';
             let md = botCommands[mh]();
