@@ -44,6 +44,8 @@ export default class BotCommands {
                     });
                 }
 
+                cmd.addBooleanOption(o => o.setName('public').setDescription('Show response publicly'))
+
                 commands.push(cmd);
             } catch (error) {
                 console.log('error loading slashcommand: ' + m + ' - ' + error);
