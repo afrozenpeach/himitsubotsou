@@ -23,7 +23,7 @@ export default function({character} = {}) {
         let character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
 
         if (character.ID === undefined) {
-            this.message.reply("Character proficiencies not found.");
+            this.message.reply("Character languages not found.", this.ephemeral);
             return;
         }
 
