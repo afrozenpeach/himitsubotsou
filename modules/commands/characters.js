@@ -125,10 +125,10 @@ export default function({ player, all } = {}) {
             embed.setThumbnail(user.displayAvatarURL("webp", true, "64"));
         }
 
-        this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  });
+        this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  }).catch();;
     })
     .then(() => session.close())
     .catch(e => {
-        this.message.reply({ content: e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/), ephemeral: this.ephemeral });
+        this.message.reply({ content: e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/), ephemeral: this.ephemeral }).catch();;
     });
 };

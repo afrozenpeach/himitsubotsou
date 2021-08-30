@@ -23,7 +23,7 @@ export default function({character} = {}) {
         let character = result.reduce((res, pair) => Object.assign(res, { [pair.key]: pair.value }), {});
 
         if (character.ID === undefined) {
-            this.message.reply("Character languages not found.", this.ephemeral);
+            this.message.reply("Character languages not found.", this.ephemeral).catch();;
             return;
         }
 
@@ -147,9 +147,9 @@ export default function({character} = {}) {
             embed.addField('Romani Notes', character.RoNotes);
         }
 
-        this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  });
+        this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  }).catch();
     })
     .catch(e => {
-        this.message.reply({ content: e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/), ephemeral: this.ephemeral });
+        this.message.reply({ content: e.message + ' - ' + e.stack.match(/BotCommands.js:[0-9]{1,}:[0-9]{1,}/), ephemeral: this.ephemeral }).catch();;
     });
 }

@@ -72,9 +72,9 @@ export default class BotCommands {
                     .setTitle("Help - " + helpHelp.title)
                     .setDescription(helpHelp.description);
 
-                this.message.reply({ embeds: [messageEmbed], ephemeral: this.ephemeral  });
+                this.message.reply({ embeds: [messageEmbed], ephemeral: this.ephemeral  }).catch();
             } else {
-                this.message.reply({ content: "No additional help.", ephemeral: this.ephemeral });
+                this.message.reply({ content: "No additional help.", ephemeral: this.ephemeral }).catch();
             }
 
             return;
@@ -85,7 +85,7 @@ export default class BotCommands {
             .setTitle("Available commands")
             .setDescription(this.#getAllMethods(this).join(", "));
 
-        this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  });
+        this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  }).catch();
     }
 
     helpHelp() {
@@ -265,9 +265,9 @@ export default class BotCommands {
             let dateTime = new Date(parsedDate);
             dateTime.setFullYear(dateTime.getFullYear() + 1382);
 
-            this.message.reply({ content: "Day of the week: " + dateTime.toLocaleString('en-us', {  weekday: 'long' }), ephemeral: this.ephemeral });
+            this.message.reply({ content: "Day of the week: " + dateTime.toLocaleString('en-us', {  weekday: 'long' }), ephemeral: this.ephemeral }).catch();
         } else {
-            this.message.reply({ content: "No date specified.", ephemeral: this.ephemeral });
+            this.message.reply({ content: "No date specified.", ephemeral: this.ephemeral }).catch();
         }
     }
 
@@ -332,7 +332,7 @@ export default class BotCommands {
             embed.addField(pc.player, characterString.slice(0, -2))
         }, this);
 
-        this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  });
+        this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  }).catch();
     }
 
     //Gets the emoji based on a character name

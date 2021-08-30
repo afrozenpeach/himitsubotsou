@@ -180,10 +180,10 @@ if (Config.BOT_TOKEN) {
             if (typeof botCommands[commandName] === "function") {
                 botCommands[commandName](args);
             } else {
-                interaction.reply('Error: invalid command.')
+                interaction.reply('Error: invalid command.').catch();
             }
         } catch (error) {
-            interaction.reply('Error: ' + error.message);
+            interaction.reply('Error: ' + error.message).catch();;
         }
     });
 

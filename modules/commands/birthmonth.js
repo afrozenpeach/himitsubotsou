@@ -31,7 +31,7 @@ export default function({month} = {}) {
 
         embed.setDescription(finalMessage.slice(0, -1));
 
-        this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  });
+        this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  }).catch();;
     })
     .then(() => session.close())
 }
