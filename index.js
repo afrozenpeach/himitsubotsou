@@ -126,13 +126,13 @@ if (Config.BOT_TOKEN) {
 
             const { commandName } = interaction;
 
-            let public = interaction.options.getBoolean('public');
+            let publicCommand = interaction.options.getBoolean('public');
 
-            if (public === null) {
-                public = false;
+            if (publicCommand === null) {
+                publicCommand = false;
             }
 
-            const botCommands = new BotCommands(interaction, sql, !public);
+            const botCommands = new BotCommands(interaction, sql, !publicCommand);
 
             let mh = commandName + 'Help';
             let md = botCommands[mh]();
