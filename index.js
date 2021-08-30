@@ -2,7 +2,6 @@ import { Client, Intents } from "discord.js";
 import { Config } from "./config.js";
 import express from 'express';
 import cors from 'cors';
-import bodyParser from 'body-parser';
 import mysqlx from "@mysql/xdevapi";
 import Channels from './modules/Channels.js';
 import BotCommands from "./modules/BotCommands.js";
