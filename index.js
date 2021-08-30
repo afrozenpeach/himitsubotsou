@@ -173,7 +173,7 @@ if (Config.BOT_TOKEN) {
                             args = (interactionArgument ? a.trueValue : a.falseValue) + ' ';
                         }
                     } else {
-                        let interactionArgument = interaction.options.getBoolean(a.argument);
+                        let interactionArgument = interaction.options.getString(a.argument);
 
                         if (interactionArgument != null) {
                             args = interactionArgument + ' ';
@@ -184,7 +184,7 @@ if (Config.BOT_TOKEN) {
 
             botCommands[commandName]([args === '' ? undefined : args.trimEnd()]);
         } catch (error) {
-            interaction.message.reply('Error: ' + error.message);
+            interaction.reply('Error: ' + error.message);
         }
     });
 
