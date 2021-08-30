@@ -3,7 +3,6 @@ import { Config } from "../../config.js";
 
 export default function({ player, all } = {}) {
 
-    let characters = [];
     let color = "";
     let user = undefined;
     let finalMessage = "";
