@@ -202,7 +202,7 @@ if (Config.BOT_TOKEN) {
 if (Config.EXPRESS_PORT) {
     const app = express()
         .use(cors())
-        .use(bodyParser.json())
+        .use(express.json())
         .use(Channels(sql));
 
     app.listen(Config.EXPRESS_PORT, () => {
