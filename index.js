@@ -154,7 +154,27 @@ if (Config.BOT_TOKEN) {
 
             const botCommands = new BotCommands(interaction, sql, true);
 
-            botCommands[commandName]([interaction.options.getString('arg') ?? undefined]);
+            let mh = commandName + 'Help';
+            let md = botCommands[mh]();
+            let args = '';
+
+            if (md.requiredArguments) {
+                md.requiredArguments.forEach(a => {
+                    args = interaction.options.getString(a.argument) + ' ';
+                });
+            }
+
+            if (md.optionalArguments) {
+                md.optionalArguments.forEach(a => {
+                    if (a.type === 'bool') {
+                        args = (interaction.options.getBoolean(a.argument) ? a.trueValue : a.falseValue) + ' ';
+                    } else {
+                        args = interaction.options.getString(a.argument) + ' ';
+                    }
+                });
+            }
+
+            botCommands[commandName]([args === '' ? undefined : args.trimEnd()]);
         } catch (error) {
             interaction.message.reply('Error: ' + error.message);
         }

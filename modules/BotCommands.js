@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { MessageEmbed, Options } from "discord.js";
 import { SlashCommandBuilder } from '@discordjs/builders';
 
 import characters from './commands/characters.js';
@@ -24,7 +24,27 @@ export default class BotCommands {
                 let mh = m + 'Help';
                 let md = this[mh]();
 
-                commands.push(new SlashCommandBuilder().setName(m).setDescription(md.description.split('\n')[0]).addStringOption(o => o.setName('arg').setDescription('arg')));
+                let cmd = new SlashCommandBuilder()
+                    .setName(md.title.toLocaleLowerCase())
+                    .setDescription(md.description);
+
+                if (md.requiredArguments) {
+                    md.requiredArguments.forEach(a => {
+                        cmd.addStringOption(o => o.setName(a.argument).setDescription(a.description).setRequired(true));
+                    });
+                }
+
+                if (md.optionalArguments) {
+                    md.optionalArguments.forEach(a => {
+                        if (a.type === 'bool') {
+                            cmd.addBooleanOption(o => o.setName(a.argument).setDescription(a.description));
+                        } else {
+                            cmd.addStringOption(o => o.setName(a.argument).setDescription(a.description));
+                        }
+                    });
+                }
+
+                commands.push(cmd);
             } catch (error) {
                 console.log('error loading slashcommand: ' + m + ' - ' + error);
             }
@@ -64,7 +84,11 @@ export default class BotCommands {
     helpHelp() {
         return {
             title: 'Help',
-            description: 'Get help for various commands'
+            description: 'Get help for various commands',
+            optionalArguments: [{
+                argument: 'command',
+                description: 'the command to get help on'
+            }]
         };
     }
 
@@ -83,7 +107,11 @@ export default class BotCommands {
     franelcrewHelp() {
         return {
             title: 'Franelcrew',
-            description: 'Lists characters in the Franelcrew plotline.\n\nOptional Parameters: player name to filter by'
+            description: 'Lists characters in the Franelcrew plotline.',
+            optionalArguments: [{
+                argument: 'player',
+                description: 'player name to filter by'
+            }]
         };
     }
 
@@ -101,7 +129,11 @@ export default class BotCommands {
     hanalanHelp() {
         return {
             title: 'Hanalan',
-            description: 'Lists characters in the Hanalan Commons plotline.\n\nOptional Parameters: player name to filter by'
+            description: 'Lists characters in the Hanalan Commons plotline',
+            optionalArguments: [{
+                argument: 'player',
+                description: 'player name to filter by'
+            }]
         };
     }
 
@@ -119,21 +151,42 @@ export default class BotCommands {
     einaHelp() {
         return {
             title: 'Eina',
-            description: 'Lists characters in the Eina plotline.\n\nOptional Parameters: player name to filter by'
+            description: 'Lists characters in the Eina plotline',
+            optionalArguments: [{
+                argument: 'player',
+                description: 'player name to filter by'
+            }]
         };
     }
 
     charactersHelp() {
         return {
             title: 'Characters',
-            description: 'Lists characters played by the current user.\n\nOptional Parameters:\n\n0: alternative player name to filter by\n\n1: \'all\'0 to include inactive characters'
+            description: 'Lists characters played by the current user.',
+            optionalArguments: [
+                {
+                    argument: 'player',
+                    description: 'player name to filter by'
+                },
+                {
+                    type: 'bool',
+                    argument: 'all',
+                    description: 'Include inactive characters in list',
+                    trueValue: 'all',
+                    falseValue: 'notall'
+                }
+            ]
         };
     }
 
     profileHelp() {
         return {
             title: 'Profile',
-            description: 'Displays a profile for the specified character.'
+            description: 'Displays a profile for the specified character.',
+            requiredArguments: [{
+                argument: 'character',
+                description: 'The characater name whose profile to show'
+            }]
         };
     }
 
@@ -142,24 +195,38 @@ export default class BotCommands {
     }
 
     magicHelp() {
-        return this.#weaponsMagicProficienciesHelp();
+        let magicHelp = this.#weaponsMagicProficienciesHelp();
+        magicHelp.title = "magic";
+
+        return magicHelp;
     }
 
     languagesHelp() {
         return {
             title: 'Languages',
-            description: 'Displays the language proficiencies for the specified character. Aliases: !languages or !lang'
+            description: 'Displays the language proficiencies for the specified character.',
+            requiredArguments: [{
+                argument: 'character',
+                description: 'The characater name whose languages to show'
+            }]
         };
     }
 
     langHelp(args) {
-        return this.languagesHelp(args);
+        let langHelp = this.languagesHelp(args);
+        langHelp.title = "lang";
+
+        return langHelp;
     }
 
     npcHelp() {
         return {
             title: 'NPC',
-            description: 'Displays a profile for the specified npc.'
+            description: 'Displays a profile for the specified npc.',
+            requiredArguments: [{
+                argument: 'npc',
+                description: 'The characater name whose profile to show'
+            }]
         };
     }
 
@@ -172,8 +239,12 @@ export default class BotCommands {
 
     searchHelp() {
         return {
-            title: 'SQL Search',
-            description: 'Returns a list of characters and their players for a given where clause.\n\nAvailable Fields:\nID, picture, name, nickname1, nickname2, journal, jobs, subjobs, socialclass, country, hometown, house, birthmonth, birthdate, year, zodiac, bloodtype, sect, status, player, queued, adoptable, haircolor, eyecolor, heightfeet, heightinches, heightcms, build, skintone, cupsize, domhand, identifiers, class, pastclasses, mountcombat, orientation, noncombat, gender, Special\n\nExamples:\nname = \'Fayre\' -> Just \'Fayre\'\nname like \'ra%\' -> Starts with \'ra\'\nyear < 600 -> Born before 600 AR'
+            title: 'search',
+            description: 'Returns a list of characters and their players for a given where clause.',
+            requiredArguments: [{
+                argument: 'where',
+                description: 'The where clause to search with. Ex: name like \'%fayre%\''
+            }]
         };
     }
 
@@ -192,7 +263,11 @@ export default class BotCommands {
     dayHelp() {
         return {
             title: 'Day',
-            description: 'Converts the specified in-game date to a day of the week. Parameters: Date'
+            description: 'Converts the specified in-game date to a day of the week.',
+            requiredArguments: [{
+                argument: 'date',
+                description: 'The eire date to convert to a day of the week'
+            }]
         };
     }
 
@@ -355,8 +430,12 @@ export default class BotCommands {
 
     #weaponsMagicProficienciesHelp() {
         return {
-            title: 'Weapons/Magic',
-            description: 'Displays the weapon and magic proficiencies for the specified character. Aliases: !weapons or !magic'
+            title: 'weapons',
+            description: 'Displays the weapon and magic proficiencies for the specified character.',
+            requiredArguments: [{
+                argument: 'character',
+                description: 'The characater name whose weapons or magic to show'
+            }]
         };
     }
 
