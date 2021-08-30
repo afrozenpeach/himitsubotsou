@@ -138,7 +138,7 @@ if (Config.BOT_TOKEN) {
 
             let prefix = interaction.options.getString('prefix');
 
-            if (prefix != Config.PREFIX) {
+            if (prefix != null && prefix != Config.PREFIX) {
                 return;
             }
 
