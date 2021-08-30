@@ -167,9 +167,17 @@ if (Config.BOT_TOKEN) {
             if (md.optionalArguments) {
                 md.optionalArguments.forEach(a => {
                     if (a.type === 'bool') {
-                        args = (interaction.options.getBoolean(a.argument) ? a.trueValue : a.falseValue) + ' ';
+                        let interactionArgument = interaction.options.getBoolean(a.argument);
+
+                        if (interactionArgument != null) {
+                            args = (interactionArgument ? a.trueValue : a.falseValue) + ' ';
+                        }
                     } else {
-                        args = interaction.options.getString(a.argument) + ' ';
+                        let interactionArgument = interaction.options.getBoolean(a.argument);
+
+                        if (interactionArgument != null) {
+                            args = interactionArgument + ' ';
+                        }
                     }
                 });
             }
