@@ -48,7 +48,10 @@ export default class BotCommands {
                 }
 
                 //Every slash command can be ephemeral - by default ephemeral is true, but we flip that because public is more user friendly
-                cmd.addBooleanOption(o => o.setName('public').setDescription('Show response publicly'))
+                cmd.addBooleanOption(o => o.setName('public').setDescription('Show response publicly'));
+
+                //Every slash command has an optional prefix - this works like old messageCreate prefixes
+                cmd.addStringOption(o => o.setName('prefix').setDescription('Only run on the bot with the chosen prefix - for debugging only'));
 
                 commands.push(cmd);
             } catch (error) {

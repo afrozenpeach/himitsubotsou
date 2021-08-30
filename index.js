@@ -136,6 +136,12 @@ if (Config.BOT_TOKEN) {
 
             const { commandName } = interaction;
 
+            let prefix = interaction.options.getString('prefix');
+
+            if (prefix != Config.PREFIX) {
+                return;
+            }
+
             let publicCommand = interaction.options.getBoolean('public');
 
             if (publicCommand === null) {
