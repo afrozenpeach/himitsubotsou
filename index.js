@@ -7,13 +7,13 @@ import mysqlx from "@mysql/xdevapi";
 import Channels from './modules/Channels.js';
 import BotCommands from "./modules/BotCommands.js";
 
-//SQL
+//SQL connection
 const sql = mysqlx.getClient(
     { host: Config.MYSQL_HOST, user: Config.MYSQL_USER, password: Config.MYSQL_PASSWORD },
     { pooling: { enabled: true, maxIdleTime: 30000, maxSize: 25, queueTimeout: 0 } }
 )
 
-//Discord Bot
+//Discord Bot - only load if a BOT_TOKEN is set
 if (Config.BOT_TOKEN) {
     const client = new Client({
         fetchAllMembers: true,
@@ -26,6 +26,7 @@ if (Config.BOT_TOKEN) {
         ]
     });
 
+    //If VERSION is set, the bot will announce itself when it connects
     client.on("ready", () => {
         if (Config.VERSION) {
             client.channels.cache.find(channel => channel.name === "botspam").send("Bot loaded. Version: " + Config.VERSION);
@@ -34,6 +35,7 @@ if (Config.BOT_TOKEN) {
         console.log('Bot listening');
     });
 
+    //When a channel is moved, verify the channel and then if verified archive it
     client.on("channelUpdate", (oldChannel, newChannel) => {
         if (newChannel.parent.name.toLowerCase().startsWith("archive") && oldChannel.parent.name.toLowerCase().startsWith("current")) {
             let sessions = [];
@@ -41,19 +43,23 @@ if (Config.BOT_TOKEN) {
             let d = newChannel.name.split('_');
 
             try {
+                //Foramt should be location_characters_date: ex: floran-city_inara-anton-daisy_july-10th-0633-AR
                 if (d.length != 3) {
                     throw 'invalid format for channel name';
                 }
 
+                //verify location
                 d[0].replaceAll('-', ' ').split(' ').map(function(word) {
                     return (word.charAt(0).toUpperCase() + word.slice(1));
                 }).join(' ');
 
+                //verify characters
                 d[1].split('-').map(function(word) {
                     return (word.charAt(0).toUpperCase() + word.slice(1));
                 });
 
-                let date = new Date(d[2].replace('-ar', '').replace('ar', ''));
+                //verify date
+                let date = new Date(d[2].toLowerCase().replace('-ar', '').replace('ar', ''));
 
                 if (date.getFullYear > 650) {
                     throw 'invalid  year';
@@ -72,6 +78,7 @@ if (Config.BOT_TOKEN) {
             .then(s => { sessions[0] = s; return sessions[0].getSchema(Config.MYSQL_ARCHIVESDB) })
             .then(s => { return s.getTable("channels") })
             .then(t => {
+                //Insert the channel header
                 t.insert(['category', 'channel', 'discordid'])
                 .values(newChannel.parent.name, newChannel.name, newChannel.id)
                 .execute()
@@ -81,6 +88,7 @@ if (Config.BOT_TOKEN) {
                     let allMessagesRaw = [];
                     let last_id;
 
+                    //Get all the messages as quickly as possible
                     while (true) {
                         const options = { limit: 100 };
                         if (last_id) {
@@ -97,6 +105,7 @@ if (Config.BOT_TOKEN) {
                     }
 
                     allMessagesRaw.forEach(m => {
+                        //Save each message as long as a bot didn't send it
                         if (!m.author.bot) {
                             promises.push(
                                 sql.getSession()
@@ -120,6 +129,7 @@ if (Config.BOT_TOKEN) {
         }
     })
 
+    //When a slash command is run
     client.on('interactionCreate', async interaction => {
         try {
             if (!interaction.isCommand()) return;
@@ -132,18 +142,22 @@ if (Config.BOT_TOKEN) {
                 publicCommand = false;
             }
 
+            //With a few exceptions (see the #getAllMethods function) public functions are eligable slash commands
             const botCommands = new BotCommands(interaction, sql, !publicCommand);
 
+            //Each slash command should have a matching Help function named commandHelp
             let mh = commandName + 'Help';
             let md = botCommands[mh]();
             let args = {};
 
+            //Load required arguments
             if (md.requiredArguments) {
                 md.requiredArguments.forEach(a => {
                     args[a.argument] = interaction.options.getString(a.argument);
                 });
             }
 
+            //Load optional arguments
             if (md.optionalArguments) {
                 md.optionalArguments.forEach(a => {
                     if (a.type === 'bool') {
@@ -162,7 +176,12 @@ if (Config.BOT_TOKEN) {
                 });
             }
 
-            botCommands[commandName](args);
+            //As long as the command is a function, run it and pass in the arguments
+            if (typeof botCommands[commandName] === "function") {
+                botCommands[commandName](args);
+            } else {
+                interaction.reply('Error: invalid command.')
+            }
         } catch (error) {
             interaction.reply('Error: ' + error.message);
         }
@@ -171,8 +190,10 @@ if (Config.BOT_TOKEN) {
     client.login(Config.BOT_TOKEN);
 }
 
+//Web API - Only loads if an EXPRESS_PORT is set
+//All the magic happens in modules/Channels.js
+//This is required for the Himitsu Frontend
 if (Config.EXPRESS_PORT) {
-    //Web API
     const app = express()
         .use(cors())
         .use(bodyParser.json())

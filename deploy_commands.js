@@ -1,3 +1,4 @@
+//Run this to deploy the slash commands to your server
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import { Config } from "./config.js";
@@ -9,6 +10,7 @@ const rest = new REST({ version: '9' }).setToken(Config.BOT_TOKEN);
 
 (async () => {
 	try {
+		//applicationGuildCommands should probably be set by CONFIG but :effort:
 		await rest.put(
 			Routes.applicationGuildCommands('752723826881855568', '737344328581513268'),
 			{ body: commands },

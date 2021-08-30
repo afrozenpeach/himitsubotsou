@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { Config } from "../../config.js";
 
-export default function({ player, all} = {}) {
+export default function({ player, all } = {}) {
 
     let characters = [];
     let color = "";

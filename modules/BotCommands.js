@@ -1,6 +1,7 @@
-import { MessageEmbed, Options } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { SlashCommandBuilder } from '@discordjs/builders';
 
+//Some larger functions are loaded magically (see the end of the file for more!)
 import characters from './commands/characters.js';
 import profile from './commands/profile.js';
 import languages from './commands/languages.js';
@@ -16,6 +17,8 @@ export default class BotCommands {
         this.ephemeral = ephemeral;
     }
 
+    //Using the #getAllMethods function, return an array of SlashCommandBuilders
+    //Each SlashCommandBuilder is based on the matching slash command's help function
     buildSlashCommands() {
         let commands = [];
 
@@ -44,6 +47,7 @@ export default class BotCommands {
                     });
                 }
 
+                //Every slash command can be ephemeral - by default ephemeral is true, but we flip that because public is more user friendly
                 cmd.addBooleanOption(o => o.setName('public').setDescription('Show response publicly'))
 
                 commands.push(cmd);
@@ -55,6 +59,7 @@ export default class BotCommands {
         return commands.map(c => c.toJSON());
     }
 
+    //Generic help - this probably isn't needed anymore since slash commands are magic and awewsome
     help({command} = {}) {
         if (command !== undefined) {
             let argHelp = command + "Help";
@@ -380,6 +385,7 @@ export default class BotCommands {
         return emoji;
     }
 
+    //Helper function to get a character's name and display it properly
     getCharacterName(character) {
         let nameLine = "";
 
@@ -476,6 +482,7 @@ export default class BotCommands {
     }
 }
 
+//Register imported functions
 BotCommands.prototype.characters = characters;
 BotCommands.prototype.profile = profile;
 BotCommands.prototype.languages = languages;
