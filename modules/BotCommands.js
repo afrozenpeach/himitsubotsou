@@ -53,9 +53,9 @@ export default class BotCommands {
         return commands.map(c => c.toJSON());
     }
 
-    help(args) {
-        if (args[0] !== undefined) {
-            let argHelp = args[0] + "Help";
+    help({command} = {}) {
+        if (command !== undefined) {
+            let argHelp = command + "Help";
 
             if (typeof this[argHelp] === 'function') {
                 let helpHelp = this[argHelp]();
@@ -92,7 +92,7 @@ export default class BotCommands {
         };
     }
 
-    franelcrew(args) {
+    franelcrew({player} = {}) {
         let franelcrew = [
             { player: "Rosa", characters: ["Aileen", "Celeste", "Crionna", "Eabhan (Eabh)", "Korvin", "Maeryn/\"Ethniu\"", "Nessa", "Suaimeas"] },
             { player: "Elzie", characters: ["Amalea", "Elliot", "Gaibrial (Gabe)", "Jace", "Lauren", "Patience", "Sawyer"] },
@@ -101,7 +101,7 @@ export default class BotCommands {
             { player: "Meg", characters: ["Lawrence"] }
         ];
 
-        this.sendCharacterEmbed(franelcrew, "#fcba03", "Current Franelcrew members", args[0]);
+        this.sendCharacterEmbed(franelcrew, "#fcba03", "Current Franelcrew members", player);
     }
 
     franelcrewHelp() {
@@ -115,7 +115,7 @@ export default class BotCommands {
         };
     }
 
-    hanalan(args) {
+    hanalan({player} = {}) {
         let hanalanCommons = [
             { player: "Frozen", characters: ["Lenore", "Inara", "Kimberly"] },
             { player: "Dots", characters: ["Mark", "Eri"] },
@@ -123,7 +123,7 @@ export default class BotCommands {
             { player: "Rosa", characters: ["Annie", "Anton", "Nathan"] }
         ];
 
-        this.sendCharacterEmbed(hanalanCommons, "#90ee90", "Current Hanalan commons members", args[0]);
+        this.sendCharacterEmbed(hanalanCommons, "#90ee90", "Current Hanalan commons members", player);
     }
 
     hanalanHelp() {
@@ -137,7 +137,7 @@ export default class BotCommands {
         };
     }
 
-    eina(args) {
+    eina({player} = {}) {
         let eina = [
             { player: "Frozen", characters: ["Gebann", "Rae"] },
             { player: "Nin", characters: ["Dagda"] },
@@ -145,7 +145,7 @@ export default class BotCommands {
             { player: "Dots", characters: ["ebony"] }
         ];
 
-        this.sendCharacterEmbed(eina, "#bcf5f3", "Current Eina members", args[0]);
+        this.sendCharacterEmbed(eina, "#bcf5f3", "Current Eina members", player);
     }
 
     einaHelp() {
@@ -212,8 +212,8 @@ export default class BotCommands {
         };
     }
 
-    langHelp(args) {
-        let langHelp = this.languagesHelp(args);
+    langHelp({character} = {}) {
+        let langHelp = this.languagesHelp(character);
         langHelp.title = "lang";
 
         return langHelp;
@@ -233,7 +233,11 @@ export default class BotCommands {
     birthmonthHelp() {
         return {
             title: 'Birthmonth',
-            description: 'Lists characters that have a birthday in the designated month.'
+            description: 'Lists characters that have a birthday in the designated month.',
+            requiredArguments: [{
+                argument: 'month',
+                description: 'The month to list birthdays from'
+            }]
         };
     }
 
@@ -248,10 +252,10 @@ export default class BotCommands {
         };
     }
 
-    day(args) {
-        if (args.length > 0) {
-            let date = Date.parse(args.join(' '));
-            let dateTime = new Date(date);
+    day({date} = {}) {
+        if (date) {
+            let parsedDate = Date.parse(date);
+            let dateTime = new Date(parsedDate);
             dateTime.setFullYear(dateTime.getFullYear() + 1382);
 
             this.message.reply({ content: "Day of the week: " + dateTime.toLocaleString('en-us', {  weekday: 'long' }), ephemeral: this.ephemeral });

@@ -156,11 +156,11 @@ if (Config.BOT_TOKEN) {
 
             let mh = commandName + 'Help';
             let md = botCommands[mh]();
-            let args = '';
+            let args = {};
 
             if (md.requiredArguments) {
                 md.requiredArguments.forEach(a => {
-                    args = interaction.options.getString(a.argument) + ' ';
+                    args[a.argument] = interaction.options.getString(a.argument);
                 });
             }
 
@@ -170,19 +170,19 @@ if (Config.BOT_TOKEN) {
                         let interactionArgument = interaction.options.getBoolean(a.argument);
 
                         if (interactionArgument != null) {
-                            args = (interactionArgument ? a.trueValue : a.falseValue) + ' ';
+                            args[a.argument] = interactionArgument ? a.trueValue : a.falseValue;
                         }
                     } else {
                         let interactionArgument = interaction.options.getString(a.argument);
 
                         if (interactionArgument != null) {
-                            args = interactionArgument + ' ';
+                            args[a.argument] = interactionArgument;
                         }
                     }
                 });
             }
 
-            botCommands[commandName]([args === '' ? undefined : args.trimEnd()]);
+            botCommands[commandName](args);
         } catch (error) {
             interaction.reply('Error: ' + error.message);
         }

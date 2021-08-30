@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { Config } from "../../config.js";
 
-export default function(args, error = true) {
+export default function({character} = {}, error = true) {
     let session;
     let result = [];
 
@@ -12,9 +12,9 @@ export default function(args, error = true) {
         t.select()
         .where("name like :name OR nickname1 like :nickname1 OR nickname2 like :nickname2")
         .orderBy("name")
-        .bind("name", args[0])
-        .bind("nickname1", args[0])
-        .bind("nickname2", args[0])
+        .bind("name", character)
+        .bind("nickname1", character)
+        .bind("nickname2", character)
         .execute(
             row => {
                 row.forEach((value, i) => { result[i] = Object.assign({}, result[i], { value }) });

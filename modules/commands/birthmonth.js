@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { Config } from "../../config.js";
 
-export default function(args) {
+export default function({month} = {}) {
     let session;
 
     this.sql.getSession()
@@ -11,7 +11,7 @@ export default function(args) {
         t.select("name", "nickname1", "nickname2", "birthmonth", "birthdate", "year")
         .where("birthmonth like :month")
         .orderBy("birthdate")
-        .bind("month", args[0])
+        .bind("month", month)
         .execute()
     )
     .then(r => {

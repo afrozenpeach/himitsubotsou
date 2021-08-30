@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { Config } from "../../config.js";
 
-export default function(args) {
+export default function({where} = {}) {
     let session;
 
     this.sql.getSession()
@@ -9,7 +9,7 @@ export default function(args) {
     .then(s => { return s.getTable("Characters") })
     .then(t =>
         t.select("name", "nickname1", "nickname2", "player")
-        .where(args.join(' '))
+        .where(where)
         .orderBy("player", "name")
         .execute()
     )

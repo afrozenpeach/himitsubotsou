@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { Config } from "../../config.js";
 
-export default function(args) {
+export default function({npc} = {}) {
     let session;
     let result = [];
     let results = [];
@@ -13,7 +13,7 @@ export default function(args) {
         t.select()
         .where("npcName like :name")
         .orderBy("npcName")
-        .bind("name", args[0])
+        .bind("name", npc)
         .execute(
             row => {
                 row.forEach((value, i) => {

@@ -1,9 +1,8 @@
 import { MessageEmbed } from "discord.js";
 import { Config } from "../../config.js";
 
-export default function(args) {
+export default function({ player, all} = {}) {
 
-    let player = "";
     let characters = [];
     let color = "";
     let user = undefined;
@@ -11,9 +10,7 @@ export default function(args) {
 
     //If there is an arg find the characters for that player
     //Otherwise find the characters for the player that activated the command
-    if (args.length > 0 && args[0] != undefined && args[0].length > 0 && args[0] != 'all' && args[0] != 'notall') {
-        player = args[0].toLocaleLowerCase();
-    } else {
+    if (!player) {
         user = this.message.author;
 
         if (user === undefined) {
@@ -83,7 +80,7 @@ export default function(args) {
 
     let activeOnly = " && status = 'Normal'";
 
-    if (args[0] === 'all' || args[1] === "all") {
+    if (all) {
         activeOnly = "";
     }
 
