@@ -59,7 +59,7 @@ if (Config.BOT_TOKEN) {
                     throw 'invalid  year';
                 }
             } catch (error) {
-                newChannel.send('Archive failed - Channel name must be in the format location_characters_date');
+                newChannel.send('Archive failed - Channel name must be in the format location_characters_date and characters should be a hyphen separated list');
 
                 newChannel.setParent(oldChannel.parent)
 
