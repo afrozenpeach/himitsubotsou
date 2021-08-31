@@ -35,6 +35,30 @@ export default function({ player, all } = {}) {
             case "wheelfor":
                 player = "Nin";
                 break;
+            default:
+                let member = this.message.guild.member(user);
+
+                switch (member.displayName.toLocaleLowerCase()) {
+                    case "frozen":
+                        player = "Frozen";
+                        break;
+                    case "elzie":
+                        player = "Elzie";
+                        break;
+                    case "dots":
+                        player = "Dots";
+                        break;
+                    case "rosa":
+                        player = "Rosa";
+                        break;
+                    case "meg":
+                        player = "Meg";
+                        break;
+                    case "nineveh":
+                        player = "Nin";
+                        break;
+                }
+                break;
         }
     }
 
