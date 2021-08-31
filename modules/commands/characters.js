@@ -4,100 +4,51 @@ import { Config } from "../../config.js";
 export default function({ player, all } = {}) {
 
     let color = "";
-    let user = undefined;
+    let member = undefined;
     let finalMessage = "";
 
     //If there is an arg find the characters for that player
     //Otherwise find the characters for the player that activated the command
     if (!player) {
-        user = this.message.author;
-
-        if (user === undefined) {
-            user = this.message.user;
-        }
-
-        switch (user.username.toLocaleLowerCase()) {
-            case "frozenpeach":
-                player = "Frozen";
-                break;
-            case "worm":
-                player = "Elzie";
-                break;
-            case "stormbourne":
-                player = "Dots";
-                break;
-            case "rosa":
-                player = "Rosa";
-                break;
-            case "meg":
-                player = "Meg";
-                break;
-            case "wheelfor":
-                player = "Nin";
-                break;
-            default:
-                let member = this.message.guild.member(user);
-
-                switch (member.displayName.toLocaleLowerCase()) {
-                    case "frozen":
-                        player = "Frozen";
-                        break;
-                    case "elzie":
-                        player = "Elzie";
-                        break;
-                    case "dots":
-                        player = "Dots";
-                        break;
-                    case "rosa":
-                        player = "Rosa";
-                        break;
-                    case "meg":
-                        player = "Meg";
-                        break;
-                    case "nineveh":
-                        player = "Nin";
-                        break;
-                }
-                break;
-        }
+        player = this.message.guild.member(this.message.user).displayName;
     }
 
     //Player preferences - TO DO: Pull from database
     switch (player.toLocaleLowerCase()) {
         case "frozen":
-            user = this.message.client.users.cache.find(user => user.username == "FrozenPeach");
+            member = this.message.guild.members.cache.find(m => m.displayName == "Frozen");
             color = "#32a8a4";
             break;
         case "dots":
-            user = this.message.client.users.cache.find(user => user.username == "stormbourne");
+            member = this.message.guild.members.cache.find(m => m.displayName == "dots");
             color = "#a70058";
             break;
         case "elzie":
-            user = this.message.client.users.cache.find(user => user.username == "belix");
+            member = this.message.guild.members.cache.find(m => m.displayName == "Elzie");
             color = "#008000";
             break;
         case "meg":
-            user = this.message.client.users.cache.find(user => user.username == "Meg");
+            member = this.message.guild.members.cache.find(m => m.displayName == "Meg");
             color = "#800080";
             break;
         case "nineveh":
         case "nin":
-            user = this.message.client.users.cache.find(user => user.username == "wheelfor");
+            member = this.message.guild.members.cache.find(m => m.displayName == "Nineveh");
             color = "#800080";
             player = "nineveh";
             break;
         case "rosa":
-            user = this.message.client.users.cache.find(user => user.username == "ROSA");
+            member = this.message.guild.members.cache.find(m => m.displayName == "ROSA");
             color = "#800080";
             break;
         case "playerless":
         case "unplayed":
-            user = undefined;
+            member = undefined;
             color = "#000000";
             player = "playerless";
             break;
         default:
-            this.message.reply({ content: "Player not found.", ephemeral: this.ephemeral });
+            this.message.reply({ content: "Player not found.", ephemeral: this.ephemeral }).catch();
             return;
     }
 
@@ -144,8 +95,8 @@ export default function({ player, all } = {}) {
             embed.setColor(color);
         }
 
-        if (user != undefined) {
-            embed.setThumbnail(user.displayAvatarURL("webp", true, "64"));
+        if (member != undefined) {
+            embed.setThumbnail(member.user.displayAvatarURL("webp", true, "64"));
         }
 
         this.message.reply({ embeds: [embed], ephemeral: this.ephemeral  }).catch();;
