@@ -20,7 +20,7 @@ export default function({ player, all } = {}) {
             case "frozenpeach":
                 player = "Frozen";
                 break;
-            case "belix":
+            case "worm":
                 player = "Elzie";
                 break;
             case "stormbourne":
