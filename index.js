@@ -186,7 +186,7 @@ if (Config.BOT_TOKEN) {
                 interaction.reply('Error: invalid command.').catch();
             }
         } catch (error) {
-            interaction.reply('Error: ' + error.message).catch();;
+            interaction.reply('Error: ' + error.message).catch();
         }
     });
 
