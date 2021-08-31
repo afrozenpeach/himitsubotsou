@@ -10,7 +10,7 @@ export default function({ player, all } = {}) {
     //If there is an arg find the characters for that player
     //Otherwise find the characters for the player that activated the command
     if (!player) {
-        player = this.message.guild.members.cache.find(m => m.user = this.message.user).displayName;
+        player = this.message.guild.members.cache.find(m => m.user == this.message.user).displayName;
     }
 
     //Player preferences - TO DO: Pull from database
