@@ -31,7 +31,7 @@ export default function createRouter(sql) {
   //Get all channels for a category
   router.get('/api/channels/category/:category', function (req, res, next) {
     let session;
-    let session2;
+    let sessions = [];
 
     if (req.params.category === 'Archive - All Channels') {
         req.params.category = '%';
@@ -58,18 +58,22 @@ export default function createRouter(sql) {
             for (const f of fetched) {
                 promises.push(
                     sql.getSession()
-                    .then(s2 => { session2 = s2; return session2.getSchema(Config.MYSQL_ARCHIVESDB)})
+                    .then(s2 => { sessions[f[0]] = s2; return sessions[f[0]].getSchema(Config.MYSQL_ARCHIVESDB)})
                     .then(() => {
-                        return session2.sql("SET SESSION group_concat_max_len = 1000000;").execute().catch();
+                        return sessions[f[0]].sql("SET SESSION group_concat_max_len = 1000000;").execute().catch();
                     })
                     .then(() => {
-                        return session2.sql("SELECT GROUP_CONCAT(content SEPARATOR ', ') FROM " + Config.MYSQL_ARCHIVESDB + ".messages WHERE channelId = " + f[0] + " GROUP BY channelId").execute().catch(err => {
+                        return sessions[f[0]].sql("SELECT GROUP_CONCAT(content SEPARATOR ', ') FROM " + Config.MYSQL_ARCHIVESDB + ".messages WHERE channelId = " + f[0] + " GROUP BY channelId").execute().catch(err => {
                             res.status(500).json({status: err});
                         })
                     })
                     .then(r2 => {
                         let d = f[2].split('_');
-                        let m = r2.fetchAll();
+                        let m = [];
+
+                        if (r2) {
+                            m = r2.fetchAll();
+                        }
 
                         try {
                             output.push({
@@ -94,7 +98,7 @@ export default function createRouter(sql) {
                             })
                         }
 
-                        session2.close();
+                        sessions[f[0]].close();
                     })
                 );
             }
