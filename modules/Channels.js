@@ -504,7 +504,7 @@ export default function createRouter(sql) {
 
     sql.getSession()
     .then(s => { session = s; return session.getSchema(Config.MYSQL_FICDB) })
-    .then(s => { return s.getTable("fics") })
+    .then(s => { return s.getTable("Fics") })
     .then(t =>
         t.select()
         .orderBy(['year asc', 'month asc', 'day asc'])
