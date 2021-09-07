@@ -2,6 +2,7 @@ import express from 'express';
 import { Config } from "../config.js";
 import jwt from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
+import jwtDecode from 'jwt-decode';
 
 export default function createRouter(sql) {
   const router = express.Router();
@@ -564,3 +565,21 @@ const checkJwt = jwt({
         return null;
     }
 });
+
+const checkRole = (req, res, next) => {
+    let token = null;
+
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+        token = req.headers.authorization.split(' ')[1];
+    } else if (req.query && req.query.token) {
+        token = req.query.token;
+    }
+
+    const decoded = jwtDecode(token);
+
+    if (decoded.roles.includes('Admin')) {
+        next();
+    } else {
+        res.status(401).json('Unauthorized. User must be an Admin.');
+    }
+}
