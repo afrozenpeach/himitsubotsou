@@ -1,5 +1,7 @@
 import express from 'express';
 import { Config } from "../config.js";
+import jwt from 'express-jwt';
+import jwksRsa from 'jwks-rsa';
 
 export default function createRouter(sql) {
   const router = express.Router();
@@ -542,3 +544,23 @@ export default function createRouter(sql) {
 
   return router;
 }
+
+const checkJwt = jwt({
+    secret: jwksRsa.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: Config.FUSIONAUTH_SERVER + '/.well-known/jwks.json'
+    }),
+    issuer: [Config.FUSIONAUTH_SERVER],
+    algorithms: ['ES256'],
+    getToken: function fromHeaderOrQuerystring (req) {
+        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+            return req.headers.authorization.split(' ')[1];
+        } else if (req.query && req.query.token) {
+            return req.query.token;
+        }
+
+        return null;
+    }
+});

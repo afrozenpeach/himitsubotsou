@@ -8,5 +8,6 @@ export const Config = {
     "MYSQL_CHARDB": "characters_database",
     "MYSQL_FICDB": "fic_database",
     "MYSQL_ARCHIVESDB": "archives_database",
-    "EXPRESS_PORT": 8080
+    "EXPRESS_PORT": 8080,
+    "FUSIONAUTH_SERVER": "Put fusion auth server here"
 }
