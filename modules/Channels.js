@@ -381,109 +381,109 @@ export default function createRouter(sql) {
     });
   });
 
-  router.put('/api/characters/:id', checkJwt, checkRole, function (req, res, next) {
-      let session;
-      let character = req.body;
+  router.put('/api/characters/:id', checkJwt, checkRoleAdmin, function (req, res, next) {
+    let session;
+    let character = req.body;
 
-      const schema = joi.object().keys({
-          picture: joi.string().min(5).max(200).pattern(/(jpg|png|gif)$/).required(),
-          name: joi.string().min(1).max(30).required(),
-          nickname1: joi.string().max(30).allow(''),
-          nickname2: joi.string().max(30).allow(''),
-          journal: joi.string().min(1).max(30).required(),
-          jobs: joi.string().max(200).allow(''),
-          subjobs: joi.string().max(200).allow(''),
-          socialclass: joi.string().min(1).max(30).required(),
-          country: joi.string().min(1).max(10).valid('Korin', 'Dentoria', 'Kanemoria', 'Megam', 'Kilia', 'Hanalan', 'Atsiria', 'Romani').required(),
-          hometown: joi.string().max(30).allow(''),
-          house: joi.string().max(50).allow(''),
-          birthmonth: joi.string().min(1).max(10).valid('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'Novemeber', 'December').required(),
-          birthdate: joi.number().less(31).required(),
-          year: joi.number().less(650).required(),
-          zodiac: joi.string().max(30).valid('Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces').required(),
-          bloodtype: joi.string().max(4).valid('B', 'A', 'AB', 'O', 'B-', 'B+').required(),
-          sect: joi.string().max(21).valid('Unknown', 'Neutral', 'Pillar of Light', 'Messenger of Darkness', 'Silent One').required(),
-          status: joi.string().max(20).valid('Normal', 'Dead', 'Missing', 'Incapacitated').required(),
-          player: joi.string().max(20).valid('Elzie', 'Elaine', 'Frozen', 'Playerless', 'Meg', 'Rosa', 'Sara', 'Nineveh', 'Dots', 'Mike', 'Silvie', 'Vicki').required(),
-          queued: joi.number().less(2).required(),
-          adoptable: joi.number().less(2).required(),
-          haircolor: joi.string().max(20).required(),
-          eyecolor: joi.string().max(20).required(),
-          heightfeet: joi.number().less(7).required(),
-          heightinches: joi.number().less(13).required(),
-          heightcms: joi.number().less(200).required(),
-          build: joi.string().max(11).required(),
-          skintone: joi.string().max(10).required(),
-          cupsize: joi.string().max(3).valid('A', 'B', 'C', 'D', 'N/A', 'DD'),
-          domhand: joi.string().max(20).valid('Right', 'Left', 'Mixed', 'Ambidextrous').required(),
-          identifiers: joi.string().allow(''),
-          class: joi.string().max(20).allow(''),
-          pastclasses: joi.string().allow(''),
-          mountcombat: joi.number().less(2).required(),
-          orientation: joi.string().max(20).valid('Bicurious', 'Straight', 'Gay', 'Bi', 'Asexual', 'Undecided', 'Unknown', 'Bisexual').required(),
-          noncombat: joi.string().allow(''),
-          gender: joi.string().max(1).valid('F', 'M', 'N').required(),
-          special: joi.string().max(20).allow('')
-      });
+    const schema = joi.object().keys({
+        picture: joi.string().min(5).max(200).pattern(/(jpg|png|gif)$/).required(),
+        name: joi.string().min(1).max(30).required(),
+        nickname1: joi.string().max(30).allow(''),
+        nickname2: joi.string().max(30).allow(''),
+        journal: joi.string().min(1).max(30).required(),
+        jobs: joi.string().max(200).allow(''),
+        subjobs: joi.string().max(200).allow(''),
+        socialclass: joi.string().min(1).max(30).required(),
+        country: joi.string().min(1).max(10).valid('Korin', 'Dentoria', 'Kanemoria', 'Megam', 'Kilia', 'Hanalan', 'Atsiria', 'Romani').required(),
+        hometown: joi.string().max(30).allow(''),
+        house: joi.string().max(50).allow(''),
+        birthmonth: joi.string().min(1).max(10).valid('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'Novemeber', 'December').required(),
+        birthdate: joi.number().less(31).required(),
+        year: joi.number().less(650).required(),
+        zodiac: joi.string().max(30).valid('Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces').required(),
+        bloodtype: joi.string().max(4).valid('B', 'A', 'AB', 'O', 'B-', 'B+').required(),
+        sect: joi.string().max(21).valid('Unknown', 'Neutral', 'Pillar of Light', 'Messenger of Darkness', 'Silent One').required(),
+        status: joi.string().max(20).valid('Normal', 'Dead', 'Missing', 'Incapacitated').required(),
+        player: joi.string().max(20).valid('Elzie', 'Elaine', 'Frozen', 'Playerless', 'Meg', 'Rosa', 'Sara', 'Nineveh', 'Dots', 'Mike', 'Silvie', 'Vicki').required(),
+        queued: joi.number().less(2).required(),
+        adoptable: joi.number().less(2).required(),
+        haircolor: joi.string().max(20).required(),
+        eyecolor: joi.string().max(20).required(),
+        heightfeet: joi.number().less(7).required(),
+        heightinches: joi.number().less(13).required(),
+        heightcms: joi.number().less(200).required(),
+        build: joi.string().max(11).required(),
+        skintone: joi.string().max(10).required(),
+        cupsize: joi.string().max(3).valid('A', 'B', 'C', 'D', 'N/A', 'DD'),
+        domhand: joi.string().max(20).valid('Right', 'Left', 'Mixed', 'Ambidextrous').required(),
+        identifiers: joi.string().allow(''),
+        class: joi.string().max(20).allow(''),
+        pastclasses: joi.string().allow(''),
+        mountcombat: joi.number().less(2).required(),
+        orientation: joi.string().max(20).valid('Bicurious', 'Straight', 'Gay', 'Bi', 'Asexual', 'Undecided', 'Unknown', 'Bisexual').required(),
+        noncombat: joi.string().allow(''),
+        gender: joi.string().max(1).valid('F', 'M', 'N').required(),
+        special: joi.string().max(20).allow('')
+    });
 
-      const result = schema.validate(character);
+    const result = schema.validate(character);
 
-      if (result.error !== undefined) {
-          return res.status(500).json(result.error);
-      }
+    if (result.error !== undefined) {
+        return res.status(500).json(result.error);
+    }
 
-      sql.getSession()
-      .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
-      .then(s => { return s.getTable("Characters") })
-      .then(t =>
-        t.update()
-        .set('picture', character.picture)
-        .set('name', character.name)
-        .set('nickname1', character.nickname1)
-        .set('nickname2', character.nickname2)
-        .set('journal', character.journal)
-        .set('jobs', character.jobs)
-        .set('subjobs', character.subjobs)
-        .set('socialclass', character.socialclass)
-        .set('country', character.country)
-        .set('hometown', character.hometown)
-        .set('house', character.house)
-        .set('birthmonth', character.birthmonth)
-        .set('birthdate', character.birthdate)
-        .set('year', character.year)
-        .set('zodiac', character.zodiac)
-        .set('bloodtype', character.bloodtype)
-        .set('sect', character.sect)
-        .set('player', character.player)
-        .set('queued', character.queued)
-        .set('adoptable', character.adoptable)
-        .set('haircolor', character.haircolor)
-        .set('eyecolor', character.eyecolor)
-        .set('heightfeet', character.heightfeet)
-        .set('heightinches', character.heightinches)
-        .set('heightcms', character.heightcms)
-        .set('build', character.build)
-        .set('skintone', character.skintone)
-        .set('cupsize', character.cupsize)
-        .set('domhand', character.domhand)
-        .set('identifiers', character.identifiers)
-        .set('class', character.class)
-        .set('pastclasses', character.pastclasses)
-        .set('mountcombat', character.mountcombat)
-        .set('orientation', character.orientation)
-        .set('noncombat', character.noncombat)
-        .set('gender', character.gender)
-        .where('id = :id')
-        .bind('id', req.params.id)
-        .execute()
-        .then(() => res.status(200).json({status: 'updated'}))
-        .catch(err => {
-            res.status(500).json({status: err});
-        })
-      )
-      .catch(e => {
-          res.status(503).json("API Error");
-      });
+    sql.getSession()
+    .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
+    .then(s => { return s.getTable("Characters") })
+    .then(t =>
+    t.update()
+    .set('picture', character.picture)
+    .set('name', character.name)
+    .set('nickname1', character.nickname1)
+    .set('nickname2', character.nickname2)
+    .set('journal', character.journal)
+    .set('jobs', character.jobs)
+    .set('subjobs', character.subjobs)
+    .set('socialclass', character.socialclass)
+    .set('country', character.country)
+    .set('hometown', character.hometown)
+    .set('house', character.house)
+    .set('birthmonth', character.birthmonth)
+    .set('birthdate', character.birthdate)
+    .set('year', character.year)
+    .set('zodiac', character.zodiac)
+    .set('bloodtype', character.bloodtype)
+    .set('sect', character.sect)
+    .set('player', character.player)
+    .set('queued', character.queued)
+    .set('adoptable', character.adoptable)
+    .set('haircolor', character.haircolor)
+    .set('eyecolor', character.eyecolor)
+    .set('heightfeet', character.heightfeet)
+    .set('heightinches', character.heightinches)
+    .set('heightcms', character.heightcms)
+    .set('build', character.build)
+    .set('skintone', character.skintone)
+    .set('cupsize', character.cupsize)
+    .set('domhand', character.domhand)
+    .set('identifiers', character.identifiers)
+    .set('class', character.class)
+    .set('pastclasses', character.pastclasses)
+    .set('mountcombat', character.mountcombat)
+    .set('orientation', character.orientation)
+    .set('noncombat', character.noncombat)
+    .set('gender', character.gender)
+    .where('id = :id')
+    .bind('id', req.params.id)
+    .execute()
+    .then(() => res.status(200).json({status: 'updated'}))
+    .catch(err => {
+        res.status(500).json({status: err});
+    })
+    )
+    .catch(e => {
+        res.status(503).json("API Error");
+    });
   });
 
   //Get all NPCs
@@ -672,7 +672,7 @@ const checkJwt = jwt({
     }
 });
 
-const checkRole = (req, res, next) => {
+const checkRoleAdmin = (req, res, next) => {
     let token = null;
 
     if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
