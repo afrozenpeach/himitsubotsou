@@ -5,6 +5,7 @@ import cors from 'cors';
 import mysqlx from "@mysql/xdevapi";
 import Channels from './modules/Channels.js';
 import BotCommands from "./modules/BotCommands.js";
+import bodyParser from 'body-parser';
 
 //SQL connection
 const sql = mysqlx.getClient(
@@ -200,6 +201,7 @@ if (Config.EXPRESS_PORT) {
     const app = express()
         .use(cors())
         .use(express.json())
+        .use(bodyParser.json())
         .use(Channels(sql));
 
     app.listen(Config.EXPRESS_PORT, () => {
