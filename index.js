@@ -3,7 +3,7 @@ import { Config } from "./config.js";
 import express from 'express';
 import cors from 'cors';
 import mysqlx from "@mysql/xdevapi";
-import BotCommands from "./modules/BotCommands/BotCommands.js";
+import BotCommands from "./modules/Bot/BotCommands.js";
 import bodyParser from 'body-parser';
 import categoriesRouter from './modules/API/categories.js';
 import channelsRouter from './modules/API/channels.js';

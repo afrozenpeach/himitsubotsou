@@ -205,52 +205,6 @@ export default function createRouter(sql) {
       let session;
       let character = req.body;
 
-      const schema = joi.object().keys({
-          ID: joi.number().required(),
-          picture: joi.string().min(5).max(200).pattern(/(jpg|png|gif)$/).required(),
-          name: joi.string().min(1).max(30).required(),
-          nickname1: joi.string().max(30).allow('', null),
-          nickname2: joi.string().max(30).allow('', null),
-          journal: joi.string().min(1).max(30).required(),
-          identifiers: joi.string().allow('', null),
-          noncombat: joi.string().allow('', null),
-          jobs: joi.string().max(200).allow('', null),
-          subjobs: joi.string().max(200).allow('', null),
-          socialclass: joi.string().min(1).max(30).required(),
-          country: joi.string().min(1).max(10).valid('Korin', 'Dentoria', 'Kanemoria', 'Megam', 'Kilia', 'Hanalan', 'Atsiria', 'Romani').required(),
-          hometown: joi.string().max(30).allow('', null),
-          house: joi.string().max(50).allow('', null),
-          birthmonth: joi.string().min(1).max(10).valid('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'Novemeber', 'December').required(),
-          birthdate: joi.number().less(31).required(),
-          year: joi.number().less(650).required(),
-          zodiac: joi.string().max(30).valid('Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces').required(),
-          bloodtype: joi.string().max(4).valid('B', 'A', 'AB', 'O', 'B-', 'B+').required(),
-          sect: joi.string().max(21).valid('Unknown', 'Neutral', 'Pillar of Light', 'Messenger of Darkness', 'Silent One').required(),
-          status: joi.string().max(20).valid('Normal', 'Dead', 'Missing', 'Incapacitated').required(),
-          player: joi.string().max(20).valid('Elzie', 'Elaine', 'Frozen', 'Playerless', 'Meg', 'Rosa', 'Sara', 'Nineveh', 'Dots', 'Mike', 'Silvie', 'Vicki').required(),
-          haircolor: joi.string().max(20).required(),
-          eyecolor: joi.string().max(20).required(),
-          skintone: joi.string().max(10).required(),
-          cupsize: joi.string().max(3).valid('A', 'B', 'C', 'D', 'N/A', 'DD'),
-          domhand: joi.string().max(20).valid('Right', 'Left', 'Mixed', 'Ambidextrous').required(),
-          orientation: joi.string().max(20).valid('Bicurious', 'Straight', 'Gay', 'Bi', 'Asexual', 'Undecided', 'Unknown', 'Bisexual').required(),
-          gender: joi.string().trim().max(1).valid('F', 'M', 'N').required(),
-          heightfeet: joi.number().less(7).required(),
-          heightinches: joi.number().less(13).required(),
-          heightcms: joi.number().less(200).required(),
-          build: joi.string().max(11).required(),
-          class: joi.string().max(20).allow('', null),
-          pastclasses: joi.string().allow('', null),
-          mountcombat: joi.number().less(2).required(),
-          Special: joi.string().max(20).allow('', null),
-          queued: joi.number().less(2).required(),
-          adoptable: joi.number().less(2).required(),
-          connections: joi.optional(),
-          languages: joi.optional(),
-          weapons: joi.optional(),
-          mounts: joi.optional()
-      });
-
       const result = schema.validate(character);
 
       if (result.error !== undefined) {
@@ -351,3 +305,51 @@ const checkRoleAdmin = (req, res, next) => {
         res.status(401).json('Unauthorized. User must be an Admin.');
     }
 }
+
+
+
+const schema = joi.object().keys({
+    ID: joi.number().required(),
+    picture: joi.string().min(5).max(200).pattern(/(jpg|png|gif)$/).required(),
+    name: joi.string().min(1).max(30).required(),
+    nickname1: joi.string().max(30).allow('', null),
+    nickname2: joi.string().max(30).allow('', null),
+    journal: joi.string().min(1).max(30).required(),
+    identifiers: joi.string().allow('', null),
+    noncombat: joi.string().allow('', null),
+    jobs: joi.string().max(200).allow('', null),
+    subjobs: joi.string().max(200).allow('', null),
+    socialclass: joi.string().min(1).max(30).required(),
+    country: joi.string().min(1).max(10).valid('Korin', 'Dentoria', 'Kanemoria', 'Megam', 'Kilia', 'Hanalan', 'Atsiria', 'Romani').required(),
+    hometown: joi.string().max(30).allow('', null),
+    house: joi.string().max(50).allow('', null),
+    birthmonth: joi.string().min(1).max(10).valid('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'Novemeber', 'December').required(),
+    birthdate: joi.number().less(31).required(),
+    year: joi.number().less(650).required(),
+    zodiac: joi.string().max(30).valid('Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces').required(),
+    bloodtype: joi.string().max(4).valid('B', 'A', 'AB', 'O', 'B-', 'B+').required(),
+    sect: joi.string().max(21).valid('Unknown', 'Neutral', 'Pillar of Light', 'Messenger of Darkness', 'Silent One').required(),
+    status: joi.string().max(20).valid('Normal', 'Dead', 'Missing', 'Incapacitated').required(),
+    player: joi.string().max(20).valid('Elzie', 'Elaine', 'Frozen', 'Playerless', 'Meg', 'Rosa', 'Sara', 'Nineveh', 'Dots', 'Mike', 'Silvie', 'Vicki').required(),
+    haircolor: joi.string().max(20).required(),
+    eyecolor: joi.string().max(20).required(),
+    skintone: joi.string().max(10).required(),
+    cupsize: joi.string().max(3).valid('A', 'B', 'C', 'D', 'N/A', 'DD'),
+    domhand: joi.string().max(20).valid('Right', 'Left', 'Mixed', 'Ambidextrous').required(),
+    orientation: joi.string().max(20).valid('Bicurious', 'Straight', 'Gay', 'Bi', 'Asexual', 'Undecided', 'Unknown', 'Bisexual').required(),
+    gender: joi.string().trim().max(1).valid('F', 'M', 'N').required(),
+    heightfeet: joi.number().less(7).required(),
+    heightinches: joi.number().less(13).required(),
+    heightcms: joi.number().less(200).required(),
+    build: joi.string().max(11).required(),
+    class: joi.string().max(20).allow('', null),
+    pastclasses: joi.string().allow('', null),
+    mountcombat: joi.number().less(2).required(),
+    Special: joi.string().max(20).allow('', null),
+    queued: joi.number().less(2).required(),
+    adoptable: joi.number().less(2).required(),
+    connections: joi.optional(),
+    languages: joi.optional(),
+    weapons: joi.optional(),
+    mounts: joi.optional()
+});
