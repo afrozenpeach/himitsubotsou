@@ -3,9 +3,14 @@ import { Config } from "./config.js";
 import express from 'express';
 import cors from 'cors';
 import mysqlx from "@mysql/xdevapi";
-import Channels from './modules/Channels.js';
-import BotCommands from "./modules/BotCommands.js";
+import BotCommands from "./modules/BotCommands/BotCommands.js";
 import bodyParser from 'body-parser';
+import categoriesRouter from './modules/API/categories.js';
+import channelsRouter from './modules/API/channels.js';
+import charactersRouter from './modules/API/characters.js';
+import ficsRouter from './modules/API/fics.js';
+import messagesRouter from './modules/API/messages.js';
+import npcsRouter from './modules/API/npcs.js';
 
 //SQL connection
 const sql = mysqlx.getClient(
@@ -202,7 +207,12 @@ if (Config.EXPRESS_PORT) {
         .use(cors())
         .use(express.json())
         .use(bodyParser.json())
-        .use(Channels(sql));
+        .use('/api/categories', categoriesRouter(sql))
+        .use('/api/channels', channelsRouter(sql))
+        .use('/api/characters', charactersRouter(sql))
+        .use('/api/fics', ficsRouter(sql))
+        .use('/api/messages', messagesRouter(sql))
+        .use('/api/npcs', npcsRouter(sql));
 
     app.listen(Config.EXPRESS_PORT, () => {
         console.log(`Express server listening on port ${Config.EXPRESS_PORT}`);
