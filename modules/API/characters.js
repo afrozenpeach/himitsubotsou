@@ -252,6 +252,7 @@ export default function createRouter(sql) {
           .set('orientation', character.orientation)
           .set('noncombat', character.noncombat)
           .set('gender', character.gender)
+          .set('status', character.status)
           .where('id = :id')
           .bind('id', req.params.id)
           .execute()
@@ -263,6 +264,48 @@ export default function createRouter(sql) {
       .catch(e => {
           res.status(503).json("API Error");
       });
+    });
+
+    router.post('/', checkJwt, checkRoleAdmin, function (req, res, next) {
+        let session;
+        let character = req.body;
+
+        const result = schema.validate(character);
+
+        if (result.error !== undefined) {
+            return res.status(500).json(result.error);
+        }
+
+        sql.getSession()
+        .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
+        .then(s => { return s.getTable("Characters") })
+        .then(t =>
+            t.insert([
+                'picture', 'name', 'nickname1', 'nickname2', 'journal', 'jobs', 'subjobs', 'socialclass',
+                'country', 'hometown', 'house', 'birthmonth', 'birthdate', 'year', 'zodiac', 'bloodtype',
+                'sect', 'player', 'queued', 'adoptable', 'haircolor', 'eyecolor', 'heightfeet', 'heightinches',
+                'heightcms', 'build', 'skintone', 'cupsize', 'domhand', 'identifiers', 'class', 'pastclasses',
+                'mountcombat', 'orientation', 'noncombat', 'gender', 'status', 'Special'
+            ])
+            .values(
+                character.picture, character.name, character.nickname1, character.nickname2, character.journal,
+                character.jobs, character.subjobs, character.socialclass, character.country, character.hometown,
+                character.house, character.birthmonth, character.birthdate, character.year, character.zodiac,
+                character.bloodtype, character.sect, character.player, character.queued, character.adoptable,
+                character.haircolor, character.eyecolor, character.heightfeet, character.heightinches,
+                character.heightcms, character.build, character.skintone, character.cupsize, character.domhand,
+                character.identifiers, character.class, character.pastclasses, character.mountcombat,
+                character.orientation, character.noncombat, character.gender, character.status, character.Special
+            )
+            .execute()
+            .then(async r => res.status(200).json({status: 'inserted', id: r.getAutoIncrementValue()}))
+            .catch(err => {
+                res.status(500).json({status: err});
+            })
+        )
+        .catch(e => {
+            res.status(503).json("API Error");
+        });
     });
 
     return router;
@@ -306,10 +349,8 @@ const checkRoleAdmin = (req, res, next) => {
     }
 }
 
-
-
 const schema = joi.object().keys({
-    ID: joi.number().required(),
+    ID: joi.number().optional(),
     picture: joi.string().min(5).max(200).pattern(/(jpg|png|gif)$/).required(),
     name: joi.string().min(1).max(30).required(),
     nickname1: joi.string().max(30).allow('', null),
