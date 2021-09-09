@@ -57,6 +57,12 @@ export default function createRouter(sql) {
       let session;
       let result = [];
 
+      const validation = intIdSchema.validate(req.params.id);
+
+      if (validation.error !== undefined) {
+          return res.status(500).json(result.error);
+      }
+
       sql.getSession()
       .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
       .then(s => { return s.getTable("Characters") })
@@ -298,7 +304,7 @@ export default function createRouter(sql) {
                 character.orientation, character.noncombat, character.gender, character.status, character.Special
             )
             .execute()
-            .then(async r => res.status(200).json({status: 'inserted', id: r.getAutoIncrementValue()}))
+            .then(async r => res.status(200).json(r.getAutoIncrementValue()))
             .catch(err => {
                 res.status(500).json({status: err});
             })
@@ -351,18 +357,18 @@ const checkRoleAdmin = (req, res, next) => {
 
 const schema = joi.object().keys({
     ID: joi.number().optional(),
-    picture: joi.string().min(5).max(200).pattern(/(jpg|png|gif)$/).required(),
     name: joi.string().min(1).max(30).required(),
     nickname1: joi.string().max(30).allow('', null),
     nickname2: joi.string().max(30).allow('', null),
     journal: joi.string().min(1).max(30).required(),
+    picture: joi.string().min(5).max(200).pattern(/(jpg|png|gif)$/).required(),
     identifiers: joi.string().allow('', null),
     noncombat: joi.string().allow('', null),
-    jobs: joi.string().max(200).allow('', null),
+    jobs: joi.string().max(200).allow(''),
     subjobs: joi.string().max(200).allow('', null),
     socialclass: joi.string().min(1).max(30).required(),
     country: joi.string().min(1).max(10).valid('Korin', 'Dentoria', 'Kanemoria', 'Megam', 'Kilia', 'Hanalan', 'Atsiria', 'Romani').required(),
-    hometown: joi.string().max(30).allow('', null),
+    hometown: joi.string().max(30).allow(''),
     house: joi.string().max(50).allow('', null),
     birthmonth: joi.string().min(1).max(10).valid('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'Novemeber', 'December').required(),
     birthdate: joi.number().less(31).required(),
@@ -383,10 +389,10 @@ const schema = joi.object().keys({
     heightinches: joi.number().less(13).required(),
     heightcms: joi.number().less(200).required(),
     build: joi.string().max(11).required(),
-    class: joi.string().max(20).allow('', null),
+    class: joi.string().max(20).allow(''),
     pastclasses: joi.string().allow('', null),
     mountcombat: joi.number().less(2).required(),
-    Special: joi.string().max(20).allow('', null),
+    Special: joi.string().max(20).allow(''),
     queued: joi.number().less(2).required(),
     adoptable: joi.number().less(2).required(),
     connections: joi.optional(),
@@ -394,3 +400,5 @@ const schema = joi.object().keys({
     weapons: joi.optional(),
     mounts: joi.optional()
 });
+
+const intIdSchema = joi.number();
