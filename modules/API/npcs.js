@@ -1,5 +1,6 @@
 import express from 'express';
 import { Config } from "../../config.js";
+import joi from 'joi';
 
 export default function createRouter(sql) {
     const router = express.Router();
@@ -52,6 +53,12 @@ export default function createRouter(sql) {
     router.get('/:id', function (req, res, next) {
       let session;
       let result = [];
+
+      const validation = intIdSchema.validate(req.params.id);
+
+      if (validation.error !== undefined) {
+          return res.status(500).json(result.error);
+      }
 
       sql.getSession()
       .then(s => { session = s; return session.getSchema(Config.MYSQL_CHARDB) })
@@ -125,3 +132,5 @@ export default function createRouter(sql) {
 
     return router;
 }
+
+const intIdSchema = joi.number();

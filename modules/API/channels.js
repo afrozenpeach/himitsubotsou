@@ -1,5 +1,6 @@
 import express from 'express';
 import { Config } from "../../config.js";
+import joi from 'joi';
 
 export default function createRouter(sql) {
     const router = express.Router();
@@ -11,6 +12,12 @@ export default function createRouter(sql) {
 
       if (req.params.category === 'Archive - All Channels') {
           req.params.category = '%';
+      }
+
+      const validation = stringSchema.validate(req.params.category);
+
+      if (validation.error !== undefined) {
+          return res.status(500).json(result.error);
       }
 
       sql.getSession()
@@ -133,3 +140,5 @@ export default function createRouter(sql) {
 
     return router;
 }
+
+const stringSchema = joi.string();

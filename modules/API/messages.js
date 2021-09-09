@@ -1,5 +1,6 @@
 import express from 'express';
 import { Config } from "../../config.js";
+import joi from 'joi';
 
 export default function createRouter(sql) {
     const router = express.Router();
@@ -7,6 +8,12 @@ export default function createRouter(sql) {
     //Get all messages for a channel
     router.get('/channel/:channelId', function (req, res, next) {
       let session;
+
+      const validation = intIdSchema.validate(req.params.id);
+
+      if (validation.error !== undefined) {
+          return res.status(500).json(result.error);
+      }
 
       sql.getSession()
       .then(s => { session = s; return session.getSchema(Config.MYSQL_ARCHIVESDB) })
@@ -35,3 +42,5 @@ export default function createRouter(sql) {
 
     return router;
 }
+
+const intIdSchema = joi.number();
