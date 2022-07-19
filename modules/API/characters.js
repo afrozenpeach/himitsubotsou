@@ -1,9 +1,11 @@
 import express from 'express';
 import { Config } from "../../config.js";
 import joi from 'joi';
+import expressjwt from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
 import jwtDecode from 'jwt-decode';
-const { expressjwt: jwt } = require('express-jwt');
+
+var { expressjwt: jwt } = expressjwt;
 
 export default function createRouter(sql) {
     const router = express.Router();
