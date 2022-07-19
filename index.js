@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits } from "discord.js";
+import { Client, GatewayIntentBits, InteractionType } from "discord.js";
 import { Config } from "./config.js";
 import express from 'express';
 import cors from 'cors';
