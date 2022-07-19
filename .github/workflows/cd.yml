@@ -38,5 +38,4 @@ jobs:
           script: cp ~/himitsubotsou.config.js ~/discord/himitsubotsou/config.js && cd ~/discord/himitsubotsou && sed -i 's/}/,\n\"VERSION\":\"${{ steps.vars.outputs.tag }}\"}/' config.js && npm install && pm2 restart index.js
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          debug: true
+          key: ${{ secrets.APPLEBOY_KEY }}
