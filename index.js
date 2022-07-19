@@ -1,4 +1,4 @@
-import { Client, Intents } from "discord.js";
+import { Client, GatewayIntentBits } from "discord.js";
 import { Config } from "./config.js";
 import express from 'express';
 import cors from 'cors';
@@ -24,10 +24,10 @@ if (Config.BOT_TOKEN) {
         fetchAllMembers: true,
         presence: {activities: [{name: "Himitsu no Sensou", type: "PLAYING"}], status: 'online'},
         intents: [
-            Intents.FLAGS.GUILDS,
-            Intents.FLAGS.GUILD_MESSAGES,
-            Intents.FLAGS.GUILD_MEMBERS,
-            Intents.FLAGS.GUILD_PRESENCES
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.GuildMembers,
+            GatewayIntentBits.GuildPresences
         ]
     });
 

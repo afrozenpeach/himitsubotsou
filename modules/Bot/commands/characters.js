@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { Config } from "../../../config.js";
 
 export default function({ player, all } = {}) {
@@ -87,7 +87,7 @@ export default function({ player, all } = {}) {
             finalMessage += ", ";
         }, this)
 
-        let embed = new MessageEmbed()
+        let embed = new EmbedBuilder()
             .setTitle(player.slice(0, 1).toLocaleUpperCase() + player.slice(1).toLocaleLowerCase() + (player.slice(-1) == "s" ? "'" : "'s") + " characters")
             .setDescription(finalMessage.slice(0, -2));
 

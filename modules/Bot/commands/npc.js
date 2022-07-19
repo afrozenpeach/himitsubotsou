@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { Config } from "../../../config.js";
 
 export default function({npc} = {}) {
@@ -53,7 +53,7 @@ export default function({npc} = {}) {
                     ]);
                 })
                 .then(() => {
-                    let embed = new MessageEmbed();
+                    let embed = new EmbedBuilder();
 
                     embed.setTitle(npc.npcName);
 

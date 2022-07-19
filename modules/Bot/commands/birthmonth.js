@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder as EmbedBuilder } from "discord.js";
 import { Config } from "../../../config.js";
 
 export default function({month} = {}) {
@@ -17,7 +17,7 @@ export default function({month} = {}) {
     .then(r => {
         let characters = r.fetchAll();
 
-        let embed = new MessageEmbed().setTitle("Birthdays for " + characters[0][3]);
+        let embed = new EmbedBuilder().setTitle("Birthdays for " + characters[0][3]);
 
         let finalMessage = "";
 

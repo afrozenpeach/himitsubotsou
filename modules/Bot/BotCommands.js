@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { SlashCommandBuilder } from '@discordjs/builders';
 
 //Some larger functions are loaded magically (see the end of the file for more!)
@@ -70,12 +70,12 @@ export default class BotCommands {
             if (typeof this[argHelp] === 'function') {
                 let helpHelp = this[argHelp]();
 
-                let messageEmbed = new MessageEmbed()
+                let EmbedBuilder = new EmbedBuilder()
                     .setColor("#ff0000")
                     .setTitle("Help - " + helpHelp.title)
                     .setDescription(helpHelp.description);
 
-                this.message.reply({ embeds: [messageEmbed], ephemeral: this.ephemeral  }).catch();
+                this.message.reply({ embeds: [EmbedBuilder], ephemeral: this.ephemeral  }).catch();
             } else {
                 this.message.reply({ content: "No additional help.", ephemeral: this.ephemeral }).catch();
             }
@@ -83,7 +83,7 @@ export default class BotCommands {
             return;
         }
 
-        let embed = new MessageEmbed()
+        let embed = new EmbedBuilder()
             .setColor("#ff0000")
             .setTitle("Available commands")
             .setDescription(this.#getAllMethods(this).join(", "));
@@ -289,7 +289,7 @@ export default class BotCommands {
             playerCharacters = playerCharacters.filter(row => row.player.toLocaleLowerCase() === filterPlayer.toLocaleLowerCase())
         }
 
-        let embed =  new MessageEmbed()
+        let embed =  new EmbedBuilder()
             .setColor(color)
             .setTitle(title);
 

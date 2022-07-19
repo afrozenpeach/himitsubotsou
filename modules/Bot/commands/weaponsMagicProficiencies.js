@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { Config } from "../../../config.js";
 
 export default function({character} = {}) {
@@ -27,7 +27,7 @@ export default function({character} = {}) {
             return;
         }
 
-        let embed = new MessageEmbed();
+        let embed = new EmbedBuilder();
 
         if (character.journal) {
             embed.setURL("https://himitsu-sensou.dreamwidth.org/?poster=" + character.journal);
