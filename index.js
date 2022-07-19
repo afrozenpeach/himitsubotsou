@@ -137,7 +137,7 @@ if (Config.BOT_TOKEN) {
     //When a slash command is run
     client.on('interactionCreate', async interaction => {
         try {
-            if (!interaction.isCommand()) return;
+            if (!interaction.type === InteractionType.ApplicationCommand()) return;
 
             const { commandName } = interaction;
 
